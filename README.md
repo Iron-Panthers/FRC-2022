@@ -1,8 +1,11 @@
-# Iron Panthers FRC-2022 repo
+# FRC-2022
 
-this is for RAPID RECHARGE
+Iron Panthers repository for 2022 season code.
 
-rat shooter rat shooter
+## Setting up
 
-### ai generated image of theoretical rat shooter:
-![image](https://user-images.githubusercontent.com/72410860/149045787-4567d8ca-7339-4e44-9bfe-4b4a7a3d2f70.png)
+### Before working: make sure you have the 2022 tools:
+ * WPILib: download the latest release from https://github.com/wpilibsuite/allwpilib/tags. Run installer executable. Should include VS Code + extensions, but just in case...
+ * VS Code extension: download the latest .vsix release from https://github.com/wpilibsuite/vscode-wpilib/tags 
+
+TODO: expand README
