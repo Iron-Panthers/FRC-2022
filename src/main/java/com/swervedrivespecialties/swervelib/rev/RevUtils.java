@@ -1,12 +1,13 @@
 package com.swervedrivespecialties.swervelib.rev;
 
-import com.revrobotics.CANError;
+import com.revrobotics.RevLibError;
 
 public final class RevUtils {
-    private RevUtils() {}
+    private RevUtils() {
+    }
 
-    public static void checkNeoError(CANError error, String message) {
-        if (error != CANError.kOk) {
+    public static void checkNeoError(RevLibError error, String message) {
+        if (error != RevLibError.kOk) {
             throw new RuntimeException(String.format("%s: %s", message, error.toString()));
         }
     }

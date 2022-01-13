@@ -99,7 +99,7 @@ public final class NeoSteerControllerFactoryBuilder {
             checkNeoError(integratedEncoder.setPosition(absoluteEncoder.getAbsoluteAngle()),
                     "Failed to set NEO encoder position");
 
-            CANPIDController controller = motor.getPIDController();
+            SparkMaxPIDController controller = motor.getPIDController();
             if (hasPidConstants()) {
                 checkNeoError(controller.setP(pidProportional), "Failed to set NEO PID proportional constant");
                 checkNeoError(controller.setI(pidIntegral), "Failed to set NEO PID integral constant");
@@ -117,7 +117,7 @@ public final class NeoSteerControllerFactoryBuilder {
 
         @SuppressWarnings({ "FieldCanBeLocal", "unused" })
         private final CANSparkMax motor;
-        private final CANPIDController controller;
+        private final SparkMaxPIDController controller;
         private final RelativeEncoder motorEncoder;
         private final AbsoluteEncoder absoluteEncoder;
 
@@ -173,7 +173,7 @@ public final class NeoSteerControllerFactoryBuilder {
 
             this.referenceAngleRadians = referenceAngleRadians;
 
-            controller.setReference(adjustedReferenceAngleRadians, ControlType.kPosition);
+            controller.setReference(adjustedReferenceAngleRadians, CANSparkMax.ControlType.kPosition);
         }
 
         @Override
