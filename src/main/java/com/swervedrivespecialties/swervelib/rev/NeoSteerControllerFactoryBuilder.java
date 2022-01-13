@@ -44,11 +44,13 @@ public final class NeoSteerControllerFactoryBuilder {
         return Double.isFinite(currentLimit);
     }
 
-    public <T> SteerControllerFactory<ControllerImplementation, NeoSteerConfiguration<T>> build(AbsoluteEncoderFactory<T> encoderFactory) {
+    public <T> SteerControllerFactory<ControllerImplementation, NeoSteerConfiguration<T>> build(
+            AbsoluteEncoderFactory<T> encoderFactory) {
         return new FactoryImplementation<>(encoderFactory);
     }
 
-    public class FactoryImplementation<T> implements SteerControllerFactory<ControllerImplementation, NeoSteerConfiguration<T>> {
+    public class FactoryImplementation<T>
+            implements SteerControllerFactory<ControllerImplementation, NeoSteerConfiguration<T>> {
         private final AbsoluteEncoderFactory<T> encoderFactory;
 
         public FactoryImplementation(AbsoluteEncoderFactory<T> encoderFactory) {
@@ -58,30 +60,44 @@ public final class NeoSteerControllerFactoryBuilder {
         @Override
         public void addDashboardEntries(ShuffleboardContainer container, ControllerImplementation controller) {
             SteerControllerFactory.super.addDashboardEntries(container, controller);
-            container.addNumber("Absolute Encoder Angle", () -> Math.toDegrees(controller.absoluteEncoder.getAbsoluteAngle()));
+            container.addNumber("Absolute Encoder Angle",
+                    () -> Math.toDegrees(controller.absoluteEncoder.getAbsoluteAngle()));
         }
 
         @Override
-        public ControllerImplementation create(NeoSteerConfiguration<T> steerConfiguration, ModuleConfiguration moduleConfiguration) {
+        public ControllerImplementation create(NeoSteerConfiguration<T> steerConfiguration,
+                ModuleConfiguration moduleConfiguration) {
             AbsoluteEncoder absoluteEncoder = encoderFactory.create(steerConfiguration.getEncoderConfiguration());
 
-            CANSparkMax motor = new CANSparkMax(steerConfiguration.getMotorPort(), CANSparkMaxLowLevel.MotorType.kBrushless);
-            checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100), "Failed to set periodic status frame 0 rate");
-            checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20), "Failed to set periodic status frame 1 rate");
-            checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20), "Failed to set periodic status frame 2 rate");
+            CANSparkMax motor = new CANSparkMax(steerConfiguration.getMotorPort(),
+                    CANSparkMaxLowLevel.MotorType.kBrushless);
+            checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100),
+                    "Failed to set periodic status frame 0 rate");
+            checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20),
+                    "Failed to set periodic status frame 1 rate");
+            checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20),
+                    "Failed to set periodic status frame 2 rate");
             checkNeoError(motor.setIdleMode(CANSparkMax.IdleMode.kBrake), "Failed to set NEO idle mode");
             motor.setInverted(!moduleConfiguration.isSteerInverted());
             if (hasVoltageCompensation()) {
                 checkNeoError(motor.enableVoltageCompensation(nominalVoltage), "Failed to enable voltage compensation");
             }
             if (hasCurrentLimit()) {
-                checkNeoError(motor.setSmartCurrentLimit((int) Math.round(currentLimit)), "Failed to set NEO current limits");
+                checkNeoError(motor.setSmartCurrentLimit((int) Math.round(currentLimit)),
+                        "Failed to set NEO current limits");
             }
 
-            CANEncoder integratedEncoder = motor.getEncoder();
-            checkNeoError(integratedEncoder.setPositionConversionFactor(2.0 * Math.PI * moduleConfiguration.getSteerReduction()), "Failed to set NEO encoder conversion factor");
-            checkNeoError(integratedEncoder.setVelocityConversionFactor(2.0 * Math.PI * moduleConfiguration.getSteerReduction() / 60.0), "Failed to set NEO encoder conversion factor");
-            checkNeoError(integratedEncoder.setPosition(absoluteEncoder.getAbsoluteAngle()), "Failed to set NEO encoder position");
+            RelativeEncoder integratedEncoder = motor.getEncoder();
+            checkNeoError(
+                    integratedEncoder
+                            .setPositionConversionFactor(2.0 * Math.PI * moduleConfiguration.getSteerReduction()),
+                    "Failed to set NEO encoder conversion factor");
+            checkNeoError(
+                    integratedEncoder.setVelocityConversionFactor(
+                            2.0 * Math.PI * moduleConfiguration.getSteerReduction() / 60.0),
+                    "Failed to set NEO encoder conversion factor");
+            checkNeoError(integratedEncoder.setPosition(absoluteEncoder.getAbsoluteAngle()),
+                    "Failed to set NEO encoder position");
 
             CANPIDController controller = motor.getPIDController();
             if (hasPidConstants()) {
@@ -99,10 +115,10 @@ public final class NeoSteerControllerFactoryBuilder {
         private static final int ENCODER_RESET_ITERATIONS = 500;
         private static final double ENCODER_RESET_MAX_ANGULAR_VELOCITY = Math.toRadians(0.5);
 
-        @SuppressWarnings({"FieldCanBeLocal", "unused"})
+        @SuppressWarnings({ "FieldCanBeLocal", "unused" })
         private final CANSparkMax motor;
         private final CANPIDController controller;
-        private final CANEncoder motorEncoder;
+        private final RelativeEncoder motorEncoder;
         private final AbsoluteEncoder absoluteEncoder;
 
         private double referenceAngleRadians = 0;
@@ -126,8 +142,10 @@ public final class NeoSteerControllerFactoryBuilder {
             double currentAngleRadians = motorEncoder.getPosition();
 
             // Reset the NEO's encoder periodically when the module is not rotating.
-            // Sometimes (~5% of the time) when we initialize, the absolute encoder isn't fully set up, and we don't
-            // end up getting a good reading. If we reset periodically this won't matter anymore.
+            // Sometimes (~5% of the time) when we initialize, the absolute encoder isn't
+            // fully set up, and we don't
+            // end up getting a good reading. If we reset periodically this won't matter
+            // anymore.
             if (motorEncoder.getVelocity() < ENCODER_RESET_MAX_ANGULAR_VELOCITY) {
                 if (++resetIteration >= ENCODER_RESET_ITERATIONS) {
                     resetIteration = 0;
@@ -144,7 +162,8 @@ public final class NeoSteerControllerFactoryBuilder {
                 currentAngleRadiansMod += 2.0 * Math.PI;
             }
 
-            // The reference angle has the range [0, 2pi) but the Neo's encoder can go above that
+            // The reference angle has the range [0, 2pi) but the Neo's encoder can go above
+            // that
             double adjustedReferenceAngleRadians = referenceAngleRadians + currentAngleRadians - currentAngleRadiansMod;
             if (referenceAngleRadians - currentAngleRadiansMod > Math.PI) {
                 adjustedReferenceAngleRadians -= 2.0 * Math.PI;
