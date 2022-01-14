@@ -72,7 +72,7 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
- 
+
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -94,44 +94,44 @@ wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
 spotless {
-   java {
-      target fileTree('.') {
+    java {
+        target fileTree('.') {
             include '**/*.java'
             exclude '**/build/**', '**/build-*/**'
-      }
-      toggleOffOn()
-      googleJavaFormat()
-      removeUnusedImports()
-      trimTrailingWhitespace()
-      endWithNewline()
-   }
-   groovyGradle {
-      target fileTree('.') {
+        }
+        toggleOffOn()
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
             include '**/*.gradle'
             exclude '**/build/**', '**/build-*/**'
-      }
-      greclipse()
-      indentWithSpaces(4)
-      trimTrailingWhitespace()
-      endWithNewline()
-   }
-   format 'xml', {
-      target fileTree('.') {
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'xml', {
+        target fileTree('.') {
             include '**/*.xml'
             exclude '**/build/**', '**/build-*/**'
-      }
-      eclipseWtp('xml')
-      trimTrailingWhitespace()
-      indentWithSpaces(2)
-      endWithNewline()
-   }
-   format 'misc', {
-      target fileTree('.') {
+        }
+        eclipseWtp('xml')
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
             include '**/*.md', '**/.gitignore'
             exclude '**/build/**', '**/build-*/**'
-      }
-      trimTrailingWhitespace()
-      indentWithSpaces(2)
-      endWithNewline()
-   }
+        }
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
 }
