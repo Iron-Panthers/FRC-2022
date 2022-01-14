@@ -2,12 +2,15 @@
   "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
   "java.format.settings.profile": "GoogleStyle",
 
+
+  
   "spotlessGradle.format.enable": true,
   "spotlessGradle.diagnostics.enable": true,
   "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
   "editor.codeActionsOnSave": {
       "source.fixAll.spotlessGradle": true
     },
+    
   
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.server.launchMode": "Standard",
