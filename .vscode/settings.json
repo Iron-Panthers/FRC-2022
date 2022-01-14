@@ -10,7 +10,14 @@
   "editor.codeActionsOnSave": {
       "source.fixAll.spotlessGradle": true
     },
-    
+  "files.associations": {
+    "*.gradle": "groovy"
+  },
+  "[gradle]": {
+    "spotlessGradle.format.enable": true,
+    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
+  },
+
   
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.server.launchMode": "Standard",
