@@ -1,9 +1,9 @@
 package com.swervedrivespecialties.swervelib;
 
 public interface SwerveModule {
-    double getDriveVelocity();
+  double getDriveVelocity();
 
-    double getSteerAngle();
+  double getSteerAngle();
 
-    void set(double driveVoltage, double steerAngle);
+  void set(double driveVoltage, double steerAngle);
 }

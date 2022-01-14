@@ -1,9 +1,9 @@
 package com.swervedrivespecialties.swervelib;
 
 public interface SteerController {
-    double getReferenceAngle();
+  double getReferenceAngle();
 
-    void setReferenceAngle(double referenceAngleRadians);
+  void setReferenceAngle(double referenceAngleRadians);
 
-    double getStateAngle();
+  double getStateAngle();
 }
