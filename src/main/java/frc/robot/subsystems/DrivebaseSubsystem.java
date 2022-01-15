@@ -128,7 +128,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
-    SwerveDriveKinematics.normalizeWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
     double sDivisor = MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE;
 
