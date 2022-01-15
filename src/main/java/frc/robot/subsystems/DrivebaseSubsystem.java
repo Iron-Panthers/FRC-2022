@@ -9,6 +9,7 @@ import static frc.robot.Constants.Drive.*;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -65,7 +66,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   /** Creates a new DrivebaseSubsystem. */
   public DrivebaseSubsystem() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
 
     frontLeftModule =
         createModule(
@@ -107,6 +107,17 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** Sets the gyro angle to zero, resetting the forward direction */
   public void zeroGyroscope() {
     navx.zeroYaw();
+  }
+
+  public Rotation2d getGyroscopeRotation() {
+    if (navx.isMagnetometerCalibrated()) {
+      // We will only get valid fused headings if the magnetometer is calibrated
+      return Rotation2d.fromDegrees(navx.getFusedHeading());
+    }
+
+    // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
+    // the angle increase.
+    return Rotation2d.fromDegrees(360.0 - navx.getYaw());
   }
 
   @Override
