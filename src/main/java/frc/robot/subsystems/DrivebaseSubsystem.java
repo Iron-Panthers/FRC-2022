@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -120,8 +121,20 @@ public class DrivebaseSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(360.0 - navx.getYaw());
   }
 
+  public void drive(ChassisSpeeds chassisSpeeds) {
+    this.chassisSpeeds = chassisSpeeds;
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
+    SwerveDriveKinematics.normalizeWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+
+    double sDivisor = MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE;
+
+    frontLeftModule.set(states[0].speedMetersPerSecond / sDivisor, states[0].angle.getRadians());
+    frontRightModule.set(states[1].speedMetersPerSecond / sDivisor, states[1].angle.getRadians());
+    backLeftModule.set(states[2].speedMetersPerSecond / sDivisor, states[2].angle.getRadians());
+    backRightModule.set(states[3].speedMetersPerSecond / sDivisor, states[3].angle.getRadians());
   }
 }
