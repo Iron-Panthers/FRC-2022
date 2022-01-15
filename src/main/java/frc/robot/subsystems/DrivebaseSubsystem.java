@@ -39,6 +39,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveModule backLeftModule;
   private final SwerveModule backRightModule;
 
+  private final SwerveModule[] swerveModules;
+
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
 
   /**
@@ -103,6 +105,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
             Modules.BackRight.STEER_MOTOR,
             Modules.BackRight.STEER_ENCODER,
             Modules.BackRight.STEER_OFFSET);
+
+    swerveModules =
+        new SwerveModule[] {frontRightModule, frontLeftModule, backRightModule, backLeftModule};
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -130,11 +135,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    double sDivisor = MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE;
-
-    frontLeftModule.set(states[0].speedMetersPerSecond / sDivisor, states[0].angle.getRadians());
-    frontRightModule.set(states[1].speedMetersPerSecond / sDivisor, states[1].angle.getRadians());
-    backLeftModule.set(states[2].speedMetersPerSecond / sDivisor, states[2].angle.getRadians());
-    backRightModule.set(states[3].speedMetersPerSecond / sDivisor, states[3].angle.getRadians());
+    // sets swerve module speeds and angles, for each swerve module, using kinematics
+    for (int i = 0; i < swerveModules.length; i++) {
+      swerveModules[i].set(
+          states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+          states[i].angle.getRadians());
+    }
   }
 }
