@@ -16,19 +16,48 @@ public final class Constants {
   @SuppressWarnings("java:S1118")
   public static final class Drive {
     public static final class Dims {
+      // FIXME validate with hardware
       public static final double TRACKWIDTH_METERS =
           .5207; // 20.5 inches (source: cad) converted to meters
       public static final double WHEELBASE_METERS = TRACKWIDTH_METERS; // robot is square
     }
 
-    public static final class Id {
-      public static final class FrontLeft {}
+    public static final class Modules {
+      public static final class FrontLeft {
+        // FIXME add can id values
+        public static final int DRIVE_MOTOR = 0;
+        public static final int STEER_MOTOR = 0;
+        public static final int STEER_ENCODER = 0;
+        public static final double STEER_OFFSET =
+            -Math.toRadians(0.0); // FIXME measure and set with hw
+      }
 
-      public static final class FrontRight {}
+      public static final class FrontRight {
+        // FIXME add can id values
+        public static final int DRIVE_MOTOR = 0;
+        public static final int STEER_MOTOR = 0;
+        public static final int STEER_ENCODER = 0;
+        public static final double STEER_OFFSET =
+            -Math.toRadians(0.0); // FIXME measure and set with hw
+      }
 
-      public static final class BackLeft {}
+      public static final class BackLeft {
+        // FIXME add can id values
+        public static final int DRIVE_MOTOR = 0;
+        public static final int STEER_MOTOR = 0;
+        public static final int STEER_ENCODER = 0;
+        public static final double STEER_OFFSET =
+            -Math.toRadians(0.0); // FIXME measure and set with hw
+      }
 
-      public static final class BackRight {}
+      public static final class BackRight {
+        // FIXME add can id values
+        public static final int DRIVE_MOTOR = 0;
+        public static final int STEER_MOTOR = 0;
+        public static final int STEER_ENCODER = 0;
+        public static final double STEER_OFFSET =
+            -Math.toRadians(0.0); // FIXME measure and set with hw
+      }
     }
   }
 }
