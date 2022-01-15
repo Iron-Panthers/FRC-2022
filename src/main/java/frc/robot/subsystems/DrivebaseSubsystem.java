@@ -39,6 +39,17 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
 
+  /**
+   * initialize a falcon with a shuffleboard tab, and mk4 default gear ratio
+   *
+   * @param title the shuffleboard title
+   * @param pos the shuffleboard x position, which is <b>multiplied by 2</b>
+   * @param drive the drive motor port const
+   * @param steer the steer motor port const
+   * @param encoder the encoder port const
+   * @param offset the steer offset const, found experimentally
+   * @return an sds swerve module object
+   */
   private SwerveModule createModule(
       String title, int pos, int drive, int steer, int encoder, double offset) {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
@@ -91,6 +102,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
             Modules.BackRight.STEER_MOTOR,
             Modules.BackRight.STEER_ENCODER,
             Modules.BackRight.STEER_OFFSET);
+  }
+
+  /** Sets the gyro angle to zero, resetting the forward direction */
+  public void zeroGyroscope() {
+    navx.zeroYaw();
   }
 
   @Override
