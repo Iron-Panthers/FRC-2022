@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "gradle",
-			"id": "/home/isaacr/Repos/FRC-2022buildFRC-2022",
+			"id": "gradlebuild",
 			"script": "build",
 			"description": "Assembles and tests this project.",
 			"group": {
@@ -11,10 +11,10 @@
 				"isDefault": true
 			},
 			"project": "FRC-2022",
-			"buildFile": "/home/isaacr/Repos/FRC-2022/build.gradle",
+			"buildFile": "./FRC-2022/build.gradle",
 			"rootProject": "FRC-2022",
 			"projectFolder": "/home/isaacr/Repos/FRC-2022",
-			"workspaceFolder": "/home/isaacr/Repos/FRC-2022",
+			"workspaceFolder": "./FRC-2022",
 			"args": "",
 			"javaDebug": false,
 			"problemMatcher": [
