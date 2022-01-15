@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import java.util.function.DoubleSupplier;
@@ -30,17 +31,24 @@ public class DefaultDriveCommand extends CommandBase {
     addRequirements(drivebaseSubsystem);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented
+    // movement
+    drivebaseSubsystem.drive(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            translationXSupplier.getAsDouble(),
+            translationYSupplier.getAsDouble(),
+            rotationSupplier.getAsDouble(),
+            drivebaseSubsystem.getGyroscopeRotation()));
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drivebaseSubsystem.drive(new ChassisSpeeds());
+  }
 
   // Returns true when the command should end.
   @Override
