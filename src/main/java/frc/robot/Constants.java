@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,6 +17,23 @@ package frc.robot;
 public final class Constants {
   @SuppressWarnings("java:S1118")
   public static final class Drive {
+    // max voltage delivered to drivebase
+    // supposedly useful to limit speed for testing
+    public static final double MAX_VOLTAGE = 12.0;
+    // maximum velocity
+    // FIXME measure this value experimentally
+    public static final double MAX_VELOCITY_METERS_PER_SECOND =
+        5880.0 // falcon 500 free speed rpm (supposedly)
+            / 60.0
+            * SdsModuleConfigurations.MK4_L2.getDriveReduction()
+            * SdsModuleConfigurations.MK4_L2.getWheelDiameter()
+            * Math.PI;
+    // theoretical value
+    // FIXME measure and validate experimentally
+    public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND =
+        MAX_VELOCITY_METERS_PER_SECOND
+            / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0);
+
     public static final class Dims {
       // FIXME validate with hardware
       public static final double TRACKWIDTH_METERS =
