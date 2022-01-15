@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.jooq.lambda.function.Function6;
 
 public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics kinematics =
@@ -40,30 +39,58 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
 
+  private SwerveModule createModule(
+      String title, int pos, int drive, int steer, int encoder, double offset) {
+    ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
+
+    return Mk4SwerveModuleHelper.createFalcon500(
+        tab.getLayout(title, BuiltInLayouts.kList).withSize(2, 4).withPosition(pos * 2, 0),
+        Mk4SwerveModuleHelper.GearRatio.L2,
+        drive,
+        steer,
+        encoder,
+        offset);
+  }
+
   /** Creates a new DrivebaseSubsystem. */
   public DrivebaseSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
 
-    Function6<String, Integer, Integer, Integer, Integer, Integer, SwerveModule> createModule =
-        (title, pos, drive, steer, encoder, offset) ->
-            Mk4SwerveModuleHelper.createFalcon500(
-                tab.getLayout(title, BuiltInLayouts.kList)
-                    .withSize(2, 4)
-                    .withPosition(pos.intValue() * 2, 0),
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                drive,
-                steer,
-                encoder,
-                offset);
+    frontLeftModule =
+        createModule(
+            "Front Left Module",
+            0,
+            Modules.FrontLeft.DRIVE_MOTOR,
+            Modules.FrontLeft.STEER_MOTOR,
+            Modules.FrontLeft.STEER_ENCODER,
+            Modules.FrontLeft.STEER_OFFSET);
 
     frontRightModule =
         createModule(
             "Front Right Module",
-            0,
+            1,
             Modules.FrontRight.DRIVE_MOTOR,
             Modules.FrontRight.STEER_MOTOR,
             Modules.FrontRight.STEER_ENCODER,
             Modules.FrontRight.STEER_OFFSET);
+
+    backLeftModule =
+        createModule(
+            "Back Right Module",
+            2,
+            Modules.BackLeft.DRIVE_MOTOR,
+            Modules.BackLeft.STEER_MOTOR,
+            Modules.BackLeft.STEER_ENCODER,
+            Modules.BackLeft.STEER_OFFSET);
+
+    backRightModule =
+        createModule(
+            "Back Right Module",
+            3,
+            Modules.BackRight.DRIVE_MOTOR,
+            Modules.BackRight.STEER_MOTOR,
+            Modules.BackRight.STEER_ENCODER,
+            Modules.BackRight.STEER_OFFSET);
   }
 
   @Override
