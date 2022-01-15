@@ -12,4 +12,23 @@ package frc.robot;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants {}
+public final class Constants {
+  @SuppressWarnings("java:S1118")
+  public static final class Drive {
+    public static final class Dims {
+      public static final double TRACKWIDTH_METERS =
+          .5207; // 20.5 inches (source: cad) converted to meters
+      public static final double WHEELBASE_METERS = TRACKWIDTH_METERS; // robot is square
+    }
+
+    public static final class Id {
+      public static final class FrontLeft {}
+
+      public static final class FrontRight {}
+
+      public static final class BackLeft {}
+
+      public static final class BackRight {}
+    }
+  }
+}
