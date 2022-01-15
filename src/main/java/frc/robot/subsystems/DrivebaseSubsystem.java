@@ -7,14 +7,17 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.Drive.*;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.jooq.lambda.function.Function6;
 
 public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics kinematics =
@@ -40,6 +43,27 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** Creates a new DrivebaseSubsystem. */
   public DrivebaseSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
+
+    Function6<String, Integer, Integer, Integer, Integer, Integer, SwerveModule> createModule =
+        (title, pos, drive, steer, encoder, offset) ->
+            Mk4SwerveModuleHelper.createFalcon500(
+                tab.getLayout(title, BuiltInLayouts.kList)
+                    .withSize(2, 4)
+                    .withPosition(pos.intValue() * 2, 0),
+                Mk4SwerveModuleHelper.GearRatio.L2,
+                drive,
+                steer,
+                encoder,
+                offset);
+
+    frontRightModule =
+        createModule(
+            "Front Right Module",
+            0,
+            Modules.FrontRight.DRIVE_MOTOR,
+            Modules.FrontRight.STEER_MOTOR,
+            Modules.FrontRight.STEER_ENCODER,
+            Modules.FrontRight.STEER_OFFSET);
   }
 
   @Override
