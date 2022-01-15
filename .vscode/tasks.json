@@ -7,7 +7,7 @@
 			"script": "build",
 			"description": "Assembles and tests this project.",
 			"group": {
-				"kind": "build",
+				"kind": "test",
 				"isDefault": true
 			},
 			"project": "FRC-2022",
@@ -21,6 +21,27 @@
 				"$gradle"
 			],
 			"label": "gradle: build"
+		},
+		{
+			"type": "gradle",
+			"id": "/home/isaacr/Repos/FRC-2022deployFRC-2022",
+			"script": "deploy",
+			"description": "Deploy all artifacts on all targets",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"project": "FRC-2022",
+			"buildFile": "/home/isaacr/Repos/FRC-2022/build.gradle",
+			"rootProject": "FRC-2022",
+			"projectFolder": "/home/isaacr/Repos/FRC-2022",
+			"workspaceFolder": "/home/isaacr/Repos/FRC-2022",
+			"args": "",
+			"javaDebug": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "gradle: deploy"
 		}
 	]
 }
