@@ -47,6 +47,8 @@ public final class Constants {
         public static final int DRIVE_MOTOR = 0;
         public static final int STEER_MOTOR = 0;
         public static final int STEER_ENCODER = 0;
+
+        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
         public static final double STEER_OFFSET =
             -Math.toRadians(0.0); // FIXME measure and set with hw
       }
@@ -56,6 +58,8 @@ public final class Constants {
         public static final int DRIVE_MOTOR = 0;
         public static final int STEER_MOTOR = 0;
         public static final int STEER_ENCODER = 0;
+
+        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
         public static final double STEER_OFFSET =
             -Math.toRadians(0.0); // FIXME measure and set with hw
       }
@@ -65,6 +69,8 @@ public final class Constants {
         public static final int DRIVE_MOTOR = 0;
         public static final int STEER_MOTOR = 0;
         public static final int STEER_ENCODER = 0;
+
+        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
         public static final double STEER_OFFSET =
             -Math.toRadians(0.0); // FIXME measure and set with hw
       }
@@ -74,6 +80,8 @@ public final class Constants {
         public static final int DRIVE_MOTOR = 0;
         public static final int STEER_MOTOR = 0;
         public static final int STEER_ENCODER = 0;
+
+        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
         public static final double STEER_OFFSET =
             -Math.toRadians(0.0); // FIXME measure and set with hw
       }
