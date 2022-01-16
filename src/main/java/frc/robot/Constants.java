@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
+@SuppressWarnings("java:S1118")
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,7 +16,6 @@ import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  @SuppressWarnings("java:S1118")
   public static final class Drive {
     // max voltage delivered to drivebase
     // supposedly useful to limit speed for testing
