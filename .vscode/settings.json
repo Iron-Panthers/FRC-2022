@@ -48,6 +48,7 @@
   "java.test.defaultConfig": "WPIlibUnitTests",
   "cSpell.words": [
     "AHRS",
+    "Deadband",
     "drivebase",
     "navx",
     "TRACKWIDTH"
