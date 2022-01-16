@@ -51,6 +51,7 @@
     "Deadband",
     "drivebase",
     "navx",
+    "teleop",
     "TRACKWIDTH"
   ]
 }
