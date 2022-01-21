@@ -57,7 +57,7 @@ To configure keybindings for testing and deploying, open the command pallette an
 
 ### Writing code
 
-When writing code, there are a few things to know.
+When writing code, there are a few rules + changes to know.
 
 - We have decided to stop using ``m_`` prefix for members of an object
 - Constant blocks in ``Constants.java`` are PascalCase
@@ -67,3 +67,11 @@ When writing code, there are a few things to know.
 - All command filenames should be suffixed with Command
   - ``ExampleCommand.java``
 - Controllers are named after the driver who uses them, ``nick`` and ``will``
+
+### Code snippets
+
+Code snippets are a vscode feature to allow easy typing of repetitive things. If snippets are added, they should be noted here - see ``.vscode/wpilib.code-snippets`` for examples if you want to write more. The prefix of a snippet is what you type to trigger it. To move between the places to fill in, use ``tab``.
+
+| prefix | effect|
+| --- | --- |
+| a | b
