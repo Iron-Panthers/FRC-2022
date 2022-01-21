@@ -127,6 +127,12 @@ spotless {
         indentWithSpaces(2)
         endWithNewline()
     }
+    format "styling", {
+        target fileTree(".vscode") {
+            include "**.json"
+        }
+        prettier("2.5.1")
+    }
     format 'misc', {
         target fileTree('.') {
             include '**/*.md', '**/.gitignore'
