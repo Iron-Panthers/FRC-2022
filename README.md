@@ -42,3 +42,28 @@ To configure keybindings for testing and deploying, open the command pallette an
 ### Deploying code
 
 1. Turn on the robot
+1. Wait for the radio light to be orange, letting you know wifi is on
+1. Connect to robot wifi, probably named ``5026_(charles|devil|rat)`` with a name hopefully written on the radio (small white box)
+1. Trigger the deploy action, either with command pallette or task keybinding
+1. Connect the the network with a computer running driver station - it's only supported on windows, so if you want to deploy from your mac / linux device, use a driverstation in addition
+1. Ensure the robot couldn't break things if it moved quickly / flung arm ect
+1. Ask people near the robot if it is ok to enable if they are unaware of your plans
+1. Say "Enabling!" loud enough everyone nearby can here you ***and wait for people to get away from the robot*** (very important)
+1. Use the enable button on the driverstation to enable the robot
+1. Ensure you or someone who understands the following is always close enough to the driverstation to stop the robot
+1. Use the disable button to stop it when your done testing, or if the robot endangers itself / property / people because of your code
+1. If something bad is happening, hit the spacebar to disable robot - you don't even need to have the driverstation focused. Don't bother looking for the disable button if someone is dying.
+1. If something really bad is happening, hit the enter key to disable robot and delete your code. This will require you to redeploy before the robot does anything again
+
+### Writing code
+
+When writing code, there are a few things to know.
+
+- We have decided to stop using ``m_`` prefix for members of an object
+- Constant blocks in ``Constants.java`` are PascalCase
+- Constant variables in ``Constants.java`` are SCREAMING_SNAKE_CASE
+- All subsystem filenames should be suffixed with Subsystem
+  - ``ExampleSubsystem.java``
+- All command filenames should be suffixed with Command
+  - ``ExampleCommand.java``
+- Controllers are named after the driver who uses them, ``nick`` and ``will``
