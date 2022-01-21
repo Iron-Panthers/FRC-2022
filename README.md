@@ -72,6 +72,7 @@ When writing code, there are a few rules + changes to know.
 
 Code snippets are a vscode feature to allow easy typing of repetitive things. If snippets are added, they should be noted here - see ``.vscode/wpilib.code-snippets`` for examples if you want to write more. The prefix of a snippet is what you type to trigger it. To move between the places to fill in, use ``tab``.
 
-| prefix | effect|
+| prefix | code |
 | --- | --- |
-| a | b
+| ``block`` | ``public static final class name {}`` |
+| ``const`` | ``public static final type name = val;`` |
