@@ -127,6 +127,18 @@ spotless {
         indentWithSpaces(2)
         endWithNewline()
     }
+    format "styling", {
+        target fileTree(".vscode") {
+            include "**.json"
+        },
+        fileTree(".wpilib") {
+            include "**.json"
+        },
+        fileTree(".github") {
+            include "**/*.yml"
+        }
+        prettier("2.5.1")
+    }
     format 'misc', {
         target fileTree('.') {
             include '**/*.md', '**/.gitignore'
