@@ -131,6 +131,9 @@ spotless {
         target fileTree(".vscode") {
             include "**.json"
         },
+        fileTree(".wpilib") {
+            include "**.json"
+        },
         fileTree(".github") {
             include "**/*.yml"
         }
