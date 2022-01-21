@@ -130,6 +130,9 @@ spotless {
     format "styling", {
         target fileTree(".vscode") {
             include "**.json"
+        },
+        fileTree(".github") {
+            include "**/*.yml"
         }
         prettier("2.5.1")
     }
