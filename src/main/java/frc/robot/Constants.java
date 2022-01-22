@@ -19,7 +19,7 @@ public final class Constants {
   public static final class Drive {
     // max voltage delivered to drivebase
     // supposedly useful to limit speed for testing
-    public static final double MAX_VOLTAGE = 12.0;
+    public static final double MAX_VOLTAGE = 6.0;
     // maximum velocity
     // FIXME measure this value experimentally
     public static final double MAX_VELOCITY_METERS_PER_SECOND =
@@ -50,7 +50,7 @@ public final class Constants {
 
         @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
         public static final double STEER_OFFSET =
-            -Math.toRadians(0.0); // FIXME measure and set with hw
+            -Math.toRadians(40.333 + 180.0);
       }
 
       public static final class FrontLeft { // Module 2
@@ -61,7 +61,7 @@ public final class Constants {
 
         @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
         public static final double STEER_OFFSET =
-            -Math.toRadians(0.0); // FIXME measure and set with hw
+            -Math.toRadians(43.9453);
       }
 
       public static final class BackLeft { // Module 3
@@ -72,7 +72,7 @@ public final class Constants {
 
         @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
         public static final double STEER_OFFSET =
-            -Math.toRadians(0.0); // FIXME measure and set with hw
+            -Math.toRadians(188.6133);
       }
 
       public static final class BackRight { // Module 4
@@ -83,7 +83,7 @@ public final class Constants {
 
         @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
         public static final double STEER_OFFSET =
-            -Math.toRadians(0.0); // FIXME measure and set with hw
+            -Math.toRadians(329.6777);
       }
     }
   }

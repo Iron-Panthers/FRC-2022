@@ -53,7 +53,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Button(nick::getBackButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
+    new Button(nick::getAButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
   }
 
   /**

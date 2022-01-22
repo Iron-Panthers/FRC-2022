@@ -23,10 +23,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(
-          // Front left
-          new Translation2d(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0),
           // Front right
           new Translation2d(Dims.TRACKWIDTH_METERS / 2.0, -Dims.WHEELBASE_METERS / 2.0),
+          // Front left
+          new Translation2d(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0),
           // Back left
           new Translation2d(-Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0),
           // Back right
@@ -106,7 +106,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
             Modules.BackRight.STEER_OFFSET);
 
     swerveModules =
-        new SwerveModule[] {frontRightModule, frontLeftModule, backRightModule, backLeftModule};
+        new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule, };
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
