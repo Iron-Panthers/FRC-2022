@@ -98,4 +98,4 @@ To collaborate on code, keep a few things in mind:
   - talk in terms of code, not who wrote it
     - "the code is crashing" vs "you crashed the robot"
   - similarly, don't be defensive about your code - you aren't your code
-  - we should be mean to code but not to people
+  - we should be mean to code, but not to people
