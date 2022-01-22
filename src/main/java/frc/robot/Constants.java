@@ -23,7 +23,7 @@ public final class Constants {
     // maximum velocity
     // FIXME measure this value experimentally
     public static final double MAX_VELOCITY_METERS_PER_SECOND =
-        5880.0 // falcon 500 free speed rpm (supposedly)
+        6380.0 // falcon 500 free speed rpm
             / 60.0
             * SdsModuleConfigurations.MK4_L2.getDriveReduction()
             * SdsModuleConfigurations.MK4_L2.getWheelDiameter()
