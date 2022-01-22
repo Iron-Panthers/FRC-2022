@@ -15,6 +15,10 @@ Iron Panthers repository for 2022 season code.
   - trigger command, which is ``ctrl shift p`` on linux
   - type install from and select vsix
   - select the vsix you downloaded
+- Node.js: download 16 lts from [node.js](https://nodejs.org/en/)
+  - we use node for spotless linting a few files with prettier
+  - if node is not installed the build will fail
+  - on windows, ***you will need to reboot for this to work***
 
 ### Run a test build
 
