@@ -69,28 +69,27 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   /** Creates a new DrivebaseSubsystem. */
   public DrivebaseSubsystem() {
-
-    frontLeftModule =
-        createModule(
-            "Front Left Module",
-            0,
-            Modules.FrontLeft.DRIVE_MOTOR,
-            Modules.FrontLeft.STEER_MOTOR,
-            Modules.FrontLeft.STEER_ENCODER,
-            Modules.FrontLeft.STEER_OFFSET);
-
     frontRightModule =
         createModule(
-            "Front Right Module",
+            "Front Right Module #1",
             1,
             Modules.FrontRight.DRIVE_MOTOR,
             Modules.FrontRight.STEER_MOTOR,
             Modules.FrontRight.STEER_ENCODER,
             Modules.FrontRight.STEER_OFFSET);
 
+    frontLeftModule =
+        createModule(
+            "Front Left Module #2",
+            0,
+            Modules.FrontLeft.DRIVE_MOTOR,
+            Modules.FrontLeft.STEER_MOTOR,
+            Modules.FrontLeft.STEER_ENCODER,
+            Modules.FrontLeft.STEER_OFFSET);
+
     backLeftModule =
         createModule(
-            "Back Right Module",
+            "Back Left Module #3",
             2,
             Modules.BackLeft.DRIVE_MOTOR,
             Modules.BackLeft.STEER_MOTOR,
@@ -99,7 +98,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     backRightModule =
         createModule(
-            "Back Right Module",
+            "Back Right Module #4",
             3,
             Modules.BackRight.DRIVE_MOTOR,
             Modules.BackRight.STEER_MOTOR,
