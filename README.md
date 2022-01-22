@@ -15,6 +15,10 @@ Iron Panthers repository for 2022 season code.
   - trigger command, which is ``ctrl shift p`` on linux
   - type install from and select vsix
   - select the vsix you downloaded
+- Node.js: download 16 lts from [node.js](https://nodejs.org/en/)
+  - we use node for spotless linting a few files with prettier
+  - if node is not installed the build will fail
+  - on windows, ***you will need to reboot for this to work***
 
 ### Run a test build
 
@@ -77,3 +81,21 @@ Code snippets are a vscode feature to allow easy typing of repetitive things. If
 | ``block`` | ``public static final class name {}`` |
 | ``const`` | ``public static final type name = val;`` |
 | ``thisprop`` | ``this.name = name;`` |
+
+### Collaborating on Code
+
+To collaborate on code, keep a few things in mind:
+
+- keep your feature branch fresh
+  - this means merge dev into your branch when things are changed on dev
+  - the worst case is that it takes a bit of time, but keeping your branch fresh will prevent large and difficult merge conflicts, because you will solve it as it happens
+- unblock fast and seek collaboration
+  - when you get stuck on something, "blocked", you should get unblocked quickly
+  - while you could probably solve the issue yourself, you are surrounded by people with different experiences who may have already solved something similar
+  - even if nobody knows the issue right away, summarizing the problem is usually a path to solution - looking at it in a new light
+- critique code, not people
+  - be kind to whoever wrote the code you take issue with
+  - talk in terms of code, not who wrote it
+    - "the code is crashing" vs "you crashed the robot"
+  - similarly, don't be defensive about your code - you aren't your code
+  - we should be mean to code but not to people
