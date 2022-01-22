@@ -19,7 +19,7 @@ public final class Constants {
   public static final class Drive {
     // max voltage delivered to drivebase
     // supposedly useful to limit speed for testing
-    public static final double MAX_VOLTAGE = 6.0;
+    public static final double MAX_VOLTAGE = 12.0;
     // maximum velocity
     // FIXME measure this value experimentally
     public static final double MAX_VELOCITY_METERS_PER_SECOND =
@@ -43,7 +43,6 @@ public final class Constants {
 
     public static final class Modules {
       public static final class FrontRight { // Module 1
-        // FIXME add can id values
         public static final int DRIVE_MOTOR = 4;
         public static final int STEER_MOTOR = 3;
         public static final int STEER_ENCODER = 24;
@@ -54,7 +53,6 @@ public final class Constants {
       }
 
       public static final class FrontLeft { // Module 2
-        // FIXME add can id values
         public static final int DRIVE_MOTOR = 11;
         public static final int STEER_MOTOR = 10;
         public static final int STEER_ENCODER = 25;
@@ -65,7 +63,6 @@ public final class Constants {
       }
 
       public static final class BackLeft { // Module 3
-        // FIXME add can id values
         public static final int DRIVE_MOTOR = 13;
         public static final int STEER_MOTOR = 12;
         public static final int STEER_ENCODER = 26;
@@ -76,7 +73,6 @@ public final class Constants {
       }
 
       public static final class BackRight { // Module 4
-        // FIXME add can id values
         public static final int DRIVE_MOTOR = 2;
         public static final int STEER_MOTOR = 1;
         public static final int STEER_ENCODER = 27;

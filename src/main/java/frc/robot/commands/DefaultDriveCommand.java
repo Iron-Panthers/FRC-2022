@@ -34,6 +34,22 @@ public class DefaultDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // TODO: scaled radial deadzones rather than hard cutoff
+    double x = translationXSupplier.getAsDouble();
+    if (Math.abs(x) < 0.2)
+      x = 0;
+    double y = translationYSupplier.getAsDouble();
+    if (Math.abs(y) < 0.2)
+      y = 0;
+    double rot = rotationSupplier.getAsDouble();
+    if (Math.abs(rot) < 0.2)
+      rot = 0;
+
+    if (Math.abs(x) < 0.2 && Math.abs(y) < 0.2 && Math.abs(rot) < 0.2) {
+      drivebaseSubsystem.setNeutral();
+      return;
+    }
+
     // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented
     // movement
     drivebaseSubsystem.drive(

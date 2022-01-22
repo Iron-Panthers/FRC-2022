@@ -129,6 +129,14 @@ public class DrivebaseSubsystem extends SubsystemBase {
     this.chassisSpeeds = chassisSpeeds;
   }
 
+  public void setNeutral() {
+    // TODO: consider "better" neutral state
+    for (SwerveModule m : swerveModules) {
+      double angle = m.getSteerAngle();
+      m.set(0, angle);
+    }
+  }
+
   @Override
   public void periodic() {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
