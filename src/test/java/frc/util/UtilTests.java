@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UtilTest {
+public class UtilTests {
   @Test
   public void deadbandScalesCorrectly() {
     assertEquals(1.0, Util.deadband(1.0, .3), "deadband should still max out");
