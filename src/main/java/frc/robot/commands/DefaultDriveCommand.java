@@ -34,18 +34,12 @@ public class DefaultDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // TODO: scaled radial deadzones rather than hard cutoff
     double x = translationXSupplier.getAsDouble();
-    if (Math.abs(x) < 0.2)
-      x = 0;
     double y = translationYSupplier.getAsDouble();
-    if (Math.abs(y) < 0.2)
-      y = 0;
     double rot = rotationSupplier.getAsDouble();
-    if (Math.abs(rot) < 0.2)
-      rot = 0;
 
-    if (Math.abs(x) < 0.2 && Math.abs(y) < 0.2 && Math.abs(rot) < 0.2) {
+    // because we have already deadbanded, if we are inside deadband all values will be zero
+    if (x == 0 && y == 0 && rot == 0) {
       drivebaseSubsystem.setNeutral();
       return;
     }
@@ -54,9 +48,9 @@ public class DefaultDriveCommand extends CommandBase {
     // movement
     drivebaseSubsystem.drive(
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            translationXSupplier.getAsDouble(),
-            translationYSupplier.getAsDouble(),
-            rotationSupplier.getAsDouble(),
+            x,
+            y,
+            rot,
             drivebaseSubsystem.getGyroscopeRotation()));
   }
 
