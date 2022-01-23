@@ -86,6 +86,11 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+// configure tests
+test {
+    useJUnitPlatform()
+}
+
 // Configure jar and deploy tasks
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)

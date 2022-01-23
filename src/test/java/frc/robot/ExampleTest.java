@@ -7,6 +7,6 @@ import org.junit.jupiter.api.Test;
 public class ExampleTest {
   @Test
   public void onePlusOneIsTwo() {
-    assertEquals(1 + 1, 2);
+    assertEquals(2, 1 + 1);
   }
 }
