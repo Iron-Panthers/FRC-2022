@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.util.Util;
 
 public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics kinematics =
@@ -137,12 +138,25 @@ public class DrivebaseSubsystem extends SubsystemBase {
     }
   }
 
-  public void setDefense() {
+  /**
+   * Angles the swerve modules in a cross shape, to make the robot hard to push. This function
+   * should be called in a periodic to actually achieve desired angle, as default command will put
+   * the modules in neutral.
+   *
+   * @return bool for if modules are in position yet
+   */
+  public boolean setDefense() {
+    boolean done = true;
     int angle = 90 + 45;
-    for (SwerveModule m : swerveModules) {
-      m.set(0, angle);
+    for (SwerveModule module : swerveModules) {
+      // if the module is close to aligned, we are done with it
+      // FIXME find this epsilon experimentally
+      if (Util.epsilonEquals(module.getSteerAngle(), angle, 1e-2)) continue;
+      done = false;
+      module.set(0, angle);
       angle += 90;
     }
+    return done;
   }
 
   @Override
