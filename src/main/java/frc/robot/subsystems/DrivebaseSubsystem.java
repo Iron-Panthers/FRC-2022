@@ -137,6 +137,14 @@ public class DrivebaseSubsystem extends SubsystemBase {
     }
   }
 
+  public void setDefense() {
+    int angle = 90 + 45;
+    for (SwerveModule m : swerveModules) {
+      m.set(0, angle);
+      angle += 90;
+    }
+  }
+
   @Override
   public void periodic() {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
