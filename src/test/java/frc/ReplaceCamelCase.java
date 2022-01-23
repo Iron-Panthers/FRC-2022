@@ -1,10 +1,9 @@
 package frc;
 
 import java.lang.reflect.Method;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 
-class ReplaceCamelCaseGenerator extends DisplayNameGenerator.Standard {
+public class ReplaceCamelCase extends DisplayNameGenerator.Standard {
   @Override
   public String generateDisplayNameForClass(Class<?> testClass) {
     return replaceCamelCase(super.generateDisplayNameForClass(testClass));
@@ -35,6 +34,3 @@ class ReplaceCamelCaseGenerator extends DisplayNameGenerator.Standard {
     return result.toString();
   }
 }
-
-@DisplayNameGeneration(ReplaceCamelCaseGenerator.class)
-public @interface ReplaceCamelCase {}
