@@ -46,6 +46,7 @@
   "cSpell.words": [
     "AHRS",
     "Deadband",
+    "deadbanded",
     "drivebase",
     "navx",
     "teleop",

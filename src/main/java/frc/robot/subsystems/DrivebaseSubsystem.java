@@ -106,7 +106,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
             Modules.BackRight.STEER_OFFSET);
 
     swerveModules =
-        new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule, };
+        new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
