@@ -6,11 +6,11 @@ public class Util {
   private static double kEpsilon = 1e-5;
 
   public static boolean epsilonEquals(double a, double b, double epsilon) {
-    return Math.abs(a - b) <= epsilon;
+    return (a - epsilon <= b) && (a + epsilon >= b);
   }
 
   public static boolean epsilonEquals(int a, int b, int epsilon) {
-    return Math.abs(a - b) <= epsilon;
+    return (a - epsilon <= b) && (a + epsilon >= b);
   }
 
   public static boolean epsilonEquals(double a, double b) {
