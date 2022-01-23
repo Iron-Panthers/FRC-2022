@@ -6,11 +6,14 @@ Iron Panthers repository for 2022 season code.
 
 ### Before working: make sure you have the 2022 tools:
 
-- WPILib: download the latest release from [allwpilib](https://github.com/wpilibsuite/allwpilib/tags). Run installer executable. Should include VS Code + extensions
+- WPILib: download the latest release from [allwpilib](https://github.com/wpilibsuite/allwpilib/releases/latest). Run installer executable. Should include VS Code + extensions
   - using provided vscode is easier, but not ideal for everyone - it is optional
   - if you want to use your own vscode, just follow steps below to get extension running
 - if you want to install VS Code extension separately, or for your own vscode instance
-  - download the latest .vsix release from [vscode-wpilib](https://github.com/wpilibsuite/vscode-wpilib/tags)
+  - check if the version in the vscode store is up to date
+    - if it is, install from there, make life easy
+    - if not, do the following
+  - download the latest .vsix release from [vscode-wpilib](https://github.com/wpilibsuite/vscode-wpilib/releases/latest)
   - open vscode
   - trigger command, which is ``ctrl shift p`` on linux
   - type install from and select vsix
@@ -101,3 +104,5 @@ To collaborate on code, keep a few things in mind:
     - "the code is crashing" vs "you crashed the robot"
   - similarly, don't be defensive about your code - you aren't your code
   - we should be mean to code, but not to people
+
+If you pick up tips and tricks as you learn, make a pr and add them to the readme.
