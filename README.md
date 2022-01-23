@@ -101,3 +101,5 @@ To collaborate on code, keep a few things in mind:
     - "the code is crashing" vs "you crashed the robot"
   - similarly, don't be defensive about your code - you aren't your code
   - we should be mean to code, but not to people
+
+If you pick up tips and tricks as you learn, make a pr and add them to the readme.
