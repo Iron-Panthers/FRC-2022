@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.util.Util;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -69,27 +70,6 @@ public class RobotContainer {
   }
 
   /**
-   * Scales radial deadband
-   *
-   * <p>The deadband value is set to be the new zero
-   *
-   * @param value the raw value
-   * @param deadband the deadband range
-   * @return the value with radial deadband applied
-   */
-  private static double deadband(double value, double deadband) {
-    if (Math.abs(value) > deadband) {
-      if (value > 0.0) {
-        return (value - deadband) / (1.0 - deadband);
-      } else {
-        return (value + deadband) / (1.0 - deadband);
-      }
-    } else {
-      return 0.0;
-    }
-  }
-
-  /**
    * applies deadband and squares axis
    *
    * @param value the axis value to be modified
@@ -97,7 +77,7 @@ public class RobotContainer {
    */
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.2);
+    value = Util.deadband(value, 0.2);
 
     // Square the axis
     value = Math.copySign(value * value, value);
