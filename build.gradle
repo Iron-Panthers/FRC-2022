@@ -89,6 +89,12 @@ jar {
 // configure tests
 test {
     useJUnitPlatform()
+
+    systemProperty 'java.util.logging.config.file', "${project.projectDir}/src/test/resources/logging-test.properties"
+
+    testLogging {
+        showStandardStreams = true;
+    }
 }
 
 // Configure jar and deploy tasks
