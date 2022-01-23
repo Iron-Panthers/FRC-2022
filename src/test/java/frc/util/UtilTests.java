@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
+import frc.UtilTest;
 
 public class UtilTests {
-  @Test
+  @UtilTest
   public void deadbandScalesCorrectly() {
     assertEquals(1.0, Util.deadband(1.0, .3), "deadband should still max out");
     assertEquals(0.0, Util.deadband(.1, .2), "value should be zero when inside deadband");
@@ -19,13 +19,13 @@ public class UtilTests {
         "value should scale such that range from deadband to 1 is mapped to 0 to 1");
   }
 
-  @Test
+  @UtilTest
   public void epsilonReturnsTrueWhenEqual() {
     assertTrue(Util.epsilonEquals(2, 2.1, .2));
     assertTrue(Util.epsilonEquals(2, 2.1, .1));
   }
 
-  @Test
+  @UtilTest
   public void epsilonReturnsFalseWhenUnequal() {
     assertFalse(Util.epsilonEquals(2, 2.1, 1e-2));
     assertFalse(Util.epsilonEquals(5, 2, 1));
