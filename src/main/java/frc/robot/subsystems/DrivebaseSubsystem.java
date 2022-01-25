@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.util.Util;
 
 public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics kinematics =
@@ -68,11 +67,13 @@ public class DrivebaseSubsystem extends SubsystemBase {
         offset);
   }
 
+  /** The modes of the drivebase subsystem */
   public enum Modes {
     DRIVE,
     DEFENSE,
   }
 
+  /** the current mode */
   private Modes mode = Modes.DRIVE;
 
   /** Creates a new DrivebaseSubsystem. */
@@ -113,7 +114,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
             Modules.BackRight.STEER_ENCODER,
             Modules.BackRight.STEER_OFFSET);
 
-    swerveModules =
+    swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
   }
 
@@ -143,15 +144,24 @@ public class DrivebaseSubsystem extends SubsystemBase {
     mode = Modes.DEFENSE;
   }
 
+  /**
+   * gets the current mode of the drivebase subsystem state machine
+   *
+   * @return the current mode
+   */
   public Modes getMode() {
     return mode;
   }
 
-  /** Angles the swerve modules in a cross shape, to make the robot hard to push. */
+  /**
+   * Angles the swerve modules in a cross shape, to make the robot hard to push. This function sets
+   * the state machine to defense mode, so it only needs to be called once
+   */
   public void setDefense() {
     mode = Modes.DEFENSE;
   }
 
+  // called when in drive mode
   private void drivePeriodic() {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
@@ -164,12 +174,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
     }
   }
 
+  // called in defense mode
   private void defensePeriodic() {
     int angle = 90 + 45;
     for (SwerveModule module : swerveModules) {
-      // if the module is close to aligned, we are done with it
-      // FIXME find this epsilon experimentally
-      if (Util.epsilonEquals(module.getSteerAngle(), angle, 1e-2)) continue;
       module.set(0, angle);
       angle += 90;
     }

@@ -9,7 +9,6 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 
 public class DefenseModeCommand extends CommandBase {
   DrivebaseSubsystem drivebaseSubsystem;
-  boolean finished = false;
   /** Creates a new DefenseModeCommand. */
   public DefenseModeCommand(DrivebaseSubsystem drivebaseSubsystem) {
     this.drivebaseSubsystem = drivebaseSubsystem;
@@ -18,13 +17,13 @@ public class DefenseModeCommand extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    drivebaseSubsystem.setDefense();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    finished = drivebaseSubsystem.setDefense();
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -33,6 +32,6 @@ public class DefenseModeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return finished;
+    return false;
   }
 }
