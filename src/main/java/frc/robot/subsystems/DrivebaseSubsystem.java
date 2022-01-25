@@ -141,7 +141,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
     this.chassisSpeeds = chassisSpeeds;
-    mode = Modes.DEFENSE;
+    mode = Modes.DRIVE;
   }
 
   /**
