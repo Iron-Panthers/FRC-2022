@@ -68,6 +68,13 @@ public class DrivebaseSubsystem extends SubsystemBase {
         offset);
   }
 
+  public enum Modes {
+    DRIVE,
+    DEFENSE,
+  }
+
+  private Modes mode = Modes.DRIVE;
+
   /** Creates a new DrivebaseSubsystem. */
   public DrivebaseSubsystem() {
     frontRightModule =
@@ -126,33 +133,26 @@ public class DrivebaseSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(360.0 - navx.getYaw());
   }
 
+  /**
+   * Tells the subsystem to drive, and puts the state machine in drive mode
+   *
+   * @param chassisSpeeds the speed of the chassis desired
+   */
   public void drive(ChassisSpeeds chassisSpeeds) {
     this.chassisSpeeds = chassisSpeeds;
+    mode = Modes.DEFENSE;
   }
 
-  /**
-   * Angles the swerve modules in a cross shape, to make the robot hard to push. This function
-   * should be called in a periodic to actually achieve desired angle, as default command will put
-   * the modules in neutral.
-   *
-   * @return bool for if modules are in position yet
-   */
-  public boolean setDefense() {
-    boolean done = true;
-    int angle = 90 + 45;
-    for (SwerveModule module : swerveModules) {
-      // if the module is close to aligned, we are done with it
-      // FIXME find this epsilon experimentally
-      if (Util.epsilonEquals(module.getSteerAngle(), angle, 1e-2)) continue;
-      done = false;
-      module.set(0, angle);
-      angle += 90;
-    }
-    return done;
+  public Modes getMode() {
+    return mode;
   }
 
-  @Override
-  public void periodic() {
+  /** Angles the swerve modules in a cross shape, to make the robot hard to push. */
+  public void setDefense() {
+    mode = Modes.DEFENSE;
+  }
+
+  private void drivePeriodic() {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
@@ -161,6 +161,29 @@ public class DrivebaseSubsystem extends SubsystemBase {
       swerveModules[i].set(
           states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
           states[i].angle.getRadians());
+    }
+  }
+
+  private void defensePeriodic() {
+    int angle = 90 + 45;
+    for (SwerveModule module : swerveModules) {
+      // if the module is close to aligned, we are done with it
+      // FIXME find this epsilon experimentally
+      if (Util.epsilonEquals(module.getSteerAngle(), angle, 1e-2)) continue;
+      module.set(0, angle);
+      angle += 90;
+    }
+  }
+
+  @Override
+  public void periodic() {
+    switch (mode) {
+      case DRIVE:
+        drivePeriodic();
+        break;
+      case DEFENSE:
+        defensePeriodic();
+        break;
     }
   }
 }
