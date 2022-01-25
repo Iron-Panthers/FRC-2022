@@ -157,7 +157,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
    * Angles the swerve modules in a cross shape, to make the robot hard to push. This function sets
    * the state machine to defense mode, so it only needs to be called once
    */
-  public void setDefense() {
+  public void setDefenseMode() {
     mode = Modes.DEFENSE;
   }
 
