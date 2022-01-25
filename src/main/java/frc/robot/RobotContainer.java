@@ -56,7 +56,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     new Button(nick::getAButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
-    new Button(nick::getLeftBumper).whenPressed(new DefenseModeCommand(drivebaseSubsystem));
+    new Button(nick::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
   }
 
   /**

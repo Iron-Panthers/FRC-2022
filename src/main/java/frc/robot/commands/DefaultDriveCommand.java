@@ -38,12 +38,6 @@ public class DefaultDriveCommand extends CommandBase {
     double y = translationYSupplier.getAsDouble();
     double rot = rotationSupplier.getAsDouble();
 
-    // because we have already deadbanded, if we are inside deadband all values will be zero
-    if (x == 0 && y == 0 && rot == 0) {
-      drivebaseSubsystem.setNeutral();
-      return;
-    }
-
     // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented
     // movement
     drivebaseSubsystem.drive(

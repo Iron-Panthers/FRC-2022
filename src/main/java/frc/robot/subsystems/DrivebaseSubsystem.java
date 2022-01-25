@@ -130,14 +130,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
     this.chassisSpeeds = chassisSpeeds;
   }
 
-  public void setNeutral() {
-    // TODO: consider "better" neutral state
-    for (SwerveModule m : swerveModules) {
-      double angle = m.getSteerAngle();
-      m.set(0, angle);
-    }
-  }
-
   /**
    * Angles the swerve modules in a cross shape, to make the robot hard to push. This function
    * should be called in a periodic to actually achieve desired angle, as default command will put
