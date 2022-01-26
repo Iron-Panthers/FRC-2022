@@ -176,10 +176,12 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   // called in defense mode
   private void defensePeriodic() {
-    int angle = 90 + 45;
+    // we want alternating pos and negative 45 degree angles
+    int angle = 45;
     for (SwerveModule module : swerveModules) {
-      module.set(0, angle);
-      angle += 90;
+      // the *= -1 operation multiplies the current variable by -1, stores it, and also returns the
+      // value. We can use this to alternate between 45 and -45 for each module.
+      module.set(0, angle *= -1);
     }
   }
 
