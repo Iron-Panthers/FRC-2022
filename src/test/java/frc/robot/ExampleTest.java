@@ -1,10 +1,12 @@
-import static org.junit.Assert.assertEquals;
+package frc.robot;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class ExampleTest {
-    @Test
-    public void onePlusOneIsTwo() {
-        assertEquals(1+1, 2);
-    }
+  @Test
+  public void onePlusOneIsTwo() {
+    assertEquals(2, 1 + 1);
+  }
 }
