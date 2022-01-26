@@ -29,7 +29,7 @@
 			"public static final ${1:int} ${2/(.*)/${1:/upcase}/} = ${3:0};$0"
 		]
 	},
-		"This Member": {
+	"This Member": {
 		"scope": "java",
 		"prefix": "thisprop",
 		"body": [

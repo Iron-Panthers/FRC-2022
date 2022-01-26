@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
+@SuppressWarnings("java:S1118")
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,15 +16,14 @@ import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  @SuppressWarnings("java:S1118")
   public static final class Drive {
     // max voltage delivered to drivebase
     // supposedly useful to limit speed for testing
-    public static final double MAX_VOLTAGE = 12.0;
+    public static final double MAX_VOLTAGE = 8.0;
     // maximum velocity
     // FIXME measure this value experimentally
     public static final double MAX_VELOCITY_METERS_PER_SECOND =
-        5880.0 // falcon 500 free speed rpm (supposedly)
+        6380.0 // falcon 500 free speed rpm
             / 60.0
             * SdsModuleConfigurations.MK4_L2.getDriveReduction()
             * SdsModuleConfigurations.MK4_L2.getWheelDiameter()
@@ -42,40 +42,40 @@ public final class Constants {
     }
 
     public static final class Modules {
-      public static final class FrontLeft {
-        // FIXME add can id values
-        public static final int DRIVE_MOTOR = 0;
-        public static final int STEER_MOTOR = 0;
-        public static final int STEER_ENCODER = 0;
-        public static final double STEER_OFFSET =
-            -Math.toRadians(0.0); // FIXME measure and set with hw
+      public static final class FrontRight { // Module 1
+        public static final int DRIVE_MOTOR = 4;
+        public static final int STEER_MOTOR = 3;
+        public static final int STEER_ENCODER = 24;
+
+        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
+        public static final double STEER_OFFSET = -Math.toRadians(40.333 + 180.0);
       }
 
-      public static final class FrontRight {
-        // FIXME add can id values
-        public static final int DRIVE_MOTOR = 0;
-        public static final int STEER_MOTOR = 0;
-        public static final int STEER_ENCODER = 0;
-        public static final double STEER_OFFSET =
-            -Math.toRadians(0.0); // FIXME measure and set with hw
+      public static final class FrontLeft { // Module 2
+        public static final int DRIVE_MOTOR = 11;
+        public static final int STEER_MOTOR = 10;
+        public static final int STEER_ENCODER = 25;
+
+        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
+        public static final double STEER_OFFSET = -Math.toRadians(43.9453);
       }
 
-      public static final class BackLeft {
-        // FIXME add can id values
-        public static final int DRIVE_MOTOR = 0;
-        public static final int STEER_MOTOR = 0;
-        public static final int STEER_ENCODER = 0;
-        public static final double STEER_OFFSET =
-            -Math.toRadians(0.0); // FIXME measure and set with hw
+      public static final class BackLeft { // Module 3
+        public static final int DRIVE_MOTOR = 13;
+        public static final int STEER_MOTOR = 12;
+        public static final int STEER_ENCODER = 26;
+
+        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
+        public static final double STEER_OFFSET = -Math.toRadians(188.6133);
       }
 
-      public static final class BackRight {
-        // FIXME add can id values
-        public static final int DRIVE_MOTOR = 0;
-        public static final int STEER_MOTOR = 0;
-        public static final int STEER_ENCODER = 0;
-        public static final double STEER_OFFSET =
-            -Math.toRadians(0.0); // FIXME measure and set with hw
+      public static final class BackRight { // Module 4
+        public static final int DRIVE_MOTOR = 2;
+        public static final int STEER_MOTOR = 1;
+        public static final int STEER_ENCODER = 27;
+
+        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
+        public static final double STEER_OFFSET = -Math.toRadians(329.6777);
       }
     }
   }

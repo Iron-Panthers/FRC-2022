@@ -43,5 +43,14 @@
     }
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
-  "cSpell.words": ["AHRS", "drivebase", "navx", "TRACKWIDTH"]
+  "cSpell.words": [
+    "AHRS",
+    "Deadband",
+    "deadbanded",
+    "drivebase",
+    "navx",
+    "teleop",
+    "teleoperated",
+    "TRACKWIDTH"
+  ]
 }

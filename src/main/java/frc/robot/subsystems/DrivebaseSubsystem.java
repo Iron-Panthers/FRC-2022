@@ -23,10 +23,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(
-          // Front left
-          new Translation2d(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0),
           // Front right
           new Translation2d(Dims.TRACKWIDTH_METERS / 2.0, -Dims.WHEELBASE_METERS / 2.0),
+          // Front left
+          new Translation2d(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0),
           // Back left
           new Translation2d(-Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0),
           // Back right
@@ -67,30 +67,38 @@ public class DrivebaseSubsystem extends SubsystemBase {
         offset);
   }
 
+  /** The modes of the drivebase subsystem */
+  public enum Modes {
+    DRIVE,
+    DEFENSE,
+  }
+
+  /** the current mode */
+  private Modes mode = Modes.DRIVE;
+
   /** Creates a new DrivebaseSubsystem. */
   public DrivebaseSubsystem() {
-
-    frontLeftModule =
-        createModule(
-            "Front Left Module",
-            0,
-            Modules.FrontLeft.DRIVE_MOTOR,
-            Modules.FrontLeft.STEER_MOTOR,
-            Modules.FrontLeft.STEER_ENCODER,
-            Modules.FrontLeft.STEER_OFFSET);
-
     frontRightModule =
         createModule(
-            "Front Right Module",
+            "Front Right Module #1",
             1,
             Modules.FrontRight.DRIVE_MOTOR,
             Modules.FrontRight.STEER_MOTOR,
             Modules.FrontRight.STEER_ENCODER,
             Modules.FrontRight.STEER_OFFSET);
 
+    frontLeftModule =
+        createModule(
+            "Front Left Module #2",
+            0,
+            Modules.FrontLeft.DRIVE_MOTOR,
+            Modules.FrontLeft.STEER_MOTOR,
+            Modules.FrontLeft.STEER_ENCODER,
+            Modules.FrontLeft.STEER_OFFSET);
+
     backLeftModule =
         createModule(
-            "Back Right Module",
+            "Back Left Module #3",
             2,
             Modules.BackLeft.DRIVE_MOTOR,
             Modules.BackLeft.STEER_MOTOR,
@@ -99,15 +107,15 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     backRightModule =
         createModule(
-            "Back Right Module",
+            "Back Right Module #4",
             3,
             Modules.BackRight.DRIVE_MOTOR,
             Modules.BackRight.STEER_MOTOR,
             Modules.BackRight.STEER_ENCODER,
             Modules.BackRight.STEER_OFFSET);
 
-    swerveModules =
-        new SwerveModule[] {frontRightModule, frontLeftModule, backRightModule, backLeftModule};
+    swerveModules = // modules are always initialized and passed in this order
+        new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -126,12 +134,35 @@ public class DrivebaseSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(360.0 - navx.getYaw());
   }
 
+  /**
+   * Tells the subsystem to drive, and puts the state machine in drive mode
+   *
+   * @param chassisSpeeds the speed of the chassis desired
+   */
   public void drive(ChassisSpeeds chassisSpeeds) {
     this.chassisSpeeds = chassisSpeeds;
+    mode = Modes.DRIVE;
   }
 
-  @Override
-  public void periodic() {
+  /**
+   * gets the current mode of the drivebase subsystem state machine
+   *
+   * @return the current mode
+   */
+  public Modes getMode() {
+    return mode;
+  }
+
+  /**
+   * Angles the swerve modules in a cross shape, to make the robot hard to push. This function sets
+   * the state machine to defense mode, so it only needs to be called once
+   */
+  public void setDefenseMode() {
+    mode = Modes.DEFENSE;
+  }
+
+  // called when in drive mode
+  private void drivePeriodic() {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
@@ -140,6 +171,29 @@ public class DrivebaseSubsystem extends SubsystemBase {
       swerveModules[i].set(
           states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
           states[i].angle.getRadians());
+    }
+  }
+
+  // called in defense mode
+  private void defensePeriodic() {
+    // we want alternating pos and negative 45 degree angles
+    int angle = 45;
+    for (SwerveModule module : swerveModules) {
+      // the *= -1 operation multiplies the current variable by -1, stores it, and also returns the
+      // value. We can use this to alternate between 45 and -45 for each module.
+      module.set(0, angle *= -1);
+    }
+  }
+
+  @Override
+  public void periodic() {
+    switch (mode) {
+      case DRIVE:
+        drivePeriodic();
+        break;
+      case DEFENSE:
+        defensePeriodic();
+        break;
     }
   }
 }
