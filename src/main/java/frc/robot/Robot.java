@@ -19,6 +19,7 @@ public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
   private RobotContainer robotContainer = new RobotContainer();
+  /** Secondary update manager for handling a faster loop period. Used for Swerve drive subsystem */
   private UpdateManager updateManager = new UpdateManager(robotContainer.getDrivebaseSubsystem());
 
   /**

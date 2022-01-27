@@ -11,6 +11,8 @@ import com.ironpanthers.robot.lib.UpdateManager.Updatable;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,14 +20,35 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
+import java.util.Optional;
 
 public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
+  // Trajectory controller logic FIXME access is bad
+  private final SimpleSwerveTrajectoryFollower follower =
+      new SimpleSwerveTrajectoryFollower(
+          new PIDController(0.4, 0.0, 0.025),
+          new PIDController(0.4, 0.0, 0.025),
+          new ProfiledPIDController(
+              1,
+              0,
+              0,
+              new TrapezoidProfile.Constraints(
+                  MAX_VELOCITY_METERS_PER_SECOND,
+                  0.5 * MAX_VELOCITY_METERS_PER_SECOND))); // FIXME: replace with empirical or
+  // smarter theoretical values
+
+  public SimpleSwerveTrajectoryFollower getFollower() {
+    return follower;
+  }
+
   /** Object for locking gyroscope access */
   private final Object sensorLock = new Object();
 
@@ -183,6 +206,11 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     }
   }
 
+  /** Return the kinematics object, for constructing a trajectory */
+  public SwerveDriveKinematics getKinematics() {
+    return kinematics;
+  }
+
   /**
    * Tells the subsystem to drive, and puts the state machine in drive mode
    *
@@ -230,9 +258,7 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     }
 
     Rotation2d angle;
-    synchronized (sensorLock) {
-      angle = getGyroscopeRotation();
-    }
+    angle = getGyroscopeRotation();
 
     synchronized (kinematicsLock) {
       this.pose = swerveOdometry.updateWithTime(time, angle, moduleStates);
@@ -294,18 +320,16 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   @Override
   public void update(double time, double dt) {
     updateOdometry(time);
-
     ChassisSpeeds speeds;
-    Modes mode;
-    // Optional<ChassisSpeeds> trajectorySpeeds = blahblah
-    // if has trajectory signal
-    // update drive signal accordingly
-    // else
-    synchronized (stateLock) {
-      speeds = this.chassisSpeeds;
-      mode = this.mode;
+    Modes mode = getMode();
+    Optional<ChassisSpeeds> trajectorySpeeds = follower.update(getPose(), time, dt);
+    if (trajectorySpeeds.isPresent()) {
+      speeds = trajectorySpeeds.get(); // use value from the trajectory follower controller
+    } else { // if no trajectory signal
+      synchronized (stateLock) {
+        speeds = this.chassisSpeeds; // use existing value (from driver inputs)
+      }
     }
-    // end else
     updateModules(speeds, mode);
   }
 
@@ -315,6 +339,5 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     odometryXEntry.setDouble(pose.getX());
     odometryYEntry.setDouble(pose.getY());
     odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
-    // end
   }
 }
