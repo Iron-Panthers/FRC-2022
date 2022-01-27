@@ -6,14 +6,15 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
+import com.ironpanthers.lib.Util;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
-import frc.util.Util;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -57,6 +58,7 @@ public class RobotContainer {
 
     new Button(nick::getAButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
     new Button(nick::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
+    new Button(will::getAButton).whenPressed(new PrintCommand("will a button"));
   }
 
   /**
@@ -83,5 +85,9 @@ public class RobotContainer {
     value = Math.copySign(value * value, value);
 
     return value;
+  }
+
+  protected DrivebaseSubsystem getDrivebaseSubsystem() {
+    return drivebaseSubsystem;
   }
 }

@@ -1,4 +1,4 @@
-package frc.util;
+package com.ironpanthers.lib;
 
 public class Util {
   private Util() {}
