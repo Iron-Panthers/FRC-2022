@@ -286,33 +286,34 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     }
   }
 
-  public void updateModules(ChassisSpeeds chassisSpeeds, Modes mode) {
-    if (chassisSpeeds == null) {
-      chassisSpeeds = new ChassisSpeeds();
-    }
+  private void drivePeriodic() {
+    SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
+    // sets swerve module speeds and angles, for each swerve module, using kinematics
+    for (int i = 0; i < swerveModules.length; i++) {
+      swerveModules[i].set(
+          states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+          states[i].angle.getRadians());
+    }
+  }
+
+  private void defensePeriodic() {
+    int angle = 45;
+    for (SwerveModule module : swerveModules) {
+      // the *= -1 operation multiplies the current variable by -1, stores it, and also returns
+      // the value. We can use this to alternate between 45 and -45 for each module.
+      module.set(0, angle *= -1);
+    }
+  }
+
+  public void updateModules(ChassisSpeeds chassisSpeeds, Modes mode) {
     switch (mode) {
       case DRIVE:
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-
-        // sets swerve module speeds and angles, for each swerve module, using kinematics
-        for (int i = 0; i < swerveModules.length; i++) {
-          swerveModules[i].set(
-              states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-              states[i].angle.getRadians());
-        }
+        drivePeriodic();
         break;
       case DEFENSE:
-        int angle = 45;
-        for (SwerveModule module : swerveModules) {
-          // the *= -1 operation multiplies the current variable by -1, stores it, and also returns
-          // the
-          // value. We can use this to alternate between 45 and -45 for each module.
-          module.set(0, angle *= -1);
-        }
-        break;
-      default:
+        defensePeriodic();
         break;
     }
   }
