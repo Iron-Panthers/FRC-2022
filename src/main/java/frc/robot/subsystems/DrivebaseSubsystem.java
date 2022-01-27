@@ -102,6 +102,8 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   /** Contains each swerve module. Order: FR, FL, BL, BR. Or in Quadrants: I, II, III, IV */
   private final SwerveModule[] swerveModules;
 
+  ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
+
   /**
    * initialize a falcon with a shuffleboard tab, and mk4 default gear ratio
    *
@@ -115,7 +117,6 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
    * @return an sds swerve module object
    */
   private SwerveModule createModule(
-      ShuffleboardTab tab,
       String title,
       int pos,
       int drive,
@@ -132,17 +133,15 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
         offset);
   }
 
+  private NetworkTableEntry createEntry(String label, int row) {
+    return tab.add(label, 0.0).withPosition(0, row).withSize(1, 1).getEntry();
+  }
+
   /** Creates a new DrivebaseSubsystem. */
   public DrivebaseSubsystem() {
-    synchronized (sensorLock) {
-      navx.getAngle(); // FIXME
-    }
-
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
 
     final SwerveModule frontRightModule =
         createModule(
-            tab,
             "Front Right Module #1",
             1,
             Modules.FrontRight.DRIVE_MOTOR,
@@ -152,7 +151,6 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
 
     final SwerveModule frontLeftModule =
         createModule(
-            tab,
             "Front Left Module #2",
             0,
             Modules.FrontLeft.DRIVE_MOTOR,
@@ -162,7 +160,6 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
 
     final SwerveModule backLeftModule =
         createModule(
-            tab,
             "Back Left Module #3",
             2,
             Modules.BackLeft.DRIVE_MOTOR,
@@ -172,7 +169,6 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
 
     final SwerveModule backRightModule =
         createModule(
-            tab,
             "Back Right Module #4",
             3,
             Modules.BackRight.DRIVE_MOTOR,
@@ -183,9 +179,10 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    odometryXEntry = tab.add("X", 0.0).withPosition(0, 0).withSize(1, 1).getEntry();
-    odometryYEntry = tab.add("Y", 0.0).withPosition(0, 1).withSize(1, 1).getEntry();
-    odometryAngleEntry = tab.add("Angle", 0.0).withPosition(0, 2).withSize(1, 1).getEntry();
+    odometryXEntry = createEntry("X", 0);
+    odometryYEntry = createEntry("Y", 1);
+    odometryAngleEntry = createEntry("Angle", 2);
+    
     tab.addNumber(
         "Rotation Speed rad/s",
         () -> {
