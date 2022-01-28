@@ -32,7 +32,16 @@ public class UtilTests {
   }
 
   @UtilTest
-  public void relativeAngularDifferenceWorks() {
+  public void relativeAngularDifferenceZerosOnEquivalent() {
     assertEquals(0, Util.relativeAngularDifference(100, 100));
+    assertEquals(0, Util.relativeAngularDifference(0, 360 * 2));
+  }
+
+  @UtilTest
+  public void relativeAngularDifferenceTakesShortestPath() {
+    assertEquals(-100, Util.relativeAngularDifference(360, 360 + 100));
+    assertEquals(60, Util.relativeAngularDifference(360, 360 + 300));
+    assertEquals(179, Util.relativeAngularDifference(0, 181));
+    assertEquals(-170, Util.relativeAngularDifference(0, 170));
   }
 }

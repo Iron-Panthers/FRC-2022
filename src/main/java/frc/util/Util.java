@@ -43,13 +43,17 @@ public class Util {
   }
 
   /**
-   * This function finds the degree difference between angles, the shortest path. useful for pid control of drivebase rotation
+   * This function finds the degree difference between angles, the shortest path. useful for pid
+   * control of drivebase rotation
    *
    * @param currentAngle Current Angle Degrees
-   * @param newAngle Target Angle Degrees 
+   * @param newAngle Target Angle Degrees
    * @return Shortest angular difference in degrees
    */
   public static double relativeAngularDifference(double currentAngle, double newAngle) {
-    return currentAngle - newAngle;
+    currentAngle %= 360;
+    newAngle %= 360;
+    double negDifference = currentAngle - newAngle;
+    return negDifference < -180 ? 360 + negDifference : negDifference;
   }
 }
