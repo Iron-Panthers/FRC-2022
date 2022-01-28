@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 
-/** Implements a simple swerve trajectory follower. TODO test */
+/** Implements a simple swerve trajectory follower, with a fixed robot heading */
 public class SimpleSwerveTrajectoryFollower extends TrajectoryFollower<ChassisSpeeds> {
   private PIDController xController;
   private PIDController yController;
@@ -26,7 +26,7 @@ public class SimpleSwerveTrajectoryFollower extends TrajectoryFollower<ChassisSp
     this.xController = xController;
     this.yController = yController;
     this.angleController = angleController;
-    angleController.enableContinuousInput(0, 2 * Math.PI); // FIXME: try -pi..pi
+    angleController.enableContinuousInput(0, 2 * Math.PI); // This works so far. Considering -pi..pi
   }
 
   @Override
@@ -47,12 +47,9 @@ public class SimpleSwerveTrajectoryFollower extends TrajectoryFollower<ChassisSp
     double linearVelocityRefMeters = lastState.velocityMetersPerSecond;
     double xFF = linearVelocityRefMeters * poseRef.getRotation().getCos();
     double yFF = linearVelocityRefMeters * poseRef.getRotation().getSin();
-    double angleFF =
-        angleController.calculate(
-            currentPose.getRotation().getRadians(), 0 /*radians FIXME no magic number */);
-
-    // FOR TESTING: DISABLE STRAFE PID COMPENSATION BY UN-COMMENTING THIS
-    // return ChassisSpeeds.fromFieldRelativeSpeeds(xFF, yFF, angleFF, currentPose.getRotation());
+    // This sets the fixed angle goal to be 0. This would ideally be changed in a more advanced
+    // follower.
+    double angleFF = angleController.calculate(currentPose.getRotation().getRadians(), 0);
 
     double xControllerEffort = xController.calculate(currentPose.getX(), poseRef.getX());
     double yControllerEffort = yController.calculate(currentPose.getY(), poseRef.getY());

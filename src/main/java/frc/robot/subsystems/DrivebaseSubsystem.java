@@ -31,7 +31,6 @@ import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
 import java.util.Optional;
 
 public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
-  // Trajectory controller logic FIXME access is bad
   private final SimpleSwerveTrajectoryFollower follower =
       new SimpleSwerveTrajectoryFollower(
           new PIDController(0.4, 0.0, 0.025),
@@ -55,8 +54,6 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   @GuardedBy("sensorLock")
   private final AHRS navxGuarded = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
 
-  // should only be accessed for initialization tasks
-  // FIXME adjust
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(
           // Front right
@@ -217,7 +214,7 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
 
   public void resetGyroAngle(Rotation2d angle) {
     synchronized (sensorLock) {
-      // FIXME test
+      // FIXME test more exahustively
       navxGuarded.setAngleAdjustment(
           getGyroscopeRotation().rotateBy(angle.unaryMinus()).getDegrees());
     }
