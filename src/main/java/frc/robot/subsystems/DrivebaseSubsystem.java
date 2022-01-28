@@ -9,6 +9,7 @@ import static frc.robot.Constants.Drive.*;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -41,7 +42,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   private final SwerveModule[] swerveModules;
 
+  private final PIDController rotController;
+
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
+  private int targetAngle = 0; // default target angle to zero
 
   /**
    * initialize a falcon with a shuffleboard tab, and mk4 default gear ratio
@@ -70,6 +74,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** The modes of the drivebase subsystem */
   public enum Modes {
     DRIVE,
+    DRIVE_ANGLE,
     DEFENSE,
   }
 
@@ -116,6 +121,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
+
+    rotController = new PIDController(0.1, 0, 0);
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -141,7 +148,14 @@ public class DrivebaseSubsystem extends SubsystemBase {
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
     this.chassisSpeeds = chassisSpeeds;
+
     mode = Modes.DRIVE;
+  }
+
+  public void driveAngle(ChassisSpeeds chassisSpeeds, int targetAngle) {
+    this.chassisSpeeds = chassisSpeeds;
+    this.targetAngle = targetAngle;
+    mode = Modes.DRIVE_ANGLE;
   }
 
   /**
@@ -174,6 +188,19 @@ public class DrivebaseSubsystem extends SubsystemBase {
     }
   }
 
+  // called in drive to angle mode
+  private void driveAnglePeriodic() {
+    // reinitialize chassis speeds but add our desired angle
+    int omegaRadiansPerSecond = 0;
+    chassisSpeeds =
+        new ChassisSpeeds(
+            chassisSpeeds.vxMetersPerSecond,
+            chassisSpeeds.vyMetersPerSecond,
+            omegaRadiansPerSecond);
+    // use the existing drive periodic logic to assign to motors ect
+    drivePeriodic();
+  }
+
   // called in defense mode
   private void defensePeriodic() {
     // we want alternating pos and negative 45 degree angles
@@ -190,6 +217,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
     switch (mode) {
       case DRIVE:
         drivePeriodic();
+        break;
+      case DRIVE_ANGLE:
+        driveAnglePeriodic();
         break;
       case DEFENSE:
         defensePeriodic();
