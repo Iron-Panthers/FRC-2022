@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.Util;
@@ -44,8 +43,7 @@ public class RotateAngleDriveCommand extends CommandBase {
     // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented
     // movement
     drivebaseSubsystem.driveAngle(
-        new Pair<Double, Double>(x, y),
-        targetAngle // the desired angle, gyro relative
+        new Pair<Double, Double>(x, y), targetAngle // the desired angle, gyro relative
         );
   }
 

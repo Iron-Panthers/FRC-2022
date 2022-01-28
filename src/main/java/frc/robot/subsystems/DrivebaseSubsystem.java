@@ -17,7 +17,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -195,9 +194,15 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   // called in drive to angle mode
   private void driveAnglePeriodic() {
-    double rotationValue = rotController.calculate(getGyroscopeRotation().getCos(), Rotation2d.fromDegrees(targetAngle).getCos());
+    double rotationValue =
+        rotController.calculate(
+            getGyroscopeRotation().getCos(), Rotation2d.fromDegrees(targetAngle).getCos());
 
-    rotationValue = MathUtil.clamp(rotationValue, -1, 1); // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
+    rotationValue =
+        MathUtil.clamp(
+            rotationValue,
+            -1,
+            1); // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
 
     // this value makes our unit-less [-1, 1] into [-max angular, max angular]
     double omegaRadiansPerSecond = rotationValue * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
@@ -206,14 +211,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("robot angle", getGyroscopeRotation().getCos());
     SmartDashboard.putNumber("rotation value", rotationValue);
     SmartDashboard.putNumber("omega", omegaRadiansPerSecond);
-    
+
     // initialize chassis speeds but add our desired angle
-    chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-          xyInput.getFirst(),
-          xyInput.getSecond(),
-          omegaRadiansPerSecond,
-          getGyroscopeRotation()
-        );
+    chassisSpeeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xyInput.getFirst(), xyInput.getSecond(), omegaRadiansPerSecond, getGyroscopeRotation());
     // use the existing drive periodic logic to assign to motors ect
     drivePeriodic();
   }
