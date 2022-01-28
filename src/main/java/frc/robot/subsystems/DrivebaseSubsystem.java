@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.util.Util;
 
 public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics kinematics =
@@ -127,6 +128,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
     rotController = new PIDController(3, 0, 0);
+    rotController.setSetpoint(0);
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -194,21 +196,19 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   // called in drive to angle mode
   private void driveAnglePeriodic() {
-    double rotationValue =
-        rotController.calculate(
-            getGyroscopeRotation().getCos(), Rotation2d.fromDegrees(targetAngle).getCos());
+    double angularDifference =
+        Util.relativeAngularDifference(getGyroscopeRotation().getDegrees(), targetAngle);
+    double rotationValue = rotController.calculate(angularDifference);
 
-    rotationValue =
-        MathUtil.clamp(
-            rotationValue,
-            -1,
-            1); // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
+    // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
+    rotationValue = MathUtil.clamp(rotationValue, -1, 1);
 
     // this value makes our unit-less [-1, 1] into [-max angular, max angular]
     double omegaRadiansPerSecond = rotationValue * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
 
-    SmartDashboard.putNumber("target angle", Rotation2d.fromDegrees(targetAngle).getCos());
-    SmartDashboard.putNumber("robot angle", getGyroscopeRotation().getCos());
+    SmartDashboard.putNumber("target angle", targetAngle);
+    SmartDashboard.putNumber("robot angle", getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("angular difference", angularDifference);
     SmartDashboard.putNumber("rotation value", rotationValue);
     SmartDashboard.putNumber("omega", omegaRadiansPerSecond);
 
@@ -216,6 +216,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
     chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
             xyInput.getFirst(), xyInput.getSecond(), omegaRadiansPerSecond, getGyroscopeRotation());
+
     // use the existing drive periodic logic to assign to motors ect
     drivePeriodic();
   }
