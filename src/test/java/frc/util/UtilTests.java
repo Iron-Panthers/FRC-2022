@@ -30,4 +30,9 @@ public class UtilTests {
     assertFalse(Util.epsilonEquals(2, 2.1, 1e-2));
     assertFalse(Util.epsilonEquals(5, 2, 1));
   }
+
+  @UtilTest
+  public void relativeAngularDifferenceWorks() {
+    assertEquals(0, Util.relativeAngularDifference(100, 100));
+  }
 }
