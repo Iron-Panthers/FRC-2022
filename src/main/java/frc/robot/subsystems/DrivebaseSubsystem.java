@@ -9,16 +9,19 @@ import static frc.robot.Constants.Drive.*;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DrivebaseSubsystem extends SubsystemBase {
@@ -46,6 +49,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
   private int targetAngle = 0; // default target angle to zero
+  private Pair<Double, Double> xyInput = new Pair<>(0d, 0d); // the x and y for using target angles
 
   /**
    * initialize a falcon with a shuffleboard tab, and mk4 default gear ratio
@@ -122,8 +126,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    rotController = new PIDController(0.1, 0, 0);
-    rotController.enableContinuousInput(-1, 1);
+    rotController = new PIDController(1, 0, 0);
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -153,8 +156,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
     mode = Modes.DRIVE;
   }
 
-  public void driveAngle(ChassisSpeeds chassisSpeeds, int targetAngle) {
-    this.chassisSpeeds = chassisSpeeds;
+  public void driveAngle(Pair<Double, Double> xyInput, int targetAngle) {
+    this.xyInput = xyInput;
     this.targetAngle = targetAngle;
     mode = Modes.DRIVE_ANGLE;
   }
@@ -191,14 +194,20 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   // called in drive to angle mode
   private void driveAnglePeriodic() {
-    double rotationValue = rotController.calculate(getGyroscopeRotation().getDegrees(), targetAngle);
+    double rotationValue = rotController.calculate(getGyroscopeRotation().getCos(), Rotation2d.fromDegrees(targetAngle).getCos());
     // reinitialize chassis speeds but add our desired angle
     double omegaRadiansPerSecond = rotationValue * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-    chassisSpeeds =
-        new ChassisSpeeds(
-            chassisSpeeds.vxMetersPerSecond,
-            chassisSpeeds.vyMetersPerSecond,
-            omegaRadiansPerSecond);
+    SmartDashboard.putNumber("target angle", Rotation2d.fromDegrees(targetAngle).getCos());
+    SmartDashboard.putNumber("robot angle", getGyroscopeRotation().getCos());
+    SmartDashboard.putNumber("rotation value", rotationValue);
+    SmartDashboard.putNumber("omega", omegaRadiansPerSecond);
+    
+    chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+          xyInput.getFirst(),
+          xyInput.getSecond(),
+          omegaRadiansPerSecond,
+          getGyroscopeRotation()
+        );
     // use the existing drive periodic logic to assign to motors ect
     drivePeriodic();
   }
