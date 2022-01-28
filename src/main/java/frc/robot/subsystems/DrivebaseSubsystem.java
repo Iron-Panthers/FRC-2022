@@ -9,6 +9,7 @@ import static frc.robot.Constants.Drive.*;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -126,7 +127,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    rotController = new PIDController(1, 0, 0);
+    rotController = new PIDController(3, 0, 0);
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -195,13 +196,18 @@ public class DrivebaseSubsystem extends SubsystemBase {
   // called in drive to angle mode
   private void driveAnglePeriodic() {
     double rotationValue = rotController.calculate(getGyroscopeRotation().getCos(), Rotation2d.fromDegrees(targetAngle).getCos());
-    // reinitialize chassis speeds but add our desired angle
+
+    rotationValue = MathUtil.clamp(rotationValue, -1, 1); // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
+
+    // this value makes our unit-less [-1, 1] into [-max angular, max angular]
     double omegaRadiansPerSecond = rotationValue * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+
     SmartDashboard.putNumber("target angle", Rotation2d.fromDegrees(targetAngle).getCos());
     SmartDashboard.putNumber("robot angle", getGyroscopeRotation().getCos());
     SmartDashboard.putNumber("rotation value", rotationValue);
     SmartDashboard.putNumber("omega", omegaRadiansPerSecond);
     
+    // initialize chassis speeds but add our desired angle
     chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
           xyInput.getFirst(),
           xyInput.getSecond(),
