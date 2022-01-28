@@ -191,7 +191,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   // called in drive to angle mode
   private void driveAnglePeriodic() {
     // reinitialize chassis speeds but add our desired angle
-    int omegaRadiansPerSecond = 0;
+    double omegaRadiansPerSecond = 0 * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
     chassisSpeeds =
         new ChassisSpeeds(
             chassisSpeeds.vxMetersPerSecond,
