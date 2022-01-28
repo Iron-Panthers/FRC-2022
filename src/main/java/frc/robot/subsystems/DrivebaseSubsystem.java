@@ -53,7 +53,7 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   private final Object sensorLock = new Object();
 
   @GuardedBy("sensorLock")
-  private final AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+  private final AHRS navxGuarded = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
 
   // should only be accessed for initialization tasks
   // FIXME adjust
@@ -72,19 +72,19 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   private final Object kinematicsLock = new Object();
 
   @GuardedBy("kinematicsLock")
-  private final SwerveDriveOdometry swerveOdometry =
-      new SwerveDriveOdometry(kinematics, navx.getRotation2d());
+  private final SwerveDriveOdometry swerveOdometryGuarded =
+      new SwerveDriveOdometry(kinematics, navxGuarded.getRotation2d());
 
   @GuardedBy("kinematicsLock")
-  private Pose2d pose = new Pose2d();
+  private Pose2d poseGuarded = new Pose2d();
 
   /** Object for locking ChassisSpeeds demand updates */
   private final Object stateLock = new Object();
 
   @GuardedBy("stateLock")
-  private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
+  private ChassisSpeeds chassisSpeedsGuarded = new ChassisSpeeds(); // defaults to zeros
 
-  /** The modes of the drivebase subsystem */
+  /** The mode of the drivebase subsystem */
   public enum Modes {
     DRIVE,
     DEFENSE,
@@ -92,7 +92,7 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
 
   @GuardedBy("stateLock")
   /** the current mode */
-  private Modes mode = Modes.DRIVE;
+  private Modes modeGuarded = Modes.DRIVE;
 
   /* Logging values */
   private final NetworkTableEntry odometryXEntry;
@@ -117,12 +117,7 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
    * @return an sds swerve module object
    */
   private SwerveModule createModule(
-      String title,
-      int pos,
-      int drive,
-      int steer,
-      int encoder,
-      double offset) {
+      String title, int pos, int drive, int steer, int encoder, double offset) {
 
     return Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout(title, BuiltInLayouts.kList).withSize(2, 4).withPosition(pos * 2, 0),
@@ -182,13 +177,13 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     odometryXEntry = createEntry("X", 0);
     odometryYEntry = createEntry("Y", 1);
     odometryAngleEntry = createEntry("Angle", 2);
-    
+
     tab.addNumber(
         "Rotation Speed rad/s",
         () -> {
           ChassisSpeeds speeds;
           synchronized (stateLock) {
-            speeds = this.chassisSpeeds;
+            speeds = this.chassisSpeedsGuarded;
           }
           if (speeds == null) return 0.0;
 
@@ -199,7 +194,7 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   /** Return the current pose estimation of the robot */
   public Pose2d getPose() {
     synchronized (kinematicsLock) {
-      return pose;
+      return poseGuarded;
     }
   }
 
@@ -209,21 +204,22 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   }
 
   /**
-   * Tells the subsystem to drive, and puts the state machine in drive mode
+   * Tells the subsystem to drive, and puts the state machine in drive modeGuarded
    *
-   * @param chassisSpeeds the speed of the chassis desired
+   * @param chassisSpeedsGuarded the speed of the chassis desired
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
     synchronized (stateLock) {
-      this.mode = Modes.DRIVE;
-      this.chassisSpeeds = chassisSpeeds;
+      this.modeGuarded = Modes.DRIVE;
+      this.chassisSpeedsGuarded = chassisSpeeds;
     }
   }
 
   public void resetGyroAngle(Rotation2d angle) {
     synchronized (sensorLock) {
       // FIXME test
-      navx.setAngleAdjustment(getGyroscopeRotation().rotateBy(angle.unaryMinus()).getDegrees());
+      navxGuarded.setAngleAdjustment(
+          getGyroscopeRotation().rotateBy(angle.unaryMinus()).getDegrees());
     }
   }
 
@@ -234,14 +230,14 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
 
   public Rotation2d getGyroscopeRotation() {
     synchronized (sensorLock) {
-      if (navx.isMagnetometerCalibrated()) {
+      if (navxGuarded.isMagnetometerCalibrated()) {
         // We will only get valid fused headings if the magnetometer is calibrated
-        return Rotation2d.fromDegrees(navx.getFusedHeading());
+        return Rotation2d.fromDegrees(navxGuarded.getFusedHeading());
       }
 
       // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
       // the angle increase.
-      return Rotation2d.fromDegrees(360.0 - navx.getYaw());
+      return Rotation2d.fromDegrees(360.0 - navxGuarded.getYaw());
     }
   }
 
@@ -258,33 +254,33 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     angle = getGyroscopeRotation();
 
     synchronized (kinematicsLock) {
-      this.pose = swerveOdometry.updateWithTime(time, angle, moduleStates);
+      this.poseGuarded = swerveOdometryGuarded.updateWithTime(time, angle, moduleStates);
     }
   }
 
   /**
-   * gets the current mode of the drivebase subsystem state machine
+   * gets the current modeGuarded of the drivebase subsystem state machine
    *
-   * @return the current mode
+   * @return the current modeGuarded
    */
   public Modes getMode() {
     synchronized (stateLock) {
-      return mode;
+      return modeGuarded;
     }
   }
 
   /**
    * Angles the swerve modules in a cross shape, to make the robot hard to push. This function sets
-   * the state machine to defense mode, so it only needs to be called once
+   * the state machine to defense modeGuarded, so it only needs to be called once
    */
   public void setDefenseMode() {
     synchronized (stateLock) {
-      mode = Modes.DEFENSE;
+      modeGuarded = Modes.DEFENSE;
     }
   }
 
   private void drivePeriodic() {
-    SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
+    SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeedsGuarded);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
     // sets swerve module speeds and angles, for each swerve module, using kinematics
@@ -295,6 +291,7 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     }
   }
 
+  @SuppressWarnings("java:S1121")
   private void defensePeriodic() {
     int angle = 45;
     for (SwerveModule module : swerveModules) {
@@ -304,7 +301,7 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     }
   }
 
-  public void updateModules(ChassisSpeeds chassisSpeeds, Modes mode) {
+  public void updateModules(Modes mode) {
     switch (mode) {
       case DRIVE:
         drivePeriodic();
@@ -318,17 +315,13 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   @Override
   public void update(double time, double dt) {
     updateOdometry(time);
-    ChassisSpeeds speeds;
     Modes mode = getMode();
     Optional<ChassisSpeeds> trajectorySpeeds = follower.update(getPose(), time, dt);
     if (trajectorySpeeds.isPresent()) {
-      speeds = trajectorySpeeds.get(); // use value from the trajectory follower controller
-    } else { // if no trajectory signal
-      synchronized (stateLock) {
-        speeds = this.chassisSpeeds; // use existing value (from driver inputs)
-      }
+      this.chassisSpeedsGuarded =
+          trajectorySpeeds.get(); // use value from the trajectory follower controller
     }
-    updateModules(speeds, mode);
+    updateModules(mode);
   }
 
   @Override
