@@ -280,14 +280,16 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
   }
 
   private void drivePeriodic() {
-    SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeedsGuarded);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+    synchronized (stateLock) {
+      SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeedsGuarded);
+      SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    // sets swerve module speeds and angles, for each swerve module, using kinematics
-    for (int i = 0; i < swerveModules.length; i++) {
-      swerveModules[i].set(
-          states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-          states[i].angle.getRadians());
+      // sets swerve module speeds and angles, for each swerve module, using kinematics
+      for (int i = 0; i < swerveModules.length; i++) {
+        swerveModules[i].set(
+            states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+            states[i].angle.getRadians());
+      }
     }
   }
 
@@ -317,9 +319,11 @@ public class DrivebaseSubsystem extends SubsystemBase implements Updatable {
     updateOdometry(time);
     Modes mode = getMode();
     Optional<ChassisSpeeds> trajectorySpeeds = follower.update(getPose(), time, dt);
-    if (trajectorySpeeds.isPresent()) {
-      this.chassisSpeedsGuarded =
-          trajectorySpeeds.get(); // use value from the trajectory follower controller
+    synchronized (stateLock) {
+      if (trajectorySpeeds.isPresent()) {
+        this.chassisSpeedsGuarded =
+            trajectorySpeeds.get(); // use value from the trajectory follower controller
+      }
     }
     updateModules(mode);
   }
