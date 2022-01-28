@@ -55,6 +55,7 @@ public class RotateAngleDriveCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Util.epsilonEquals(drivebaseSubsystem.getGyroscopeRotation().getDegrees(), targetAngle, .1);
+    return Util.epsilonEquals(
+        drivebaseSubsystem.getGyroscopeRotation().getDegrees(), targetAngle, .1);
   }
 }

@@ -12,8 +12,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.Util;
+import java.util.function.DoubleSupplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -55,8 +57,17 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Button(nick::getAButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
+    new Button(nick::getStartButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
     new Button(nick::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
+    // these are flipped because the joystick is the opposite of intuition yay
+    DoubleSupplier translationXSupplier =
+        () -> (-modifyAxis(nick.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+    DoubleSupplier translationYSupplier =
+        () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+    new Button(nick::getYButton)
+        .whenPressed(
+            new RotateAngleDriveCommand(
+                drivebaseSubsystem, translationXSupplier, translationYSupplier, 0));
   }
 
   /**
