@@ -123,6 +123,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
     rotController = new PIDController(0.1, 0, 0);
+    rotController.enableContinuousInput(-1, 1);
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -190,8 +191,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   // called in drive to angle mode
   private void driveAnglePeriodic() {
+    double rotationValue = rotController.calculate(getGyroscopeRotation().getDegrees(), targetAngle);
     // reinitialize chassis speeds but add our desired angle
-    double omegaRadiansPerSecond = 0 * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+    double omegaRadiansPerSecond = rotationValue * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
     chassisSpeeds =
         new ChassisSpeeds(
             chassisSpeeds.vxMetersPerSecond,
