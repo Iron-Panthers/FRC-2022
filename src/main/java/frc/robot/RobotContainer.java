@@ -68,7 +68,7 @@ public class RobotContainer {
 
     IntFunction<RotateAngleDriveCommand> rotCommand =
         angle ->
-            new RotateAngleDriveCommand(
+            RotateAngleDriveCommand.fromRobotRelative(
                 drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
 
     new Button(nick::getYButton).whenPressed(rotCommand.apply(0));
