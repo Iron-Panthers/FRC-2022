@@ -129,6 +129,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     rotController = new PIDController(.02, 0, 0.001);
     rotController.setSetpoint(0);
+    rotController.setTolerance(1); // degrees error
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
