@@ -1,24 +1,16 @@
 package frc.util;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class Util {
   private Util() {}
-
-  private static double kEpsilon = 1e-5;
 
   public static boolean epsilonEquals(double a, double b, double epsilon) {
     return (a - epsilon <= b) && (a + epsilon >= b);
   }
 
-  public static boolean epsilonEquals(int a, int b, int epsilon) {
-    return (a - epsilon <= b) && (a + epsilon >= b);
-  }
-
-  public static boolean epsilonEquals(double a, double b) {
-    return epsilonEquals(a, b, kEpsilon);
-  }
-
-  public static boolean epsilonEquals(int a, int b) {
-    return epsilonEquals(a, b, kEpsilon);
+  public static boolean epsilonZero(double a, double epsilon) {
+    return epsilonEquals(a, 0, epsilon);
   }
 
   /**
@@ -55,5 +47,9 @@ public class Util {
     newAngle %= 360;
     double negDifference = currentAngle - newAngle;
     return negDifference < -180 ? 360 + negDifference : negDifference;
+  }
+
+  public static double relativeAngularDifference(Rotation2d currentAngle, double newAngle) {
+    return relativeAngularDifference(currentAngle.getDegrees(), newAngle);
   }
 }
