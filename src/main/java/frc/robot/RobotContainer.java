@@ -71,7 +71,10 @@ public class RobotContainer {
             new RotateAngleDriveCommand(
                 drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
 
-    new Button(nick::getYButton).whenPressed(rotCommand.apply(180));
+    new Button(nick::getYButton).whenPressed(rotCommand.apply(0));
+    new Button(nick::getBButton).whenPressed(rotCommand.apply(90));
+    new Button(nick::getAButton).whenPressed(rotCommand.apply(180));
+    new Button(nick::getXButton).whenPressed(rotCommand.apply(270));
   }
 
   /**
