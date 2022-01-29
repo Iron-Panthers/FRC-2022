@@ -198,8 +198,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   // called in drive to angle mode
   private void driveAnglePeriodic() {
-    double angularDifference =
-        Util.relativeAngularDifference(getGyroscopeRotation().getDegrees(), targetAngle);
+    double angularDifference = Util.relativeAngularDifference(getGyroscopeRotation(), targetAngle);
     double rotationValue = rotController.calculate(angularDifference);
 
     // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
