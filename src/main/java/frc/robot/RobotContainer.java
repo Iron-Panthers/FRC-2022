@@ -16,7 +16,7 @@ import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.Util;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -66,8 +66,8 @@ public class RobotContainer {
     DoubleSupplier translationYSupplier =
         () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
 
-    Function<Integer, Command> rotCommand =
-        (angle) ->
+    IntFunction<RotateAngleDriveCommand> rotCommand =
+        angle ->
             new RotateAngleDriveCommand(
                 drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
 
