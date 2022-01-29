@@ -17,7 +17,8 @@ public class RotateAngleDriveCommand extends CommandBase {
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
 
-  private final int targetAngle;
+  private int targetAngle;
+  private boolean robotRelative = false;
 
   /** Creates a new RotateAngleDriveCommand. */
   public RotateAngleDriveCommand(
@@ -33,6 +34,27 @@ public class RotateAngleDriveCommand extends CommandBase {
     this.targetAngle = targetAngle;
 
     addRequirements(drivebaseSubsystem);
+  }
+
+  public static RotateAngleDriveCommand fromRobotRelative(
+      DrivebaseSubsystem drivebaseSubsystem,
+      DoubleSupplier translationXSupplier,
+      DoubleSupplier translationYSupplier,
+      int targetAngle) {
+
+    var command =
+        new RotateAngleDriveCommand(
+            drivebaseSubsystem, translationXSupplier, translationYSupplier, targetAngle);
+
+    command.robotRelative = true;
+    return command;
+  }
+
+  @Override
+  public void initialize() {
+    if (robotRelative) {
+      targetAngle += drivebaseSubsystem.getGyroscopeRotation().getDegrees();
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
