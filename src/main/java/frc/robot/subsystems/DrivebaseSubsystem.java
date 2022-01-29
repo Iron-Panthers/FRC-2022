@@ -127,7 +127,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    rotController = new PIDController(3, 0, 0);
+    rotController = new PIDController(.02, 0, 0.001);
     rotController.setSetpoint(0);
   }
 
@@ -161,6 +161,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   public void driveAngle(Pair<Double, Double> xyInput, int targetAngle) {
     this.xyInput = xyInput;
     this.targetAngle = targetAngle;
+    if (mode != Modes.DRIVE_ANGLE) rotController.reset();
     mode = Modes.DRIVE_ANGLE;
   }
 
