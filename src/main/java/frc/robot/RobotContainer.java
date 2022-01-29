@@ -14,7 +14,7 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
-import frc.util.Util;
+import frc.util.ControllerUtil;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntFunction;
 
@@ -95,7 +95,7 @@ public class RobotContainer {
    */
   private static double modifyAxis(double value) {
     // Deadband
-    value = Util.deadband(value, 0.2);
+    value = ControllerUtil.deadband(value, 0.2);
 
     // Square the axis
     value = Math.copySign(value * value, value);
