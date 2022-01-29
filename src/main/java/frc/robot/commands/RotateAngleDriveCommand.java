@@ -6,7 +6,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.Drive;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class RotateAngleDriveCommand extends CommandBase {
@@ -16,7 +18,6 @@ public class RotateAngleDriveCommand extends CommandBase {
   private final DoubleSupplier translationYSupplier;
 
   private final int targetAngle;
-  private boolean finished = false;
 
   /** Creates a new RotateAngleDriveCommand. */
   public RotateAngleDriveCommand(
@@ -40,12 +41,9 @@ public class RotateAngleDriveCommand extends CommandBase {
     double x = translationXSupplier.getAsDouble();
     double y = translationYSupplier.getAsDouble();
 
-    // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented
-    // movement
-    finished =
-        drivebaseSubsystem.driveAngle(
-            new Pair<Double, Double>(x, y), targetAngle // the desired angle, gyro relative
-            );
+    drivebaseSubsystem.driveAngle(
+        new Pair<Double, Double>(x, y), targetAngle // the desired angle, gyro relative
+        );
   }
 
   // Called once the command ends or is interrupted.
@@ -55,6 +53,10 @@ public class RotateAngleDriveCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return finished;
+    return Util.epsilonEquals(
+        Util.relativeAngularDifference(
+            drivebaseSubsystem.getGyroscopeRotation().getDegrees(), targetAngle),
+        0,
+        Drive.ANGULAR_ERROR);
   }
 }

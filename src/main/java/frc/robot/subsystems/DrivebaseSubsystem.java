@@ -129,7 +129,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     rotController = new PIDController(.02, 0.0001, 0.001);
     rotController.setSetpoint(0);
-    rotController.setTolerance(1); // degrees error
+    rotController.setTolerance(ANGULAR_ERROR); // degrees error
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -159,12 +159,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
     mode = Modes.DRIVE;
   }
 
-  public boolean driveAngle(Pair<Double, Double> xyInput, int targetAngle) {
+  public void driveAngle(Pair<Double, Double> xyInput, int targetAngle) {
     this.xyInput = xyInput;
     this.targetAngle = targetAngle;
     if (mode != Modes.DRIVE_ANGLE) rotController.reset();
     mode = Modes.DRIVE_ANGLE;
-    return rotController.atSetpoint();
   }
 
   /**

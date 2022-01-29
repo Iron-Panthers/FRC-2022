@@ -34,6 +34,8 @@ public final class Constants {
         MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0);
 
+    public static final double ANGULAR_ERROR = 1.0;
+
     public static final class Dims {
       // FIXME validate with hardware
       public static final double TRACKWIDTH_METERS =
