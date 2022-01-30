@@ -15,6 +15,7 @@ import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.ControllerUtil;
+import frc.util.Layer;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntFunction;
 
@@ -71,10 +72,12 @@ public class RobotContainer {
             new RotateAngleDriveCommand(
                 drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
 
-    new Button(nick::getYButton).whenPressed(rotCommand.apply(0));
-    new Button(nick::getBButton).whenPressed(rotCommand.apply(90));
-    new Button(nick::getAButton).whenPressed(rotCommand.apply(180));
-    new Button(nick::getXButton).whenPressed(rotCommand.apply(270));
+    Layer rightBumper = new Layer(nick::getRightBumper);
+
+    rightBumper.on(nick::getYButton).whenPressed(rotCommand.apply(0));
+    rightBumper.on(nick::getBButton).whenPressed(rotCommand.apply(90));
+    rightBumper.on(nick::getAButton).whenPressed(rotCommand.apply(180));
+    rightBumper.on(nick::getXButton).whenPressed(rotCommand.apply(270));
   }
 
   /**

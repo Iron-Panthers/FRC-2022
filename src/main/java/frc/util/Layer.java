@@ -16,11 +16,19 @@ public class Layer {
     this.layerSwitch = layerSwitch;
   }
 
-  public Trigger on(BooleanSupplier boolSupplier) {
-    return layerSwitch.and(new Button(boolSupplier));
+  public Button on(Trigger button) {
+    return new Button(layerSwitch.and(button));
   }
 
-  public Trigger on(Trigger button) {
-    return layerSwitch.and(button);
+  public Button off(Trigger button) {
+    return new Button(layerSwitch.negate().and(button));
+  }
+
+  public Button on(BooleanSupplier boolSupplier) {
+    return on(new Button(boolSupplier));
+  }
+
+  public Button off(BooleanSupplier boolSupplier) {
+    return off(new Button(boolSupplier));
   }
 }
