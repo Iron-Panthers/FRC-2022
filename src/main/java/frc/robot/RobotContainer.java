@@ -72,12 +72,22 @@ public class RobotContainer {
             new RotateAngleDriveCommand(
                 drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
 
+    IntFunction<RotateAngleDriveCommand> relRotCommand =
+        angle ->
+            RotateAngleDriveCommand.fromRobotRelative(
+                drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
+
     Layer rightBumper = new Layer(nick::getRightBumper);
 
     rightBumper.on(nick::getYButton).whenPressed(rotCommand.apply(0));
     rightBumper.on(nick::getBButton).whenPressed(rotCommand.apply(90));
     rightBumper.on(nick::getAButton).whenPressed(rotCommand.apply(180));
     rightBumper.on(nick::getXButton).whenPressed(rotCommand.apply(270));
+
+    rightBumper.off(nick::getYButton).whenPressed(relRotCommand.apply(0));
+    rightBumper.off(nick::getBButton).whenPressed(relRotCommand.apply(90));
+    rightBumper.off(nick::getAButton).whenPressed(relRotCommand.apply(180));
+    rightBumper.off(nick::getXButton).whenPressed(relRotCommand.apply(270));
   }
 
   /**
