@@ -81,15 +81,15 @@ public class RobotContainer {
 
     // when the bumper is held, field relative rotation
     rightBumper.on(nick::getYButton).whenPressed(rotCommand.apply(0));
-    rightBumper.on(nick::getBButton).whenPressed(rotCommand.apply(90));
+    rightBumper.on(nick::getBButton).whenPressed(rotCommand.apply(270));
     rightBumper.on(nick::getAButton).whenPressed(rotCommand.apply(180));
-    rightBumper.on(nick::getXButton).whenPressed(rotCommand.apply(270));
+    rightBumper.on(nick::getXButton).whenPressed(rotCommand.apply(90));
 
     // otherwise, rotate robot
-    rightBumper.on(nick::getYButton).whenPressed(relRotCommand.apply(-180)); // flip left
-    rightBumper.off(nick::getBButton).whenPressed(relRotCommand.apply(90));
-    rightBumper.off(nick::getAButton).whenPressed(relRotCommand.apply(180)); // flip right
-    rightBumper.off(nick::getXButton).whenPressed(relRotCommand.apply(-90));
+    rightBumper.off(nick::getYButton).whenPressed(relRotCommand.apply(180)); // flip left
+    rightBumper.off(nick::getBButton).whenPressed(relRotCommand.apply(-90));
+    rightBumper.off(nick::getAButton).whenPressed(relRotCommand.apply(-180)); // flip right
+    rightBumper.off(nick::getXButton).whenPressed(relRotCommand.apply(90));
   }
 
   /**
@@ -110,7 +110,7 @@ public class RobotContainer {
    */
   private static double modifyAxis(double value) {
     // Deadband
-    value = ControllerUtil.deadband(value, 0.2);
+    value = ControllerUtil.deadband(value, 0.05);
 
     // Square the axis
     value = Math.copySign(value * value, value);
