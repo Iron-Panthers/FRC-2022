@@ -76,7 +76,8 @@ public class RotateAngleDriveCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     return Util.epsilonZero(
-        Util.relativeAngularDifference(drivebaseSubsystem.getGyroscopeRotation(), targetAngle),
-        Drive.ANGULAR_ERROR);
+            Util.relativeAngularDifference(drivebaseSubsystem.getGyroscopeRotation(), targetAngle),
+            Drive.ANGULAR_ERROR)
+        && Util.epsilonEquals(drivebaseSubsystem.getRotVelocity(), 0, 10);
   }
 }

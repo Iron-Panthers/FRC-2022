@@ -128,9 +128,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    rotController = new PIDController(.02, 0.0001, 0.001);
+    rotController = new PIDController(.07, 0, 0);
     rotController.setSetpoint(0);
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
+    Shuffleboard.getTab("Drivebase").add(rotController);
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
