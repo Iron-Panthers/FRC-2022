@@ -28,8 +28,8 @@ public class Util {
     double difference2 = Math.abs(360 - difference1);
     double difference = difference1 < difference2 ? difference1 : difference2;
 
-    if ((currentAngle + difference) % 360 == newAngle) return difference;
-    return difference * -1;
+    if ((currentAngle + difference) % 360 == newAngle) return difference * -1;
+    return difference;
   }
 
   public static double relativeAngularDifference(Rotation2d currentAngle, double newAngle) {

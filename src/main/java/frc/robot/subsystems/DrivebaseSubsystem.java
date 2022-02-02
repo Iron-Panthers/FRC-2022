@@ -147,6 +147,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     angle %= 360;
     SmartDashboard.putNumber("mod angle", angle);
+    SmartDashboard.putNumber(
+        "stale angular diff", Util.relativeAngularDifference(angle, targetAngle));
 
     // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
     // the angle increase.

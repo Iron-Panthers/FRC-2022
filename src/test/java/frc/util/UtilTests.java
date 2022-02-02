@@ -27,12 +27,12 @@ public class UtilTests {
 
   @UtilTest
   public void relativeAngularDifferenceTakesShortestPath() {
-    assertEquals(100, Util.relativeAngularDifference(0, 100));
-    assertEquals(100, Util.relativeAngularDifference(360, 360 + 100));
-    assertEquals(-60, Util.relativeAngularDifference(360, 360 + 300));
-    assertEquals(-179, Util.relativeAngularDifference(0, 181));
-    assertEquals(170, Util.relativeAngularDifference(0, 170));
-    assertEquals(90, Util.relativeAngularDifference(270, 360));
-    assertEquals(90, Util.relativeAngularDifference(270, 0));
+    assertEquals(-100, Util.relativeAngularDifference(0, 100));
+    assertEquals(-100, Util.relativeAngularDifference(360, 360 + 100));
+    assertEquals(60, Util.relativeAngularDifference(360, 360 + 300));
+    assertEquals(179, Util.relativeAngularDifference(0, 181));
+    assertEquals(-170, Util.relativeAngularDifference(0, 170));
+    assertEquals(-90, Util.relativeAngularDifference(270, 360));
+    assertEquals(-90, Util.relativeAngularDifference(270, 0));
   }
 }
