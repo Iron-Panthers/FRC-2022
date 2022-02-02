@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -155,6 +156,23 @@ public class DrivebaseSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(angle);
   }
 
+  private double lastAngle = 0;
+  private double lastTime = 0;
+  private double rotVelocity = 0;
+
+  private void updateRotVelocity() {
+    double time = Timer.getFPGATimestamp();
+    double angle = getGyroscopeRotation().getDegrees();
+    rotVelocity = (angle - lastAngle) / (time - lastTime);
+    lastTime = time;
+    lastAngle = angle;
+    SmartDashboard.putNumber("rot vel", rotVelocity);
+  }
+
+  public double getRotVelocity() {
+    return rotVelocity;
+  }
+
   /**
    * Tells the subsystem to drive, and puts the state machine in drive mode
    *
@@ -242,6 +260,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    updateRotVelocity();
     switch (mode) {
       case DRIVE:
         drivePeriodic();
