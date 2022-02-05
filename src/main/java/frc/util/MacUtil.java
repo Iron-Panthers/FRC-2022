@@ -43,7 +43,7 @@ public class MacUtil {
     return macAddresses;
   }
 
-  private static String macToString(byte[] address) {
+  public static String macToString(byte[] address) {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < address.length; i++) {
       if (i != 0) {
