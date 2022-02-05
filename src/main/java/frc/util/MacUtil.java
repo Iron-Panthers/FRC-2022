@@ -25,6 +25,12 @@ public class MacUtil {
     System.out.println(e);
   }
 
+  /**
+   * Gets the first readable mac address and returns it as an array of bytes. Never throws errors,
+   * instead returning an empty array of bytes
+   *
+   * @return byte array of first mac address, or empty byte array if none could be read
+   */
   public static byte[] getMacAddress() {
 
     // init dance to not throw an error
@@ -55,6 +61,20 @@ public class MacUtil {
     return new byte[0];
   }
 
+  /**
+   * Takes a mac address byte array, and returns a string with the mac address formatted to be human
+   * readable.
+   *
+   * <p><code>byte[] address = {46, -75, -30, 99, 104, 4};</code> is formatted to <code>
+   * "2E:B5:E2:63:68:04"
+   * </code>
+   *
+   * <p>Safely handles empty byte array, by returning empty string, or byte array of zeros, by
+   * returning zeroed mac address for as many bytes
+   *
+   * @param address the address, in bytes, to format
+   * @return the String human readable equivalent of the byte array
+   */
   public static String macToString(byte[] address) {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < address.length; i++) {
