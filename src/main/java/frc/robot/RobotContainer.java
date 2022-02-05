@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.ControllerUtil;
@@ -94,6 +95,9 @@ public class RobotContainer {
     rightBumper.on(nick::getBButton).whenPressed(relRotCommand.apply(-90));
     rightBumper.on(nick::getAButton).whenPressed(relRotCommand.apply(-180)); // flip right
     rightBumper.on(nick::getXButton).whenPressed(relRotCommand.apply(90));
+
+    new Button(nick::getLeftStickButton)
+        .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
   }
 
   /**
