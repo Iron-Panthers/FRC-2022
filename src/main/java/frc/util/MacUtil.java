@@ -16,8 +16,7 @@ public class MacUtil {
           .equals(
               // this value is the mac address of the practice bot
               // if the read mac address is not the practice bot, we default to comp bot
-              "2E:B5:E2:63:68:04" // FIXME: find actual mac address
-              );
+              "00:80:2F:32:FD:81");
 
   private static void logErr(SocketException e) {
     System.out.print(
