@@ -20,4 +20,10 @@ public class MacUtilTests {
     assertEquals("2E:B5:E2:63:68:04", MacUtil.macToString(macOne));
     assertEquals("5E:44:17:35:0F:DB", MacUtil.macToString(macTwo));
   }
+
+  @UtilTest
+  public void macAddressFormatsCorrectlyWithEmptyByteArray() {
+    assertEquals("", MacUtil.macToString(new byte[0]));
+    assertEquals("00:00:00:00:00:00", MacUtil.macToString(new byte[6]));
+  }
 }
