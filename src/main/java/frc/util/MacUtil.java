@@ -2,19 +2,18 @@ package frc.util;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 public class MacUtil {
+  private MacUtil() {}
+
   private static void logErr(SocketException e) {
     System.out.print(
         "mac util, which is used to toggle const values based on the robot, threw SocketException: ");
     System.out.println(e);
   }
 
-  public static List<byte[]> getMacAddresses() {
-    List<byte[]> macAddresses = new ArrayList<>();
+  public static byte[] getMacAddress() {
 
     // init dance to not throw an error
     Enumeration<NetworkInterface> networkInterfaces;
@@ -23,7 +22,7 @@ public class MacUtil {
       networkInterfaces = NetworkInterface.getNetworkInterfaces();
     } catch (SocketException e) {
       logErr(e);
-      return macAddresses;
+      return new byte[0];
     }
 
     while (networkInterfaces.hasMoreElements()) {
@@ -33,14 +32,15 @@ public class MacUtil {
         // the address may be null
         if (address == null) continue;
 
-        macAddresses.add(address);
+        return address;
 
       } catch (SocketException e) {
         logErr(e);
       }
     }
 
-    return macAddresses;
+    // we couldn't read any network interfaces
+    return new byte[0];
   }
 
   public static String macToString(byte[] address) {
