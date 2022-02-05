@@ -7,6 +7,18 @@ import java.util.Enumeration;
 public class MacUtil {
   private MacUtil() {}
 
+  /**
+   * is the robot code is running on the competition robot? defaults to true, better to assume comp
+   * then practice
+   */
+  public static final boolean IS_COMP_BOT =
+      !macToString(getMacAddress())
+          .equals(
+              // this value is the mac address of the practice bot
+              // if the read mac address is not the practice bot, we default to comp bot
+              "2E:B5:E2:63:68:04" // FIXME: find actual mac address
+              );
+
   private static void logErr(SocketException e) {
     System.out.print(
         "mac util, which is used to toggle const values based on the robot, threw SocketException: ");
