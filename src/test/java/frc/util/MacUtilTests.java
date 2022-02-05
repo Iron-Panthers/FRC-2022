@@ -2,6 +2,7 @@ package frc.util;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import frc.UtilTest;
 
@@ -25,5 +26,10 @@ public class MacUtilTests {
   public void macAddressFormatsCorrectlyWithEmptyByteArray() {
     assertEquals("", MacUtil.macToString(new byte[0]));
     assertEquals("00:00:00:00:00:00", MacUtil.macToString(new byte[6]));
+  }
+
+  @UtilTest
+  public void compBotDefaultsTrue() {
+    assertTrue(MacUtil.IS_COMP_BOT);
   }
 }
