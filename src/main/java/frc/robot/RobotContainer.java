@@ -8,6 +8,7 @@ import static frc.robot.Constants.Drive;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
@@ -16,6 +17,7 @@ import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.ControllerUtil;
 import frc.util.Layer;
+import frc.util.MacUtil;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntFunction;
 
@@ -46,6 +48,8 @@ public class RobotContainer {
             () -> (-modifyAxis(nick.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
             () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
             () -> (-modifyAxis(nick.getRightX()) * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+
+    SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
     // Configure the button bindings
     configureButtonBindings();

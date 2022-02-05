@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static frc.util.MacUtil.IS_COMP_BOT;
+
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
 @SuppressWarnings("java:S1118")
@@ -49,8 +51,10 @@ public final class Constants {
         public static final int STEER_MOTOR = 3;
         public static final int STEER_ENCODER = 24;
 
-        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
-        public static final double STEER_OFFSET = -Math.toRadians(40.333 + 180.0);
+        public static final double STEER_OFFSET =
+            IS_COMP_BOT
+                ? -Math.toRadians(329.4937 + 180.0) // comp bot offset
+                : -Math.toRadians(40.333 + 180.0); // practice bot offset
       }
 
       public static final class FrontLeft { // Module 2
@@ -58,8 +62,10 @@ public final class Constants {
         public static final int STEER_MOTOR = 10;
         public static final int STEER_ENCODER = 25;
 
-        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
-        public static final double STEER_OFFSET = -Math.toRadians(43.9453);
+        public static final double STEER_OFFSET =
+            IS_COMP_BOT
+                ? -Math.toRadians(209.0836) // comp bot offset
+                : -Math.toRadians(43.9453); // practice bot offset
       }
 
       public static final class BackLeft { // Module 3
@@ -67,8 +73,10 @@ public final class Constants {
         public static final int STEER_MOTOR = 12;
         public static final int STEER_ENCODER = 26;
 
-        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
-        public static final double STEER_OFFSET = -Math.toRadians(188.6133);
+        public static final double STEER_OFFSET =
+            IS_COMP_BOT
+                ? -Math.toRadians(183.5815) // comp bot offset
+                : -Math.toRadians(188.6133); // practice bot offset
       }
 
       public static final class BackRight { // Module 4
@@ -76,8 +84,10 @@ public final class Constants {
         public static final int STEER_MOTOR = 1;
         public static final int STEER_ENCODER = 27;
 
-        @SuppressWarnings("java:S2185") // this warning calls out unneeded math toRadians calls
-        public static final double STEER_OFFSET = -Math.toRadians(329.6777);
+        public static final double STEER_OFFSET =
+            IS_COMP_BOT
+                ? -Math.toRadians(20.9152 + 180.0) // comp bot offset
+                : -Math.toRadians(329.6777); // practice bot offset
       }
     }
   }
