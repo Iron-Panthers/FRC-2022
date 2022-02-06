@@ -18,7 +18,7 @@ public class RotateAngleDriveCommand extends CommandBase {
   private final DoubleSupplier translationYSupplier;
 
   private final int targetAngle;
-  private int cumTargetAngle;
+  private double cumTargetAngle;
   private boolean robotRelative = false;
 
   /** Creates a new RotateAngleDriveCommand. */
@@ -53,7 +53,6 @@ public class RotateAngleDriveCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    System.out.println("init " + targetAngle);
     cumTargetAngle = targetAngle;
     if (robotRelative) {
       cumTargetAngle += drivebaseSubsystem.getGyroscopeRotation().getDegrees();

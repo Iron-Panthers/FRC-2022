@@ -50,7 +50,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   private final PIDController rotController;
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
-  private int targetAngle = 0; // default target angle to zero
+  private double targetAngle = 0; // default target angle to zero
   private Pair<Double, Double> xyInput = new Pair<>(0d, 0d); // the x and y for using target angles
 
   /**
@@ -185,7 +185,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
     mode = Modes.DRIVE;
   }
 
-  public void driveAngle(Pair<Double, Double> xyInput, int targetAngle) {
+  public void driveAngle(Pair<Double, Double> xyInput, double targetAngle) {
     this.xyInput = xyInput;
     this.targetAngle = targetAngle;
     if (mode != Modes.DRIVE_ANGLE) rotController.reset();
