@@ -17,7 +17,8 @@ public class RotateAngleDriveCommand extends CommandBase {
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
 
-  private int targetAngle;
+  private final int targetAngle;
+  private int cumTargetAngle;
   private boolean robotRelative = false;
 
   /** Creates a new RotateAngleDriveCommand. */
@@ -52,8 +53,10 @@ public class RotateAngleDriveCommand extends CommandBase {
 
   @Override
   public void initialize() {
+    System.out.println("init " + targetAngle);
+    cumTargetAngle = targetAngle;
     if (robotRelative) {
-      targetAngle += drivebaseSubsystem.getGyroscopeRotation().getDegrees();
+      cumTargetAngle += drivebaseSubsystem.getGyroscopeRotation().getDegrees();
     }
   }
 
@@ -64,7 +67,7 @@ public class RotateAngleDriveCommand extends CommandBase {
     double y = translationYSupplier.getAsDouble();
 
     drivebaseSubsystem.driveAngle(
-        new Pair<Double, Double>(x, y), targetAngle // the desired angle, gyro relative
+        new Pair<Double, Double>(x, y), cumTargetAngle // the desired angle, gyro relative
         );
   }
 
@@ -76,7 +79,8 @@ public class RotateAngleDriveCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     return Util.epsilonZero(
-            Util.relativeAngularDifference(drivebaseSubsystem.getGyroscopeRotation(), targetAngle),
+            Util.relativeAngularDifference(
+                drivebaseSubsystem.getGyroscopeRotation(), cumTargetAngle),
             Drive.ANGULAR_ERROR)
         && Util.epsilonEquals(drivebaseSubsystem.getRotVelocity(), 0, 10);
   }
