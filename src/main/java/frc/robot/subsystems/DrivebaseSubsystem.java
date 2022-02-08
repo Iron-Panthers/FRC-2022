@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.util.Util;
 
@@ -131,7 +130,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
     rotController = new PIDController(.0175, 0, 0.0015);
     rotController.setSetpoint(0);
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
-    Shuffleboard.getTab("Drivebase").add(rotController);
+    // tune pid with:
+    // Shuffleboard.getTab("Drivebase").add(rotController);
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -148,9 +148,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
     double angle = 360d - navx.getYaw();
 
     angle %= 360;
-    SmartDashboard.putNumber("mod angle", angle);
-    SmartDashboard.putNumber(
-        "stale angular diff", Util.relativeAngularDifference(angle, targetAngle));
 
     // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
     // the angle increase.
@@ -167,7 +164,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
     rotVelocity = (angle - lastAngle) / (time - lastTime);
     lastTime = time;
     lastAngle = angle;
-    SmartDashboard.putNumber("rot vel", rotVelocity);
   }
 
   public double getRotVelocity() {
@@ -232,12 +228,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     // this value makes our unit-less [-1, 1] into [-max angular, max angular]
     double omegaRadiansPerSecond = rotationValue * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-
-    SmartDashboard.putNumber("target angle", targetAngle);
-    SmartDashboard.putNumber("robot angle", getGyroscopeRotation().getDegrees());
-    SmartDashboard.putNumber("angular difference", angularDifference);
-    SmartDashboard.putNumber("rotation value", rotationValue);
-    SmartDashboard.putNumber("omega", omegaRadiansPerSecond);
 
     // initialize chassis speeds but add our desired angle
     chassisSpeeds =
