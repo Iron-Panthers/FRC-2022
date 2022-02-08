@@ -21,8 +21,8 @@ public class UtilTests {
 
   @UtilTest
   public void relativeAngularDifferenceZerosOnEquivalent() {
-    assertEquals(0, Util.relativeAngularDifference(100, 100));
-    assertEquals(0, Util.relativeAngularDifference(0, 360 * 2));
+    assertEquals(0, Util.relativeAngularDifference(100, 100), 1e-9);
+    assertEquals(0, Util.relativeAngularDifference(0, 360 * 2), 1e-9);
   }
 
   @UtilTest
