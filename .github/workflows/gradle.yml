@@ -1,6 +1,12 @@
 name: Builds 🔨
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "feat/*"
 
 jobs:
   build:
