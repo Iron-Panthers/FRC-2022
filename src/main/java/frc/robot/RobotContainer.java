@@ -6,7 +6,6 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
-import com.ironpanthers.lib.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,6 +24,7 @@ import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.MacUtil;
 import frc.util.Util;
+import java.util.List;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
