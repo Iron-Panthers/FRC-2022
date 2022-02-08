@@ -76,7 +76,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     TrajectoryConfig config =
-        new TrajectoryConfig(4, 2)
+        new TrajectoryConfig(1, 0.5)
             // Add kinematics to ensure max speed is actually obeyed
             .setKinematics(drivebaseSubsystem.getKinematics());
 
