@@ -9,16 +9,21 @@ import static frc.robot.Constants.Drive.*;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.util.Util;
 
 public class DrivebaseSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics kinematics =
@@ -41,7 +46,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   private final SwerveModule[] swerveModules;
 
+  private final PIDController rotController;
+
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
+  private double targetAngle = 0; // default target angle to zero
+  private Pair<Double, Double> xyInput = new Pair<>(0d, 0d); // the x and y for using target angles
 
   /**
    * initialize a falcon with a shuffleboard tab, and mk4 default gear ratio
@@ -70,6 +79,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** The modes of the drivebase subsystem */
   public enum Modes {
     DRIVE,
+    DRIVE_ANGLE,
     DEFENSE,
   }
 
@@ -116,6 +126,12 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
+
+    rotController = new PIDController(.0175, 0, 0.0015);
+    rotController.setSetpoint(0);
+    rotController.setTolerance(ANGULAR_ERROR); // degrees error
+    // tune pid with:
+    // Shuffleboard.getTab("Drivebase").add(rotController);
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -129,9 +145,29 @@ public class DrivebaseSubsystem extends SubsystemBase {
       return Rotation2d.fromDegrees(navx.getFusedHeading());
     }
 
+    double angle = 360d - navx.getYaw();
+
+    angle %= 360;
+
     // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
     // the angle increase.
-    return Rotation2d.fromDegrees(360.0 - navx.getYaw());
+    return Rotation2d.fromDegrees(angle);
+  }
+
+  private double lastAngle = 0;
+  private double lastTime = 0;
+  private double rotVelocity = 0;
+
+  private void updateRotVelocity() {
+    double time = Timer.getFPGATimestamp();
+    double angle = getGyroscopeRotation().getDegrees();
+    rotVelocity = (angle - lastAngle) / (time - lastTime);
+    lastTime = time;
+    lastAngle = angle;
+  }
+
+  public double getRotVelocity() {
+    return rotVelocity;
   }
 
   /**
@@ -141,7 +177,15 @@ public class DrivebaseSubsystem extends SubsystemBase {
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
     this.chassisSpeeds = chassisSpeeds;
+
     mode = Modes.DRIVE;
+  }
+
+  public void driveAngle(Pair<Double, Double> xyInput, double targetAngle) {
+    this.xyInput = xyInput;
+    this.targetAngle = targetAngle;
+    if (mode != Modes.DRIVE_ANGLE) rotController.reset();
+    mode = Modes.DRIVE_ANGLE;
   }
 
   /**
@@ -174,6 +218,26 @@ public class DrivebaseSubsystem extends SubsystemBase {
     }
   }
 
+  // called in drive to angle mode
+  private void driveAnglePeriodic() {
+    double angularDifference = Util.relativeAngularDifference(getGyroscopeRotation(), targetAngle);
+    double rotationValue = rotController.calculate(angularDifference);
+
+    // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
+    rotationValue = MathUtil.clamp(rotationValue, -1, 1);
+
+    // this value makes our unit-less [-1, 1] into [-max angular, max angular]
+    double omegaRadiansPerSecond = rotationValue * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+
+    // initialize chassis speeds but add our desired angle
+    chassisSpeeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xyInput.getFirst(), xyInput.getSecond(), omegaRadiansPerSecond, getGyroscopeRotation());
+
+    // use the existing drive periodic logic to assign to motors ect
+    drivePeriodic();
+  }
+
   // called in defense mode
   private void defensePeriodic() {
     // we want alternating pos and negative 45 degree angles
@@ -187,9 +251,13 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    updateRotVelocity();
     switch (mode) {
       case DRIVE:
         drivePeriodic();
+        break;
+      case DRIVE_ANGLE:
+        driveAnglePeriodic();
         break;
       case DEFENSE:
         defensePeriodic();

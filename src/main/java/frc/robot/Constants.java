@@ -21,7 +21,7 @@ public final class Constants {
   public static final class Drive {
     // max voltage delivered to drivebase
     // supposedly useful to limit speed for testing
-    public static final double MAX_VOLTAGE = 8.0;
+    public static final double MAX_VOLTAGE = 12.0;
     // maximum velocity
     // FIXME measure this value experimentally
     public static final double MAX_VELOCITY_METERS_PER_SECOND =
@@ -35,6 +35,8 @@ public final class Constants {
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND =
         MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0);
+
+    public static final double ANGULAR_ERROR = 1.0;
 
     public static final class Dims {
       // FIXME validate with hardware
