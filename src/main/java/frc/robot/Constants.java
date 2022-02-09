@@ -93,8 +93,8 @@ public final class Constants {
   }
 
   public static final class Intake {
-    public static final int LOWER_ROLLER_MOTOR = 0; // fixme
-    public static final int UPPER_ROLLER_MOTOR = 0; // fixme
+    public static final int LOWER_MOTOR = 0; // fixme
+    public static final int UPPER_MOTOR = 0; // fixme
     public static final int IDLER_MOTOR = 0; // fixme
   }
 }
