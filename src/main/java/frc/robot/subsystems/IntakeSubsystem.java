@@ -17,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private TalonFX lowerMotor;
   /** follows lower motor, only address lower motor */
   private TalonFX upperMotor;
-  /** the idiler motor, aligns balls and allows rejections */
+  /** the idler motor, aligns balls and allows rejections */
   private TalonFX idlerMotor;
 
   /** Creates a new IntakeSubsystem. */
