@@ -67,7 +67,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void intakeModePeriodic() {
     idlingModePeriodic();
-    lowerMotor.set(TalonFXControlMode.PercentOutput, 0);
+    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
+  }
+
+  private void outtakeModePeriodic() {
+    idlingModePeriodic();
+    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
   }
 
   @Override
@@ -79,6 +84,12 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case IDLING:
         idlingModePeriodic();
+        break;
+      case INTAKE:
+        intakeModePeriodic();
+        break;
+      case OUTTAKE:
+        outtakeModePeriodic();
         break;
     }
   }
