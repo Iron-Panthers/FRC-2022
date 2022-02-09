@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.Intake;
+import static frc.robot.Constants.Intake.Ports;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -21,9 +22,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    lowerMotor = new TalonFX(Intake.LOWER_MOTOR);
-    upperMotor = new TalonFX(Intake.UPPER_MOTOR);
-    idlerMotor = new TalonFX(Intake.IDLER_MOTOR);
+    lowerMotor = new TalonFX(Ports.LOWER_MOTOR);
+    upperMotor = new TalonFX(Ports.UPPER_MOTOR);
+    idlerMotor = new TalonFX(Ports.IDLER_MOTOR);
     upperMotor.follow(lowerMotor);
   }
 
@@ -60,12 +61,24 @@ public class IntakeSubsystem extends SubsystemBase {
     stopMotor(idlerMotor);
   }
 
+  private void idlingModePeriodic() {
+    idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
+  }
+
+  private void intakeModePeriodic() {
+    idlingModePeriodic();
+    lowerMotor.set(TalonFXControlMode.PercentOutput, 0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     switch (mode) {
       case OFF:
         offModePeriodic();
+        break;
+      case IDLING:
+        idlingModePeriodic();
         break;
     }
   }

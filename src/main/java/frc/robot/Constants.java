@@ -93,8 +93,15 @@ public final class Constants {
   }
 
   public static final class Intake {
-    public static final int LOWER_MOTOR = 0; // fixme
-    public static final int UPPER_MOTOR = 0; // fixme
-    public static final int IDLER_MOTOR = 0; // fixme
+    /** the percent to run the idler motor at in the idling state */
+    public static final double IDLER_PERCENT = .2;
+
+    public static final double INTAKE_PERCENT = .3;
+
+    public static final class Ports {
+      public static final int LOWER_MOTOR = 0; // fixme
+      public static final int UPPER_MOTOR = 0; // fixme
+      public static final int IDLER_MOTOR = 0; // fixme
+    }
   }
 }
