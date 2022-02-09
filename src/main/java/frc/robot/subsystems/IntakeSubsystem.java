@@ -22,6 +22,21 @@ public class IntakeSubsystem extends SubsystemBase {
     idlerMotor = new TalonFX(Intake.IDLER_MOTOR);
   }
 
+  public enum Modes {
+    OFF,
+    IDLING,
+    INTAKE,
+    OUTTAKE,
+    EJECT
+  }
+
+  private Modes mode = Modes.OFF;
+
+  /** Get the current state machine mode. */
+  public Modes getMode() {
+    return mode;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
