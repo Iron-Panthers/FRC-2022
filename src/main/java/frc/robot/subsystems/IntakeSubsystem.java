@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.Intake;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -50,12 +51,22 @@ public class IntakeSubsystem extends SubsystemBase {
     this.mode = mode;
   }
 
-  private void offModePeriodic() {}
+  private void stopMotor(TalonFX motor) {
+    motor.set(TalonFXControlMode.PercentOutput, 0);
+  }
+
+  private void offModePeriodic() {
+    stopMotor(lowerMotor);
+    stopMotor(idlerMotor);
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     switch (mode) {
+      case OFF:
+        offModePeriodic();
+        break;
     }
   }
 }
