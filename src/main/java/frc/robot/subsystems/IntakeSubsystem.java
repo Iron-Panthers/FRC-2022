@@ -75,6 +75,11 @@ public class IntakeSubsystem extends SubsystemBase {
     lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
   }
 
+  private void ejectModePeriodic() {
+    stopMotor(lowerMotor);
+    idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.EJECT_PERCENT);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -90,6 +95,9 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case OUTTAKE:
         outtakeModePeriodic();
+        break;
+      case EJECT:
+        ejectModePeriodic();
         break;
     }
   }
