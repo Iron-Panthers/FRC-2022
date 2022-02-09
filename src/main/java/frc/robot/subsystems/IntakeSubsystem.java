@@ -11,8 +11,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
 
+  /** the lower motor, upper motor follows this one - address this motor */
   private TalonFX lowerMotor;
+  /** follows lower motor, only address lower motor */
   private TalonFX upperMotor;
+  /** the idiler motor, aligns balls and allows rejections */
   private TalonFX idlerMotor;
 
   /** Creates a new IntakeSubsystem. */
@@ -20,6 +23,7 @@ public class IntakeSubsystem extends SubsystemBase {
     lowerMotor = new TalonFX(Intake.LOWER_MOTOR);
     upperMotor = new TalonFX(Intake.UPPER_MOTOR);
     idlerMotor = new TalonFX(Intake.IDLER_MOTOR);
+    upperMotor.follow(lowerMotor);
   }
 
   public enum Modes {
@@ -37,8 +41,21 @@ public class IntakeSubsystem extends SubsystemBase {
     return mode;
   }
 
+  /**
+   * Sets the current state machine mode
+   *
+   * <p>fixme: this should have checks, but currently doesn't
+   */
+  public void setMode(Modes mode) {
+    this.mode = mode;
+  }
+
+  private void offModePeriodic() {}
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    switch (mode) {
+    }
   }
 }
