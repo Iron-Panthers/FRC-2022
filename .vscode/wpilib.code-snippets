@@ -36,4 +36,11 @@
 			"this.$1 = $1;$0"
 		]
 	},
+	"TalonFX percent power": {
+		"scope": "java",
+		"prefix": "fxper",
+		"body": [
+			"$1.set(TalonFXControlMode.PercentOutput, $2);$0"
+		]
+	},
 }

@@ -86,6 +86,7 @@ Code snippets are a vscode feature to allow easy typing of repetitive things. If
 | ``block`` | ``public static final class name {}`` |
 | ``const`` | ``public static final type name = val;`` |
 | ``thisprop`` | ``this.name = name;`` |
+| ``fxper`` | ``motor.set(TalonFXControlMode.PercentOutput, percent);`` |
 
 ### Collaborating on Code
 
