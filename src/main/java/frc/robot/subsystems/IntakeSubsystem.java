@@ -44,6 +44,30 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
+   * Puts the subsystem state machine into the next mode. Some modes, like idling, are resting
+   * points, from which there are not "next" modes. For other modes, like intake, idling is the
+   * logical progression, and "next" mode
+   */
+  public void nextMode() {
+    switch (mode) {
+      case IDLING:
+      case OFF:
+        // these modes are resting points, and do not have a next mode until user input is provided
+        break;
+      case INTAKE:
+        // after intake, we should run the idling motor to align balls for shooting and outtake
+        setMode(Modes.IDLING);
+        break;
+      case EJECT:
+      case OUTTAKE:
+        // after ejection and outtake, we should stop all motors, because there shouldn't still be
+        // balls in the intake
+        setMode(Modes.OFF);
+        break;
+    }
+  }
+
+  /**
    * Sets the current state machine mode
    *
    * <p>fixme: this should have checks, but currently doesn't
