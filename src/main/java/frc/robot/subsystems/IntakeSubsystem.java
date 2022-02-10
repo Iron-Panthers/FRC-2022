@@ -28,6 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
     upperMotor.follow(lowerMotor);
   }
 
+  /** the different modes the intake subsystem state machine can be in */
   public enum Modes {
     OFF,
     IDLING,
@@ -36,6 +37,7 @@ public class IntakeSubsystem extends SubsystemBase {
     EJECT
   }
 
+  /** the current mode of the subsystem */
   private Modes mode = Modes.OFF;
 
   /** Get the current state machine mode. */
