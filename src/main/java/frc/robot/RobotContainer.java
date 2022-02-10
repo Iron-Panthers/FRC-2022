@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -70,7 +69,6 @@ public class RobotContainer {
 
     new Button(nick::getAButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
     new Button(nick::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
-    new Button(will::getAButton).whenPressed(new PrintCommand("will a button"));
   }
 
   /**
@@ -112,9 +110,5 @@ public class RobotContainer {
     value = Math.copySign(value * value, value);
 
     return value;
-  }
-
-  protected DrivebaseSubsystem getDrivebaseSubsystem() {
-    return drivebaseSubsystem;
   }
 }

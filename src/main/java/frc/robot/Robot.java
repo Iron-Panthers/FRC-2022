@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
-  private RobotContainer robotContainer = new RobotContainer();
+  private RobotContainer robotContainer;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -25,7 +25,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // Noop
+    robotContainer = new RobotContainer();
   }
 
   /**
