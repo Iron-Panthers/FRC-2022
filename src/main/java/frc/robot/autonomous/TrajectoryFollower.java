@@ -4,24 +4,19 @@
 
 package frc.robot.autonomous;
 
-import com.google.errorprone.annotations.concurrent.GuardedBy;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import java.util.Optional;
 
 /** Follower for trajectory of type T */
 public abstract class TrajectoryFollower<T> {
-  private final Object trajectoryLock = new Object();
-
   /** The trajectory that is currently being followed. null if no trajectory is being followed. */
-  @GuardedBy("trajectoryLock")
   private Trajectory currentTrajectory = null;
 
   /**
    * The time that the current trajectory started to be followed. NaN if the trajectory has not been
    * started yet.
    */
-  @GuardedBy("trajectoryLock")
   private double startTime = Double.NaN;
 
   /**
@@ -47,23 +42,17 @@ public abstract class TrajectoryFollower<T> {
   protected abstract void reset();
 
   public final void cancel() {
-    synchronized (trajectoryLock) {
-      currentTrajectory = null;
-    }
+    currentTrajectory = null;
   }
 
   public final void follow(Trajectory trajectory) {
-    synchronized (trajectoryLock) {
-      currentTrajectory = trajectory;
-      startTime = Double.NaN;
-    }
+    currentTrajectory = trajectory;
+    startTime = Double.NaN;
   }
 
   /** Gets the current trajectory that is being followed, if applicable. */
   public final Optional<Trajectory> getCurrentTrajectory() {
-    synchronized (trajectoryLock) {
-      return Optional.ofNullable(currentTrajectory);
-    }
+    return Optional.ofNullable(currentTrajectory);
   }
 
   /**
@@ -77,22 +66,21 @@ public abstract class TrajectoryFollower<T> {
   public final Optional<T> update(Pose2d currentPose, double time, double dt) {
     Trajectory trajectory;
     double timeSinceStart;
-    synchronized (trajectoryLock) {
-      // Return empty if no trajectory is being followed
-      if (currentTrajectory == null) {
-        return Optional.empty();
-      }
-      // If the trajectory has not been started, update the start time and reset the follower state
-      if (Double.isNaN(startTime)) {
-        startTime = time;
-        reset();
-      } else if (isFinished()) {
-        currentTrajectory = null;
-        return Optional.empty();
-      }
-      trajectory = currentTrajectory;
-      timeSinceStart = time - startTime;
+    // Return empty if no trajectory is being followed
+    if (currentTrajectory == null) {
+      return Optional.empty();
     }
+    // If the trajectory has not been started, update the start time and reset the follower state
+    if (Double.isNaN(startTime)) {
+      startTime = time;
+      reset();
+    } else if (isFinished()) {
+      currentTrajectory = null;
+      return Optional.empty();
+    }
+    trajectory = currentTrajectory;
+    timeSinceStart = time - startTime;
+
     T speeds = calculateDriveSignal(currentPose, trajectory, timeSinceStart, dt);
     return Optional.of(speeds);
   }
