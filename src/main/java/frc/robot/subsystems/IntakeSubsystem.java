@@ -52,6 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
     this.mode = mode;
   }
 
+  /** periodic helper method, easy way to turn a motor off, by setting to 0 percent output */
   private void stopMotor(TalonFX motor) {
     motor.set(TalonFXControlMode.PercentOutput, 0);
   }
