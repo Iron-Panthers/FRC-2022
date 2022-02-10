@@ -44,7 +44,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
-   * Puts the subsystem state machine into the next mode. Some modes, like idling, are resting
+   * This command should only be called once, after a given mode is finished, or prematurely stopped
+   *
+   * <p>Puts the subsystem state machine into the next mode. Some modes, like idling, are resting
    * points, from which there are not "next" modes. For other modes, like intake, idling is the
    * logical progression, and "next" mode
    */
