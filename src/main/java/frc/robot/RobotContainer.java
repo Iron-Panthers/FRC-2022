@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -21,6 +22,7 @@ import frc.util.ControllerUtil;
 import frc.util.Layer;
 import frc.util.MacUtil;
 import java.util.function.DoubleSupplier;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 
 /**
@@ -100,6 +102,24 @@ public class RobotContainer {
 
     new Button(nick::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
+    /**
+     * this curried start end command calls setMode with the passed mode, then calls next mode when
+     * the command is stopped
+     */
+    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
+        mode ->
+            new StartEndCommand(
+                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
+
+    // intake balls
+    new Button(will::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    // eject unwanted balls
+    new Button(will::getBButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT));
+    // shoot balls
+    new Button(will::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    // stop everything
+    new Button(will::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
   }
 
   /**
