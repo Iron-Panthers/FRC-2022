@@ -4,46 +4,39 @@
 
 package frc.util;
 
-/** Add your docs here. */
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class Util {
   private Util() {}
-
-  private static double kEpsilon = 1e-5;
 
   public static boolean epsilonEquals(double a, double b, double epsilon) {
     return (a - epsilon <= b) && (a + epsilon >= b);
   }
 
-  public static boolean epsilonEquals(int a, int b, int epsilon) {
-    return (a - epsilon <= b) && (a + epsilon >= b);
-  }
-
-  public static boolean epsilonEquals(double a, double b) {
-    return epsilonEquals(a, b, kEpsilon);
-  }
-
-  public static boolean epsilonEquals(int a, int b) {
-    return epsilonEquals(a, b, kEpsilon);
+  public static boolean epsilonZero(double a, double epsilon) {
+    return epsilonEquals(a, 0, epsilon);
   }
 
   /**
-   * Scales radial deadband
+   * This function finds the degree difference between angles, the shortest path. useful for pid
+   * control of drivebase rotation
    *
-   * <p>The deadband value is set to be the new zero
-   *
-   * @param value the raw value
-   * @param deadband the deadband range
-   * @return the value with radial deadband applied
+   * @param currentAngle Current Angle Degrees
+   * @param newAngle Target Angle Degrees
+   * @return Shortest angular difference in degrees
    */
-  public static double deadband(double value, double deadband) {
-    if (Math.abs(value) > deadband) {
-      if (value > 0.0) {
-        return (value - deadband) / (1.0 - deadband);
-      } else {
-        return (value + deadband) / (1.0 - deadband);
-      }
-    } else {
-      return 0.0;
-    }
+  public static double relativeAngularDifference(double currentAngle, double newAngle) {
+    currentAngle %= 360;
+    newAngle %= 360;
+    double difference1 = Math.abs(currentAngle - newAngle);
+    double difference2 = Math.abs(360 - difference1);
+    double difference = difference1 < difference2 ? difference1 : difference2;
+
+    if ((currentAngle + difference) % 360 == newAngle) return difference * -1;
+    return difference;
+  }
+
+  public static double relativeAngularDifference(Rotation2d currentAngle, double newAngle) {
+    return relativeAngularDifference(currentAngle.getDegrees(), newAngle);
   }
 }

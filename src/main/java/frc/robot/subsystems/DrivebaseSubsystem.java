@@ -9,6 +9,8 @@ import static frc.robot.Constants.Drive.*;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
+import frc.util.Util;
 import java.util.Optional;
 
 public class DrivebaseSubsystem extends SubsystemBase {
@@ -79,23 +81,23 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** The current ChassisSpeeds goal for the drivetrain */
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
 
-  /** The mode of the drivebase subsystem */
+  /** The modes of the drivebase subsystem */
   public enum Modes {
-    DRIVE, // For autonomous operation, the DRIVE mode is used -- no need to create another
+    DRIVE,
+    DRIVE_ANGLE,
     DEFENSE,
   }
 
   /** The current mode */
   private Modes mode = Modes.DRIVE;
 
-  /* Logging values */
-  private final NetworkTableEntry odometryXEntry;
-  private final NetworkTableEntry odometryYEntry;
-  private final NetworkTableEntry odometryAngleEntry;
-
   /** Contains each swerve module. Order: FR, FL, BL, BR. Or in Quadrants: I, II, III, IV */
   private final SwerveModule[] swerveModules;
 
+  private final PIDController rotController;
+
+  private double targetAngle = 0; // default target angle to zero
+  private Pair<Double, Double> xyInput = new Pair<>(0d, 0d); // the x and y for using target angles
   /**
    * The Shuffleboard tab which all things related to the drivebase can be put for easy access and
    * organization
@@ -125,25 +127,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
         steer,
         encoder,
         offset);
-  }
-
-  /**
-   * Helper to add an entry easily to the drivebase subsystem Shuffleboard.
-   *
-   * <p>If you want to use similar logic in another class, please rewrite -- this will always write
-   * values to the "Drivebase" ShuffleboardTab, which is not desirable behavior for anything that
-   * isn't physically or logically a part of the drivebase.
-   *
-   * <p>Another note -- you may wish to attach an anonymous "lambda" function instead (which avoids
-   * the need to use a NetworkTableEntry handle). I'll add this documentation later because I am
-   * lazy.
-   *
-   * @param label The label for the NetworkTableEntry.
-   * @param row The row to place the value in (needed so that widgets do not overlap)
-   * @return The NetworkTableEntry handle which can be updated to affect the underlying value.
-   */
-  private NetworkTableEntry createEntry(String label, int row) {
-    return tab.add(label, 0.0).withPosition(0, row).withSize(1, 1).getEntry();
   }
 
   /** Creates a new DrivebaseSubsystem. */
@@ -187,20 +170,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    odometryXEntry = createEntry("X", 0);
-    odometryYEntry = createEntry("Y", 1);
-    odometryAngleEntry = createEntry("Angle", 2);
-
-    // This is an example of how you can use a lambda instead of the NetworkTableEntry method
-    tab.addNumber(
-        "Rotation Speed rad/s",
-        () -> {
-          ChassisSpeeds speeds;
-          speeds = this.chassisSpeeds;
-          if (speeds == null) return 0.0;
-
-          return speeds.omegaRadiansPerSecond;
-        });
+    rotController = new PIDController(.0175, 0, 0.0015);
+    rotController.setSetpoint(0);
+    rotController.setTolerance(ANGULAR_ERROR); // degrees error
+    // tune pid with:
+    // Shuffleboard.getTab("Drivebase").add(rotController);
   }
 
   /** Return the current pose estimation of the robot */
@@ -211,16 +185,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** Return the kinematics object, for constructing a trajectory */
   public SwerveDriveKinematics getKinematics() {
     return kinematics;
-  }
-
-  /**
-   * Tells the subsystem to drive, and puts the state machine in drive mode
-   *
-   * @param chassisSpeeds the speed of the chassis desired
-   */
-  public void drive(ChassisSpeeds chassisSpeeds) {
-    this.mode = Modes.DRIVE;
-    this.chassisSpeeds = chassisSpeeds;
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -234,9 +198,13 @@ public class DrivebaseSubsystem extends SubsystemBase {
       return Rotation2d.fromDegrees(navx.getFusedHeading());
     }
 
+    double angle = 360d - navx.getYaw();
+
+    angle %= 360;
+
     // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
     // the angle increase.
-    return Rotation2d.fromDegrees(360.0 - navx.getYaw());
+    return Rotation2d.fromDegrees(angle);
   }
 
   private void updateOdometry(double time) {
@@ -250,6 +218,39 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     final Rotation2d angle = getGyroscopeRotation();
     this.robotPose = swerveOdometry.updateWithTime(time, angle, moduleStates);
+  }
+
+  private double lastAngle = 0;
+  private double lastTime = 0;
+  private double rotVelocity = 0;
+
+  private void updateRotVelocity() {
+    double time = Timer.getFPGATimestamp();
+    double angle = getGyroscopeRotation().getDegrees();
+    rotVelocity = (angle - lastAngle) / (time - lastTime);
+    lastTime = time;
+    lastAngle = angle;
+  }
+
+  public double getRotVelocity() {
+    return rotVelocity;
+  }
+
+  /**
+   * Tells the subsystem to drive, and puts the state machine in drive mode
+   *
+   * @param chassisSpeeds the speed of the chassis desired
+   */
+  public void drive(ChassisSpeeds chassisSpeeds) {
+    this.mode = Modes.DRIVE;
+    this.chassisSpeeds = chassisSpeeds;
+  }
+
+  public void driveAngle(Pair<Double, Double> xyInput, double targetAngle) {
+    this.xyInput = xyInput;
+    this.targetAngle = targetAngle;
+    if (mode != Modes.DRIVE_ANGLE) rotController.reset();
+    mode = Modes.DRIVE_ANGLE;
   }
 
   /**
@@ -281,6 +282,26 @@ public class DrivebaseSubsystem extends SubsystemBase {
     }
   }
 
+  // called in drive to angle mode
+  private void driveAnglePeriodic() {
+    double angularDifference = Util.relativeAngularDifference(getGyroscopeRotation(), targetAngle);
+    double rotationValue = rotController.calculate(angularDifference);
+
+    // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
+    rotationValue = MathUtil.clamp(rotationValue, -1, 1);
+
+    // this value makes our unit-less [-1, 1] into [-max angular, max angular]
+    double omegaRadiansPerSecond = rotationValue * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+
+    // initialize chassis speeds but add our desired angle
+    chassisSpeeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xyInput.getFirst(), xyInput.getSecond(), omegaRadiansPerSecond, getGyroscopeRotation());
+
+    // use the existing drive periodic logic to assign to motors ect
+    drivePeriodic();
+  }
+
   @SuppressWarnings("java:S1121")
   private void defensePeriodic() {
     int angle = 45;
@@ -298,9 +319,13 @@ public class DrivebaseSubsystem extends SubsystemBase {
    * @param mode The mode to use (should use the current mode value)
    */
   public void updateModules(Modes mode) {
+    updateRotVelocity();
     switch (mode) {
       case DRIVE:
         drivePeriodic();
+        break;
+      case DRIVE_ANGLE:
+        driveAnglePeriodic();
         break;
       case DEFENSE:
         defensePeriodic();
@@ -338,10 +363,5 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     /* Write outputs, corresponding to our current Mode of operation */
     updateModules(currentMode);
-
-    /* Update logging values on Shuffleboard widgets */
-    odometryXEntry.setDouble(pose.getX());
-    odometryYEntry.setDouble(pose.getY());
-    odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
   }
 }

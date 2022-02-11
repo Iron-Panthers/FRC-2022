@@ -20,10 +20,15 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
+import frc.robot.commands.HaltDriveCommandsCommand;
+import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.util.ControllerUtil;
+import frc.util.Layer;
 import frc.util.MacUtil;
-import frc.util.Util;
 import java.util.List;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntFunction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -67,8 +72,40 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Button(nick::getAButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
+    new Button(nick::getStartButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
     new Button(nick::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
+    // these are flipped because the joystick is the opposite of intuition yay
+    DoubleSupplier translationXSupplier =
+        () -> (-modifyAxis(nick.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+    DoubleSupplier translationYSupplier =
+        () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+
+    IntFunction<RotateAngleDriveCommand> rotCommand =
+        angle ->
+            new RotateAngleDriveCommand(
+                drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
+
+    IntFunction<RotateAngleDriveCommand> relRotCommand =
+        angle ->
+            RotateAngleDriveCommand.fromRobotRelative(
+                drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
+
+    Layer rightBumper = new Layer(nick::getRightBumper);
+
+    // when the bumper is not held, field relative rotation
+    rightBumper.off(nick::getYButton).whenPressed(rotCommand.apply(0));
+    rightBumper.off(nick::getBButton).whenPressed(rotCommand.apply(270));
+    rightBumper.off(nick::getAButton).whenPressed(rotCommand.apply(180));
+    rightBumper.off(nick::getXButton).whenPressed(rotCommand.apply(90));
+
+    // otherwise, rotate robot
+    rightBumper.on(nick::getYButton).whenPressed(relRotCommand.apply(180)); // flip left
+    rightBumper.on(nick::getBButton).whenPressed(relRotCommand.apply(-90));
+    rightBumper.on(nick::getAButton).whenPressed(relRotCommand.apply(-180)); // flip right
+    rightBumper.on(nick::getXButton).whenPressed(relRotCommand.apply(90));
+
+    new Button(nick::getLeftStickButton)
+        .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
   }
 
   /**
@@ -104,7 +141,7 @@ public class RobotContainer {
    */
   private static double modifyAxis(double value) {
     // Deadband
-    value = Util.deadband(value, 0.2);
+    value = ControllerUtil.deadband(value, 0.07);
 
     // Square the axis
     value = Math.copySign(value * value, value);
