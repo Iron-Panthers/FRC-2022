@@ -10,6 +10,7 @@ import static frc.robot.Constants.Intake.Ports;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.IntFunction;
 
 public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
@@ -20,11 +21,23 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   /** the idler motor, aligns balls and allows rejections */
   private TalonFX idlerMotor;
 
-  /** Creates a new IntakeSubsystem. */
+  /** Creates a new IntakeSubsystem. This is the only constructor that should be called. */
   public IntakeSubsystem() {
-    lowerMotor = new TalonFX(Ports.LOWER_MOTOR);
-    upperMotor = new TalonFX(Ports.UPPER_MOTOR);
-    idlerMotor = new TalonFX(Ports.IDLER_MOTOR);
+    this(TalonFX::new);
+  }
+
+  /**
+   * do not use this constructor outside of unit tests. it should only be called from the no
+   * parameter constructed, and inside unit tests.
+   *
+   * <p>this ungodly code serves to allow the talon fx constructor to be mocked.
+   *
+   * @param constructor the lambda that takes a port number and returns a constructed talon fx
+   */
+  protected IntakeSubsystem(IntFunction<TalonFX> constructor) {
+    lowerMotor = constructor.apply(Ports.LOWER_MOTOR);
+    upperMotor = constructor.apply(Ports.UPPER_MOTOR);
+    idlerMotor = constructor.apply(Ports.IDLER_MOTOR);
     upperMotor.follow(lowerMotor);
   }
 
