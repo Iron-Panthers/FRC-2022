@@ -8,9 +8,22 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import java.util.Optional;
 
-/** Follower for trajectory of type T */
+/**
+ * Follower for time-parametrized trajectories, providing output signals of type T.
+ *
+ * <p>"Output signals" means information that the relevant mechanism (in this case, the drivebase)
+ * can use in order to achieve their desired trajectory states during operation. For example, in the
+ * case of the SimpleSwerveTrajectoryFollower, these are of type ChassisSpeeds, which defines the
+ * translation and rotation speeds of the robot -- values which can then be used to write outputs to
+ * the drivebase and follow the driving path.
+ */
 public abstract class TrajectoryFollower<T> {
-  /** The trajectory that is currently being followed. null if no trajectory is being followed. */
+  /**
+   * The trajectory that is currently being followed. null if no trajectory is being followed.
+   *
+   * <p>If the value of currentTrajectory is null, your follower's #update method will return an
+   * empty Optional when called (corresponding to an undefined output).
+   */
   private Trajectory currentTrajectory = null;
 
   /**
@@ -39,12 +52,23 @@ public abstract class TrajectoryFollower<T> {
    */
   protected abstract boolean isFinished();
 
+  /**
+   * Resets the TrajectoryFollower for first run. This likely involves resetting integrators,
+   * controllers, or any other relevant tracking variables which should map 1:1 with each Trajectory
+   */
   protected abstract void reset();
 
+  /** Sets the current Trajectory to follow to null, stopping operation. */
   public final void cancel() {
     currentTrajectory = null;
   }
 
+  /**
+   * Sets the follower to follow a certain trajectory. This will reset the start time so you
+   * shouldn't call this while following a trajectory.
+   *
+   * @param trajectory The desired Trajectory to follow.
+   */
   public final void follow(Trajectory trajectory) {
     currentTrajectory = trajectory;
     startTime = Double.NaN;

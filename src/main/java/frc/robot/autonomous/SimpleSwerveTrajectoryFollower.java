@@ -10,7 +10,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 
-/** Implements a simple swerve trajectory follower, with a fixed robot heading */
+/**
+ * Implements a simple swerve trajectory follower, with a fixed robot heading.
+ *
+ * <p>See TrajectoryFollower class for more detailed documentation.
+ */
 public class SimpleSwerveTrajectoryFollower extends TrajectoryFollower<ChassisSpeeds> {
   private PIDController xController;
   private PIDController yController;
