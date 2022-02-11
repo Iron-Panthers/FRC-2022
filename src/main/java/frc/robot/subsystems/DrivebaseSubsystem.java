@@ -39,9 +39,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
               0,
               0,
               new TrapezoidProfile.Constraints(
-                  MAX_VELOCITY_METERS_PER_SECOND,
-                  0.5 * MAX_VELOCITY_METERS_PER_SECOND))); // FIXME: replace with empirical or
-  // smarter theoretical values
+                  MAX_VELOCITY_METERS_PER_SECOND, 0.5 * MAX_VELOCITY_METERS_PER_SECOND)));
+
+  // NOTE: I'm still not sure what's the way to profile this ^
+  // Not mission critical as it "technically" drives fine as of now; but I suspect this is a site
+  // for future improvements
 
   public SimpleSwerveTrajectoryFollower getFollower() {
     return follower;
@@ -65,10 +67,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
           // Back right
           new Translation2d(-Dims.TRACKWIDTH_METERS / 2.0, -Dims.WHEELBASE_METERS / 2.0));
 
-  /**
-   * The SwerveDriveOdometry class allows us to estimate our vehicle position over time using the
-   * power of :sparkles: math :sparkles:.
-   */
+  /** The SwerveDriveOdometry class allows us to estimate the robot's "pose" over time. */
   private final SwerveDriveOdometry swerveOdometry =
       new SwerveDriveOdometry(kinematics, navx.getRotation2d());
 
@@ -224,14 +223,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
     this.chassisSpeeds = chassisSpeeds;
   }
 
-  public void resetGyroAngle(Rotation2d angle) {
-    // FEATURE: make work for resetting to non-zero angles
-    navx.reset();
-  }
-
   /** Sets the gyro angle to zero, resetting the forward direction */
   public void zeroGyroscope() {
-    resetGyroAngle(Rotation2d.fromDegrees(0.0));
+    navx.reset();
   }
 
   public Rotation2d getGyroscopeRotation() {
@@ -254,9 +248,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
               module.getDriveVelocity(), Rotation2d.fromDegrees(module.getSteerAngle()));
     }
 
-    Rotation2d angle;
-    angle = getGyroscopeRotation();
-
+    final Rotation2d angle = getGyroscopeRotation();
     this.robotPose = swerveOdometry.updateWithTime(time, angle, moduleStates);
   }
 
@@ -300,9 +292,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
   }
 
   /**
-   * Based on the current Mode of the drivebase, write the relevant periodic method.
+   * Based on the current Mode of the drivebase, perform the mode-specific logic such as writing
+   * outputs (may vary per mode).
    *
-   * @param mode The desired mode to write (should call getMode)
+   * @param mode The mode to use (should use the current mode value)
    */
   public void updateModules(Modes mode) {
     switch (mode) {
