@@ -189,7 +189,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   /** Sets the gyro angle to zero, resetting the forward direction */
   public void zeroGyroscope() {
-    navx.reset();
+    navx.zeroYaw();
   }
 
   public Rotation2d getGyroscopeRotation() {
