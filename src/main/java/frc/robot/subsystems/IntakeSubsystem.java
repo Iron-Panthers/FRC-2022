@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   /** the lower motor, upper motor follows this one - address this motor */
   private TalonFX lowerMotor;
@@ -129,5 +129,13 @@ public class IntakeSubsystem extends SubsystemBase {
         ejectModePeriodic();
         break;
     }
+  }
+
+  @Override
+  public void close() {
+    // these error codes are ignored. this may be undesirable in the future.
+    lowerMotor.DestroyObject();
+    upperMotor.DestroyObject();
+    idlerMotor.DestroyObject();
   }
 }
