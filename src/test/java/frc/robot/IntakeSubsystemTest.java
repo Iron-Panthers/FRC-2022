@@ -7,10 +7,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.hal.HAL;
 import frc.RobotTest;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.util.TalonFXSimFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 public class IntakeSubsystemTest {
+  private TalonFXSimFactory simFactory;
 
   private IntakeSubsystem intakeSubsystem;
   private TalonFX lowerMotor;
