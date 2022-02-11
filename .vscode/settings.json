@@ -41,6 +41,7 @@
     "Deadband",
     "deadbanded",
     "drivebase",
+    "Mockito",
     "navx",
     "teleop",
     "teleoperated",
