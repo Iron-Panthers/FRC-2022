@@ -143,7 +143,8 @@ public class IntakeSubsystemTest {
         Arguments.of(Modes.IDLING, targetMotorPercents(0, Intake.IDLER_PERCENT)),
         Arguments.of(
             Modes.INTAKE, targetMotorPercents(Intake.INTAKE_PERCENT, Intake.IDLER_PERCENT)),
-        Arguments.of(Modes.OUTTAKE, targetMotorPercents(Intake.OUTTAKE_PERCENT, 0)),
+        Arguments.of(
+            Modes.OUTTAKE, targetMotorPercents(Intake.OUTTAKE_PERCENT, Intake.IDLER_PERCENT)),
         Arguments.of(Modes.EJECT, targetMotorPercents(0, Intake.EJECT_PERCENT)));
   }
 
