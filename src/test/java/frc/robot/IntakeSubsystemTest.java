@@ -66,7 +66,7 @@ public class IntakeSubsystemTest {
    * can ensure behavior is consistent
    */
   private void tick(int amount) {
-    while ((amount -= 1) >= 0) intakeSubsystem.periodic();
+    for (int i = 0; i < amount; i++) intakeSubsystem.periodic();
   }
 
   @AfterEach
