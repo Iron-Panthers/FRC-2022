@@ -153,7 +153,14 @@ public class IntakeSubsystemTest {
     intakeSubsystem.setMode(mode);
     tick();
     for (int i = 0; i < motorArray.length; i++) {
-      verify(motorArray[i]).set(TalonFXControlMode.PercentOutput, motorPercentArray[i]);
+      verify(
+              motorArray[i],
+              times(1)
+                  .description(
+                      String.format(
+                          "mode %s should have %s percent %s",
+                          mode, i == 0 ? "intake" : "idler", motorPercentArray[i])))
+          .set(TalonFXControlMode.PercentOutput, motorPercentArray[i]);
     }
   }
 }
