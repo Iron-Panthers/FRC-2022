@@ -97,6 +97,7 @@ test {
 
     testLogging {
         showStandardStreams = true;
+        exceptionFormat = 'full' // show expected and actual for failed tests
     }
 }
 
