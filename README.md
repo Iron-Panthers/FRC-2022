@@ -88,6 +88,7 @@ Code snippets are a vscode feature to allow easy typing of repetitive things. If
 | ``thisprop`` | ``this.name = name;`` |
 | ``fxper`` | ``motor.set(TalonFXControlMode.PercentOutput, percent);`` |
 | ``newsub`` | ``private final SubsystemClassPascalCase subsystemClassCamelCase = new SubsystemClass();`` |
+| ``vfxset`` | ``verify(motor).set(TalonFXControlMode.mode, value);`` |
 
 ### Collaborating on Code
 

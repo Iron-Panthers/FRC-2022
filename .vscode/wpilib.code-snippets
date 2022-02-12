@@ -50,4 +50,11 @@
 			"private final $1 $2 = new $1();$0"
 		]
 	},
+	"verify the setting of a talonfx power in a given control mode": {
+		"scope": "java",
+		"prefix": "vfxset",
+		"body": [
+			"verify($1).set(TalonFXControlMode.${2:PercentOutput}, $3);$0"
+		]
+	},
 }
