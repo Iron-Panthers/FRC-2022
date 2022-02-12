@@ -35,9 +35,17 @@ public class IntakeSubsystemTest {
   @Mock private TalonFX upperMotor;
   @Mock private TalonFX idlerMotor;
 
+  /**
+   * contains [lowerMotor, idlerMotor] but not upper motor because calls should not be made against
+   * upper motor - it is a follower
+   */
+  private TalonFX[] motorArray = new TalonFX[2];
+
   @BeforeEach
   public void setup() {
     closeable = MockitoAnnotations.openMocks(intakeSubsystem);
+    motorArray[0] = lowerMotor;
+    motorArray[1] = idlerMotor;
   }
 
   /**
@@ -115,5 +123,37 @@ public class IntakeSubsystemTest {
     intakeSubsystem.nextMode();
     assertSame(targetMode, intakeSubsystem.getMode());
     assertSame(targetMode, intakeSubsystem.getMode());
+  }
+
+  /**
+   * Initialize array of target motor percents
+   *
+   * @param lower lower motor target percent [0]
+   * @param upper upper motor target percent [1]
+   * @param idler idler motor target percent [2]
+   * @return 3 double array of the percents
+   */
+  private static double[] targetMotorPercents(double lower, double idler) {
+    return new double[] {lower, idler};
+  }
+
+  private static Stream<Arguments> modeMotorStatesProvider() {
+    return Stream.of(
+        Arguments.of(Modes.OFF, targetMotorPercents(0, 0)),
+        Arguments.of(Modes.IDLING, targetMotorPercents(0, Intake.IDLER_PERCENT)),
+        Arguments.of(
+            Modes.INTAKE, targetMotorPercents(Intake.INTAKE_PERCENT, Intake.IDLER_PERCENT)),
+        Arguments.of(Modes.OUTTAKE, targetMotorPercents(Intake.OUTTAKE_PERCENT, 0)),
+        Arguments.of(Modes.EJECT, targetMotorPercents(0, Intake.EJECT_PERCENT)));
+  }
+
+  @RobotParamTest
+  @MethodSource("modeMotorStatesProvider")
+  public void motorStatesMatchConstantsForMode(Modes mode, double[] motorPercentArray) {
+    intakeSubsystem.setMode(mode);
+    tick();
+    for (int i = 0; i < motorArray.length; i++) {
+      verify(motorArray[i]).set(TalonFXControlMode.PercentOutput, motorPercentArray[i]);
+    }
   }
 }
