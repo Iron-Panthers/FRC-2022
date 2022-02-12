@@ -116,7 +116,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   private void ejectModePeriodic() {
-    stopMotor(lowerMotor);
+    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
     idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.EJECT_PERCENT);
   }
 
