@@ -112,10 +112,8 @@ public class IntakeSubsystemTest {
   @MethodSource("nextModeProgressionProvider")
   public void nextModeSwitchesProperly(Modes fromMode, Modes targetMode) {
     intakeSubsystem.setMode(fromMode);
-    tick();
     intakeSubsystem.nextMode();
     assertSame(targetMode, intakeSubsystem.getMode());
-    tick();
     assertSame(targetMode, intakeSubsystem.getMode());
   }
 }
