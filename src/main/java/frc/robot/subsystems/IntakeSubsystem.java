@@ -85,13 +85,23 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     motor.set(TalonFXControlMode.PercentOutput, 0);
   }
 
-  private void offModePeriodic() {
+  /** periodic helper method to make intention more readable. Stops the intake motors */
+  private void stopIntake() {
     stopMotor(lowerMotor);
+  }
+
+  /** periodic helper method to make intention more readable. Stops the idler motor */
+  private void stopIdler() {
     stopMotor(idlerMotor);
   }
 
+  private void offModePeriodic() {
+    stopIdler();
+    stopIntake();
+  }
+
   private void idlingModePeriodic() {
-    stopMotor(lowerMotor);
+    stopIntake();
     idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
   }
 
@@ -101,7 +111,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   private void outtakeModePeriodic() {
-    idlingModePeriodic();
+    stopIdler();
     lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
   }
 
