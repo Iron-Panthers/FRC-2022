@@ -8,13 +8,17 @@ import static org.mockito.Mockito.verify;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import frc.RobotParamTest;
 import frc.RobotTest;
 import frc.robot.Constants.Intake;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -88,5 +92,22 @@ public class IntakeSubsystemTest {
     int calls = 3;
     tick(calls);
     verify(lowerMotor, times(calls)).set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
+  }
+
+  private static Stream<Arguments> nextModeProgressionProvider() {
+    return Stream.of(Arguments.of(Modes.OFF, Modes.OFF));
+  }
+
+  // these two annotations tell junit to call the test repeatedly with the stream of arguments from
+  // the above function, each as its own unit test
+  @RobotParamTest
+  @MethodSource("nextModeProgressionProvider")
+  public void nextModeSwitchesProperly(Modes fromMode, Modes targetMode) {
+    intakeSubsystem.setMode(fromMode);
+    tick();
+    intakeSubsystem.nextMode();
+    assertSame(targetMode, intakeSubsystem.getMode());
+    tick();
+    assertSame(targetMode, intakeSubsystem.getMode());
   }
 }
