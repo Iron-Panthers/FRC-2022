@@ -95,7 +95,15 @@ public class IntakeSubsystemTest {
   }
 
   private static Stream<Arguments> nextModeProgressionProvider() {
-    return Stream.of(Arguments.of(Modes.OFF, Modes.OFF));
+    return Stream.of(
+        // this set should stay the same
+        Arguments.of(Modes.OFF, Modes.OFF),
+        Arguments.of(Modes.IDLING, Modes.IDLING),
+        // this set should go off
+        Arguments.of(Modes.EJECT, Modes.OFF),
+        Arguments.of(Modes.OUTTAKE, Modes.OFF),
+        // after intake, mode should be idle to keep aligning balls
+        Arguments.of(Modes.INTAKE, Modes.IDLING));
   }
 
   // these two annotations tell junit to call the test repeatedly with the stream of arguments from
