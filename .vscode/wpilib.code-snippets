@@ -54,7 +54,7 @@
 		"scope": "java",
 		"prefix": "vfxset",
 		"body": [
-			"verify($1).set(TalonFXControlMode.${2:PercentOutput}, $3);$0"
+			"verify($1, ${2:times(1)}.description(String.format(\"$3\",$4))).set(TalonFXControlMode.${5:PercentOutput}, $6);$0"
 		]
 	},
 }
