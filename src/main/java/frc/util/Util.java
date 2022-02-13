@@ -40,4 +40,14 @@ public class Util {
     double angle = Math.atan2(y, x);
     return (angle * (180 / Math.PI) + 360) % 360;
   }
+
+  public static double angleSnap(double angle, double[] snaps) {
+    double closest = snaps[0];
+    for (double snap : snaps) {
+      if (Math.abs(angle - snap) < Math.abs(angle - closest)) {
+        closest = snap;
+      }
+    }
+    return closest;
+  }
 }
