@@ -33,8 +33,8 @@ public class RobotContainer {
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
-  private final XboxController nick = new XboxController(0);
-  private final XboxController will = new XboxController(1);
+  private final XboxController nick = new XboxController(1);
+  private final XboxController will = new XboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
