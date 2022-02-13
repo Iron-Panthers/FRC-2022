@@ -15,10 +15,12 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
+import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
 import frc.util.MacUtil;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 
 /**
@@ -70,6 +72,19 @@ public class RobotContainer {
 
     new Button(will::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
+    DoubleSupplier rotation =
+        () -> ControllerUtil.deadband(-will.getRightTriggerAxis() + will.getLeftTriggerAxis(), .1);
+    DoubleSupplier rotationVelocity =
+        () -> rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+
+    new Button(() -> rotation.getAsDouble() > 0)
+        .whenHeld(
+            new RotateVelocityDriveCommand(
+                drivebaseSubsystem,
+                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                rotationVelocity));
 
     /**
      * this curried start end command calls setMode with the passed mode, then calls next mode when
