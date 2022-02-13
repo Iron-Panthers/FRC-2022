@@ -50,9 +50,9 @@ public class RobotContainer {
     drivebaseSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
             drivebaseSubsystem,
-            () -> (-modifyAxis(nick.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(nick.getRightX()) * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+            () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+            () -> (-modifyAxis(will.getRightX()) * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
@@ -68,13 +68,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Button(nick::getStartButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
-    new Button(nick::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
+    new Button(will::getStartButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
+    new Button(will::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
     // these are flipped because the joystick is the opposite of intuition yay
     DoubleSupplier translationXSupplier =
-        () -> (-modifyAxis(nick.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+        () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
     DoubleSupplier translationYSupplier =
-        () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+        () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
 
     IntFunction<RotateAngleDriveCommand> rotCommand =
         angle ->
@@ -86,21 +86,21 @@ public class RobotContainer {
             RotateAngleDriveCommand.fromRobotRelative(
                 drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
 
-    Layer rightBumper = new Layer(nick::getRightBumper);
+    Layer rightBumper = new Layer(will::getRightBumper);
 
     // when the bumper is not held, field relative rotation
-    rightBumper.off(nick::getYButton).whenPressed(rotCommand.apply(0));
-    rightBumper.off(nick::getBButton).whenPressed(rotCommand.apply(270));
-    rightBumper.off(nick::getAButton).whenPressed(rotCommand.apply(180));
-    rightBumper.off(nick::getXButton).whenPressed(rotCommand.apply(90));
+    rightBumper.off(will::getYButton).whenPressed(rotCommand.apply(0));
+    rightBumper.off(will::getBButton).whenPressed(rotCommand.apply(270));
+    rightBumper.off(will::getAButton).whenPressed(rotCommand.apply(180));
+    rightBumper.off(will::getXButton).whenPressed(rotCommand.apply(90));
 
     // otherwise, rotate robot
-    rightBumper.on(nick::getYButton).whenPressed(relRotCommand.apply(180)); // flip left
-    rightBumper.on(nick::getBButton).whenPressed(relRotCommand.apply(-90));
-    rightBumper.on(nick::getAButton).whenPressed(relRotCommand.apply(-180)); // flip right
-    rightBumper.on(nick::getXButton).whenPressed(relRotCommand.apply(90));
+    rightBumper.on(will::getYButton).whenPressed(relRotCommand.apply(180)); // flip left
+    rightBumper.on(will::getBButton).whenPressed(relRotCommand.apply(-90));
+    rightBumper.on(will::getAButton).whenPressed(relRotCommand.apply(-180)); // flip right
+    rightBumper.on(will::getXButton).whenPressed(relRotCommand.apply(90));
 
-    new Button(nick::getLeftStickButton)
+    new Button(will::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
 
     /**
@@ -113,13 +113,13 @@ public class RobotContainer {
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
     // intake balls
-    new Button(will::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     // eject unwanted balls
-    new Button(will::getBButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT));
+    new Button(nick::getBButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT));
     // shoot balls
-    new Button(will::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    new Button(nick::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
     // stop everything
-    new Button(will::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
+    new Button(nick::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
   }
 
   /**
