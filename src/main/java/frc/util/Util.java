@@ -36,11 +36,25 @@ public class Util {
     return relativeAngularDifference(currentAngle.getDegrees(), newAngle);
   }
 
+  /**
+   * turn x and y of a vector to a [0, 360] angle
+   *
+   * @param x x value of vector
+   * @param y y value of vector
+   * @return [0, 360] mapped angle of vector
+   */
   public static double vectorToAngle(double x, double y) {
     double angle = Math.atan2(y, x);
     return (angle * (180 / Math.PI) + 360) % 360;
   }
 
+  /**
+   * snap an angle to the closest angle in an array of angles
+   *
+   * @param angle angle to be snapped
+   * @param snaps array of angles to snap to
+   * @return closest angle in snap array
+   */
   public static double angleSnap(double angle, double[] snaps) {
     double closest = snaps[0];
     for (double snap : snaps) {
