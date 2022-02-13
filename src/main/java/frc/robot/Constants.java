@@ -34,7 +34,8 @@ public final class Constants {
     // FIXME measure and validate experimentally
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND =
         MAX_VELOCITY_METERS_PER_SECOND
-            / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0);
+            / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0)
+            * .5;
 
     public static final double ANGULAR_ERROR = 1.0;
 
@@ -94,13 +95,13 @@ public final class Constants {
 
   public static final class Intake {
     /** the percent to run the idler motor at in the idling state */
-    public static final double IDLER_PERCENT = .5;
+    public static final double IDLER_PERCENT = 1;
     /** the percent to run the intake motors during the intake state */
-    public static final double INTAKE_PERCENT = -.5;
+    public static final double INTAKE_PERCENT = -.55;
     /** the percent to run the outtake motors during the outtake state */
-    public static final double OUTTAKE_PERCENT = .5;
+    public static final double OUTTAKE_PERCENT = .7;
     /** the percent to run the idler motor at in the ejection state */
-    public static final double EJECT_PERCENT = -.5;
+    public static final double EJECT_PERCENT = -.9;
 
     public static final class Ports {
       public static final int LOWER_MOTOR = 14;
