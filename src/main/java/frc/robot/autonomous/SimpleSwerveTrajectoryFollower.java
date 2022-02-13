@@ -16,14 +16,14 @@ import edu.wpi.first.math.trajectory.Trajectory;
  * <p>See TrajectoryFollower class for more detailed documentation.
  */
 public class SimpleSwerveTrajectoryFollower extends TrajectoryFollower<ChassisSpeeds> {
-  private PIDController xController;
-  private PIDController yController;
-  private ProfiledPIDController angleController;
+  private final PIDController xController;
+  private final PIDController yController;
+  private final ProfiledPIDController angleController;
 
   private Trajectory.State lastState = null;
   private boolean finished = false;
   /* Variable to track if calculateDriveSignal has run once yet */
-  protected boolean firstRun = false;
+  private boolean firstRun = false;
 
   public SimpleSwerveTrajectoryFollower(
       PIDController xController, PIDController yController, ProfiledPIDController angleController) {

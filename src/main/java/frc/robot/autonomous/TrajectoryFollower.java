@@ -80,6 +80,13 @@ public abstract class TrajectoryFollower<T> {
   }
 
   /**
+   * Gets the time at which the current trajectory was started; NaN if not started or no trajectory.
+   */
+  public final double getStartTime() {
+    return startTime;
+  }
+
+  /**
    * Gets the desired output for the robot at this time.
    *
    * @param currentPose the current pose of the robot
