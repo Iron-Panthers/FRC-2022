@@ -35,4 +35,12 @@ public class UtilTests {
     assertEquals(-90, Util.relativeAngularDifference(270, 360));
     assertEquals(-90, Util.relativeAngularDifference(270, 0));
   }
+
+  @UtilTest
+  public void vectorToAngleCorrect() {
+    assertEquals(0, Util.vectorToAngle(0, 0));
+    assertEquals(45, Util.vectorToAngle(1, 1));
+    assertEquals(270, Util.vectorToAngle(0, -5));
+    assertEquals(359, Util.vectorToAngle(1, -.015), .2);
+  }
 }

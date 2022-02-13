@@ -35,4 +35,9 @@ public class Util {
   public static double relativeAngularDifference(Rotation2d currentAngle, double newAngle) {
     return relativeAngularDifference(currentAngle.getDegrees(), newAngle);
   }
+
+  public static double vectorToAngle(double x, double y) {
+    double angle = Math.atan2(y, x);
+    return (angle * (180 / Math.PI) + 360) % 360;
+  }
 }
