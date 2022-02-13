@@ -8,6 +8,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class DefaultDriveCommand extends CommandBase {
@@ -17,6 +18,9 @@ public class DefaultDriveCommand extends CommandBase {
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationXSupplier;
   private final DoubleSupplier rotationYSupplier;
+
+  private double angle = 0;
+  private static final double[] angles = {0, 45, 90, 135, 180, 225, 270, 315};
 
   /** Creates a new DefaultDriveCommand. */
   public DefaultDriveCommand(
@@ -46,7 +50,12 @@ public class DefaultDriveCommand extends CommandBase {
     double rotX = rotationXSupplier.getAsDouble();
     double rotY = rotationYSupplier.getAsDouble();
 
-    drivebaseSubsystem.driveAngle(new Pair<>(x, y), 90);
+    // if stick magnitude is greater then .5
+    if (Math.sqrt(Math.pow(rotX, 2) + Math.pow(rotY, 2)) > .5) {
+      angle = Util.angleSnap(Util.vectorToAngle(rotX, rotY), angles);
+    }
+
+    drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle);
   }
 
   // Called once the command ends or is interrupted.
