@@ -15,15 +15,11 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
-import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
-import frc.util.Layer;
 import frc.util.MacUtil;
-import java.util.function.DoubleSupplier;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -70,35 +66,6 @@ public class RobotContainer {
 
     new Button(will::getStartButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
     new Button(will::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
-    // these are flipped because the joystick is the opposite of intuition yay
-    DoubleSupplier translationXSupplier =
-        () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
-    DoubleSupplier translationYSupplier =
-        () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
-
-    IntFunction<RotateAngleDriveCommand> rotCommand =
-        angle ->
-            new RotateAngleDriveCommand(
-                drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
-
-    IntFunction<RotateAngleDriveCommand> relRotCommand =
-        angle ->
-            RotateAngleDriveCommand.fromRobotRelative(
-                drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
-
-    Layer rightBumper = new Layer(will::getRightBumper);
-
-    // when the bumper is not held, field relative rotation
-    rightBumper.off(will::getYButton).whenPressed(rotCommand.apply(0));
-    rightBumper.off(will::getBButton).whenPressed(rotCommand.apply(270));
-    rightBumper.off(will::getAButton).whenPressed(rotCommand.apply(180));
-    rightBumper.off(will::getXButton).whenPressed(rotCommand.apply(90));
-
-    // otherwise, rotate robot
-    rightBumper.on(will::getYButton).whenPressed(relRotCommand.apply(180)); // flip left
-    rightBumper.on(will::getBButton).whenPressed(relRotCommand.apply(-90));
-    rightBumper.on(will::getAButton).whenPressed(relRotCommand.apply(-180)); // flip right
-    rightBumper.on(will::getXButton).whenPressed(relRotCommand.apply(90));
 
     new Button(will::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
