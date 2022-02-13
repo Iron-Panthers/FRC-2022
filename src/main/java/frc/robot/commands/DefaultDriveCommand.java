@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -14,19 +15,22 @@ public class DefaultDriveCommand extends CommandBase {
 
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
-  private final DoubleSupplier rotationSupplier;
+  private final DoubleSupplier rotationXSupplier;
+  private final DoubleSupplier rotationYSupplier;
 
   /** Creates a new DefaultDriveCommand. */
   public DefaultDriveCommand(
       DrivebaseSubsystem drivebaseSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
-      DoubleSupplier rotationSupplier) {
+      DoubleSupplier rotationXSupplier,
+      DoubleSupplier rotationYSupplier) {
 
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
-    this.rotationSupplier = rotationSupplier;
+    this.rotationXSupplier = rotationXSupplier;
+    this.rotationYSupplier = rotationYSupplier;
 
     addRequirements(drivebaseSubsystem);
   }
@@ -39,13 +43,10 @@ public class DefaultDriveCommand extends CommandBase {
   public void execute() {
     double x = translationXSupplier.getAsDouble();
     double y = translationYSupplier.getAsDouble();
-    double rot = rotationSupplier.getAsDouble();
+    double rotX = rotationXSupplier.getAsDouble();
+    double rotY = rotationYSupplier.getAsDouble();
 
-    // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented
-    // movement
-    drivebaseSubsystem.drive(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            x, y, rot, drivebaseSubsystem.getGyroscopeRotation()));
+    drivebaseSubsystem.driveAngle(new Pair<>(x, y), 90);
   }
 
   // Called once the command ends or is interrupted.
