@@ -58,7 +58,8 @@ public class Util {
   public static double angleSnap(double angle, double[] snaps) {
     double closest = snaps[0];
     for (double snap : snaps) {
-      if (Math.abs(angle - snap) < Math.abs(angle - closest)) {
+      if (Math.abs(relativeAngularDifference(angle, snap))
+          < Math.abs(relativeAngularDifference(angle, closest))) {
         closest = snap;
       }
     }

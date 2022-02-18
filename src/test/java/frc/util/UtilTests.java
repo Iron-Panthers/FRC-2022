@@ -23,6 +23,7 @@ public class UtilTests {
   public void relativeAngularDifferenceZerosOnEquivalent() {
     assertEquals(0, Util.relativeAngularDifference(100, 100), 1e-9);
     assertEquals(0, Util.relativeAngularDifference(0, 360 * 2), 1e-9);
+    assertEquals(0, Util.relativeAngularDifference(0, 0), 1e-9);
   }
 
   @UtilTest
@@ -48,10 +49,13 @@ public class UtilTests {
   public void angleSnapCorrect() {
     double[] snaps1 = {90, 270, 350};
     double[] snaps2 = {0, 45, 90, 135, 180, 225, 270, 315};
-    assertEquals(0, Util.angleSnap(0, snaps2));
+    assertEquals(0, Util.angleSnap(0, snaps2), "exact match snaps");
     assertEquals(45, Util.angleSnap(56.5, snaps2));
     assertEquals(270, Util.angleSnap(265, snaps1));
     assertEquals(270, Util.angleSnap(290, snaps1));
     assertEquals(350, Util.angleSnap(360, snaps1));
+    assertEquals(0, Util.angleSnap(5, snaps2), "close match snaps down");
+    assertEquals(
+        0, Util.angleSnap(355, snaps2), "snaps to closer angle, even if its on a different level");
   }
 }
