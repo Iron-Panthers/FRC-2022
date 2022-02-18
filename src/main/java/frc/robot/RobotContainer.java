@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -67,18 +67,20 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Button(will::getStartButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
+    new Button(will::getStartButton)
+        .whenPressed(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
     new Button(will::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
 
     new Button(will::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
 
     DoubleSupplier rotation =
-        () -> ControllerUtil.deadband(-will.getRightTriggerAxis() + will.getLeftTriggerAxis(), .1);
+        () ->
+            ControllerUtil.deadband((-will.getRightTriggerAxis() + will.getLeftTriggerAxis()), .1);
     DoubleSupplier rotationVelocity =
         () -> rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
 
-    new Button(() -> rotation.getAsDouble() > 0)
+    new Button(() -> Math.abs(rotation.getAsDouble()) > 0)
         .whenHeld(
             new RotateVelocityDriveCommand(
                 drivebaseSubsystem,

@@ -54,7 +54,7 @@ public class DefaultDriveCommand extends CommandBase {
 
     // if stick magnitude is greater then .5
     if (Math.sqrt(Math.pow(rotX, 2) + Math.pow(rotY, 2)) > .5) {
-      angle = Util.angleSnap(Util.vectorToAngle(rotX, rotY), angles);
+      angle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles);
     }
 
     drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle);
