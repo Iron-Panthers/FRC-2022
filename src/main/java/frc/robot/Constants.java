@@ -37,7 +37,10 @@ public final class Constants {
             / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0)
             * .5;
 
+    /** the maximum amount of angular error pid loops will tolerate for rotation */
     public static final double ANGULAR_ERROR = 1.0;
+    /** the minimum magnitude of the right stick for it to be used as a new rotation angle */
+    public static final double ROTATE_VECTOR_MAGNITUDE = .7;
 
     public static final class Dims {
       // FIXME validate with hardware

@@ -53,8 +53,8 @@ public class RotateVectorDriveCommand extends CommandBase {
     double rotX = rotationXSupplier.getAsDouble();
     double rotY = rotationYSupplier.getAsDouble();
 
-    // if stick magnitude is greater then .5
-    if (Util.vectorMagnitude(rotX, rotY) > .5) {
+    // if stick magnitude is greater then rotate angle mag
+    if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE) {
       angle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles);
     }
 
@@ -78,6 +78,6 @@ public class RotateVectorDriveCommand extends CommandBase {
         && Util.epsilonEquals(drivebaseSubsystem.getRotVelocity(), 0, 10)
         // are we not intentionally running pid to hold an angle
         && Util.vectorMagnitude(rotationXSupplier.getAsDouble(), rotationYSupplier.getAsDouble())
-            <= .5;
+            <= Drive.ROTATE_VECTOR_MAGNITUDE;
   }
 }

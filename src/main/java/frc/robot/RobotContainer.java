@@ -89,7 +89,10 @@ public class RobotContainer {
                 () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 rotationVelocity));
 
-    new Button(() -> Util.vectorMagnitude(will.getRightY(), will.getRightX()) > .5)
+    new Button(
+            () ->
+                Util.vectorMagnitude(will.getRightY(), will.getRightX())
+                    > Drive.ROTATE_VECTOR_MAGNITUDE)
         .whenPressed(
             new RotateVectorDriveCommand(
                 drivebaseSubsystem,
