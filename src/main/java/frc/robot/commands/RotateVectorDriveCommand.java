@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.Drive;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.Util;
 import java.util.function.DoubleSupplier;
@@ -69,6 +70,14 @@ public class RotateVectorDriveCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    // are we at the angle we want
+    return Util.epsilonZero(
+            Util.relativeAngularDifference(drivebaseSubsystem.getGyroscopeRotation(), angle),
+            Drive.ANGULAR_ERROR)
+        // is our rotational velocity low
+        && Util.epsilonEquals(drivebaseSubsystem.getRotVelocity(), 0, 10)
+        // are we not intentionally running pid to hold an angle
+        && Util.vectorMagnitude(rotationXSupplier.getAsDouble(), rotationYSupplier.getAsDouble())
+            <= .5;
   }
 }
