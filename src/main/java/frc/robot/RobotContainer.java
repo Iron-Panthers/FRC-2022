@@ -98,8 +98,8 @@ public class RobotContainer {
                 drivebaseSubsystem,
                 () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-                will::getLeftY,
-                will::getLeftX));
+                will::getRightY,
+                will::getRightX));
 
     /**
      * this curried start end command calls setMode with the passed mode, then calls next mode when
