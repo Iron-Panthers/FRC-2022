@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
 import frc.util.Util;
@@ -70,8 +71,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
           new Translation2d(-Dims.TRACKWIDTH_METERS / 2.0, -Dims.WHEELBASE_METERS / 2.0));
 
   /** The SwerveDriveOdometry class allows us to estimate the robot's "pose" over time. */
-  private final SwerveDriveOdometry swerveOdometry =
-      new SwerveDriveOdometry(kinematics, navx.getRotation2d());
+  private final SwerveDriveOdometry swerveOdometry;
 
   /**
    * Keeps track of the current estimated pose (x,y,theta) of the robot, as estimated by odometry.
@@ -175,6 +175,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
     // tune pid with:
     // Shuffleboard.getTab("Drivebase").add(rotController);
+
+    swerveOdometry = new SwerveDriveOdometry(kinematics, navx.getRotation2d());
   }
 
   /** Return the current pose estimation of the robot */
@@ -205,19 +207,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
     // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
     // the angle increase.
     return Rotation2d.fromDegrees(angle);
-  }
-
-  private void updateOdometry(double time) {
-    SwerveModuleState[] moduleStates = new SwerveModuleState[swerveModules.length];
-    for (int i = 0; i < swerveModules.length; i++) {
-      SwerveModule module = swerveModules[i];
-      moduleStates[i] =
-          new SwerveModuleState(
-              module.getDriveVelocity(), Rotation2d.fromDegrees(module.getSteerAngle()));
-    }
-
-    final Rotation2d angle = getGyroscopeRotation();
-    this.robotPose = swerveOdometry.updateWithTime(time, angle, moduleStates);
   }
 
   private double lastAngle = 0;
@@ -270,6 +259,16 @@ public class DrivebaseSubsystem extends SubsystemBase {
     mode = Modes.DEFENSE;
   }
 
+  /**
+   * Updates the robot pose estimation for newly written module states. Should be called everytime outputs are written to the modules.
+   * 
+   * @param moduleStatesWritten The outputs that you have just written to the modules.
+   */
+  private void odometryPeriodic(SwerveModuleState[] moduleStatesWritten) {
+    this.robotPose = swerveOdometry.update(getGyroscopeRotation(), moduleStatesWritten);
+    SmartDashboard.putString("robot_pose", robotPose.toString());
+  }
+
   private void drivePeriodic() {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
@@ -280,6 +279,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
           states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
           states[i].angle.getRadians());
     }
+
+    // Update odometry
+    odometryPeriodic(states);
   }
 
   // called in drive to angle mode
@@ -300,6 +302,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     // use the existing drive periodic logic to assign to motors ect
     drivePeriodic();
+
+    // Odometry updates are called in drivePeriodic, so we don't have to worry about them here
   }
 
   @SuppressWarnings("java:S1121")
@@ -310,6 +314,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
       // the value. We can use this to alternate between 45 and -45 for each module.
       module.set(0, angle *= -1);
     }
+
+    // No need to call odometry periodic
   }
 
   /**
@@ -342,7 +348,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
     final double timestamp = Timer.getFPGATimestamp();
     final double dt = timestamp - lastTimestamp;
     lastTimestamp = timestamp;
-    updateOdometry(timestamp);
 
     /* get the current set-points for the drivetrain */
     Modes currentMode = getMode();
