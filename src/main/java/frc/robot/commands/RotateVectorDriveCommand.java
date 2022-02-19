@@ -4,28 +4,44 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.util.Util;
 import java.util.function.DoubleSupplier;
 
-public class DefaultDriveCommand extends CommandBase {
+public class RotateVectorDriveCommand extends CommandBase {
   private final DrivebaseSubsystem drivebaseSubsystem;
 
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
+  private final DoubleSupplier rotationXSupplier;
+  private final DoubleSupplier rotationYSupplier;
+
+  private double angle = 0;
+  private static final double[] angles = {0, 45, 90, 135, 180, 225, 270, 315};
 
   /** Creates a new DefaultDriveCommand. */
-  public DefaultDriveCommand(
+  public RotateVectorDriveCommand(
       DrivebaseSubsystem drivebaseSubsystem,
       DoubleSupplier translationXSupplier,
-      DoubleSupplier translationYSupplier) {
+      DoubleSupplier translationYSupplier,
+      DoubleSupplier rotationXSupplier,
+      DoubleSupplier rotationYSupplier) {
 
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
+    this.rotationXSupplier = rotationXSupplier;
+    this.rotationYSupplier = rotationYSupplier;
 
     addRequirements(drivebaseSubsystem);
+  }
+
+  @Override
+  public void initialize() {
+    angle = drivebaseSubsystem.getGyroscopeRotation().getDegrees();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -33,9 +49,15 @@ public class DefaultDriveCommand extends CommandBase {
   public void execute() {
     double x = translationXSupplier.getAsDouble();
     double y = translationYSupplier.getAsDouble();
+    double rotX = rotationXSupplier.getAsDouble();
+    double rotY = rotationYSupplier.getAsDouble();
 
-    drivebaseSubsystem.drive(
-        ChassisSpeeds.fromFieldRelativeSpeeds(x, y, 0, drivebaseSubsystem.getGyroscopeRotation()));
+    // if stick magnitude is greater then .5
+    if (Util.vectorMagnitude(rotX, rotY) > .5) {
+      angle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles);
+    }
+
+    drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle);
   }
 
   // Called once the command ends or is interrupted.

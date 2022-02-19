@@ -16,11 +16,13 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
+import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
 import frc.util.MacUtil;
+import frc.util.Util;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 
@@ -50,9 +52,7 @@ public class RobotContainer {
         new DefaultDriveCommand(
             drivebaseSubsystem,
             () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            will::getRightY,
-            will::getRightX));
+            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
@@ -88,6 +88,15 @@ public class RobotContainer {
                 () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 rotationVelocity));
+
+    new Button(() -> Util.vectorMagnitude(will.getRightY(), will.getRightX()) > .5)
+        .whenPressed(
+            new RotateVectorDriveCommand(
+                drivebaseSubsystem,
+                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                will::getLeftY,
+                will::getLeftX));
 
     /**
      * this curried start end command calls setMode with the passed mode, then calls next mode when
