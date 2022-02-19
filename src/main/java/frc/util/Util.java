@@ -65,4 +65,8 @@ public class Util {
     }
     return closest;
   }
+
+  public static double vectorMagnitude(double x, double y) {
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+  }
 }
