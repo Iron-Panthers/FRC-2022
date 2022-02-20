@@ -1,21 +1,20 @@
 package frc.util;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.UtilTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@PrepareForTest(TalonFX.class)
-@RunWith(PowerMockRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LazyTalonFXTest {
   private AutoCloseable closeable;
 
@@ -41,6 +40,8 @@ public class LazyTalonFXTest {
 
   @UtilTest
   public void test() {
-    assertTrue(true);
+    lazyTalonFX.set(TalonFXControlMode.PercentOutput, .1);
+    verify(talonFX, times(1).description(String.format("")))
+        .set(TalonFXControlMode.PercentOutput, .1);
   }
 }
