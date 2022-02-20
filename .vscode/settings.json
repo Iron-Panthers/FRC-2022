@@ -39,11 +39,15 @@
   "cSpell.words": [
     "AHRS",
     "Deadband",
+    "Holonomic",
+    "Mockito",
+    "Odometry",
+    "TRACKWIDTH",
     "deadbanded",
     "drivebase",
     "navx",
+    "setpoint",
     "teleop",
-    "teleoperated",
-    "TRACKWIDTH"
+    "teleoperated"
   ]
 }
