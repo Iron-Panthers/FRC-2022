@@ -10,6 +10,7 @@ import frc.UtilTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,15 +19,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class LazyTalonFXTest {
   private AutoCloseable closeable;
 
-  private LazyTalonFX lazyTalonFX;
+  @Mock private TalonFX talonFX;
 
-  @Mock private TalonFX talonFX = new TalonFX(1);
+  @InjectMocks LazyTalonFX lazyTalonFX = new LazyTalonFX(1);
 
   @BeforeEach
   public void setup() throws Exception {
-    closeable = MockitoAnnotations.openMocks(talonFX);
-    PowerMockito.whenNew(TalonFX.class).withArguments(1).thenReturn(talonFX);
-    lazyTalonFX = new LazyTalonFX(1);
+    closeable = MockitoAnnotations.openMocks(lazyTalonFX);
   }
 
   @AfterEach
@@ -39,8 +38,10 @@ public class LazyTalonFXTest {
   }
 
   @UtilTest
-  public void test() {
-    lazyTalonFX.set(TalonFXControlMode.PercentOutput, .1);
+  public void setIsCalledButOnlyOnce() {
+    for (int i = 0; i < 5; i++) {
+      lazyTalonFX.set(TalonFXControlMode.PercentOutput, .1);
+    }
     verify(talonFX, times(1).description(String.format("")))
         .set(TalonFXControlMode.PercentOutput, .1);
   }

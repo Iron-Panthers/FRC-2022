@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-public class LazyTalonFX extends TalonFX {
+public class LazyTalonFX {
 
   private static final TalonFXControlMode DEFAULT_MODE = null;
   private static final double DEFAULT_VALUE = 0d;
@@ -15,8 +15,10 @@ public class LazyTalonFX extends TalonFX {
   private double value = DEFAULT_VALUE;
   private int masterToFollowId = DEFAULT_MASTER_TO_FOLLOW_ID;
 
+  private TalonFX talonFX;
+
   public LazyTalonFX(int deviceNumber) {
-    super(deviceNumber);
+    talonFX = new TalonFX(deviceNumber);
   }
 
   private boolean sameSetValues(TalonFXControlMode mode, double value) {
@@ -34,18 +36,16 @@ public class LazyTalonFX extends TalonFX {
         masterToFollow == null ? DEFAULT_MASTER_TO_FOLLOW_ID : masterToFollow.getBaseID();
   }
 
-  @Override
   public void set(TalonFXControlMode mode, double value) {
     if (!sameSetValues(mode, value)) {
-      super.set(mode, value);
+      talonFX.set(mode, value);
       applyValues(mode, value, null);
     }
   }
 
-  @Override
   public void follow(IMotorController masterToFollow) {
     if (!sameFollowValues(masterToFollow)) {
-      super.follow(masterToFollow);
+      talonFX.follow(masterToFollow);
       applyValues(null, 0.0, masterToFollow);
     }
   }
