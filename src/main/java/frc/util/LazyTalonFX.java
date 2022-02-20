@@ -30,7 +30,8 @@ public class LazyTalonFX extends TalonFX {
   private void applyValues(TalonFXControlMode mode, double value, IMotorController masterToFollow) {
     this.mode = mode;
     this.value = value;
-    this.masterToFollowId = masterToFollow.getBaseID();
+    this.masterToFollowId =
+        masterToFollow == null ? DEFAULT_MASTER_TO_FOLLOW_ID : masterToFollow.getBaseID();
   }
 
   @Override
