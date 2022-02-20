@@ -39,4 +39,38 @@ public class Util {
   public static double relativeAngularDifference(Rotation2d currentAngle, double newAngle) {
     return relativeAngularDifference(currentAngle.getDegrees(), newAngle);
   }
+
+  /**
+   * turn x and y of a vector to a [0, 360] angle
+   *
+   * @param x x value of vector
+   * @param y y value of vector
+   * @return [0, 360] mapped angle of vector
+   */
+  public static double vectorToAngle(double x, double y) {
+    double angle = Math.atan2(y, x);
+    return (angle * (180 / Math.PI) + 360) % 360;
+  }
+
+  /**
+   * snap an angle to the closest angle in an array of angles
+   *
+   * @param angle angle to be snapped
+   * @param snaps array of angles to snap to
+   * @return closest angle in snap array
+   */
+  public static double angleSnap(double angle, double[] snaps) {
+    double closest = snaps[0];
+    for (double snap : snaps) {
+      if (Math.abs(relativeAngularDifference(angle, snap))
+          < Math.abs(relativeAngularDifference(angle, closest))) {
+        closest = snap;
+      }
+    }
+    return closest;
+  }
+
+  public static double vectorMagnitude(double x, double y) {
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+  }
 }

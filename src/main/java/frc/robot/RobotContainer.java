@@ -16,19 +16,23 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
-import frc.robot.commands.RotateAngleDriveCommand;
+import frc.robot.commands.RotateVectorDriveCommand;
+import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
-import frc.util.Layer;
 import frc.util.MacUtil;
 import java.util.List;
+import frc.util.Util;
 import java.util.function.DoubleSupplier;
-import java.util.function.IntFunction;
+import java.util.function.Function;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,9 +44,10 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
-  private final XboxController nick = new XboxController(0);
-  private final XboxController will = new XboxController(1);
+  private final XboxController nick = new XboxController(1);
+  private final XboxController will = new XboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -54,9 +59,8 @@ public class RobotContainer {
     drivebaseSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
             drivebaseSubsystem,
-            () -> (-modifyAxis(nick.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(nick.getRightX()) * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+            () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
@@ -72,40 +76,60 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Button(nick::getStartButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
-    new Button(nick::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
-    // these are flipped because the joystick is the opposite of intuition yay
-    DoubleSupplier translationXSupplier =
-        () -> (-modifyAxis(nick.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
-    DoubleSupplier translationYSupplier =
-        () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+    new Button(will::getStartButton)
+        .whenPressed(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
+    new Button(will::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
 
-    IntFunction<RotateAngleDriveCommand> rotCommand =
-        angle ->
-            new RotateAngleDriveCommand(
-                drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
-
-    IntFunction<RotateAngleDriveCommand> relRotCommand =
-        angle ->
-            RotateAngleDriveCommand.fromRobotRelative(
-                drivebaseSubsystem, translationXSupplier, translationYSupplier, angle);
-
-    Layer rightBumper = new Layer(nick::getRightBumper);
-
-    // when the bumper is not held, field relative rotation
-    rightBumper.off(nick::getYButton).whenPressed(rotCommand.apply(0));
-    rightBumper.off(nick::getBButton).whenPressed(rotCommand.apply(270));
-    rightBumper.off(nick::getAButton).whenPressed(rotCommand.apply(180));
-    rightBumper.off(nick::getXButton).whenPressed(rotCommand.apply(90));
-
-    // otherwise, rotate robot
-    rightBumper.on(nick::getYButton).whenPressed(relRotCommand.apply(180)); // flip left
-    rightBumper.on(nick::getBButton).whenPressed(relRotCommand.apply(-90));
-    rightBumper.on(nick::getAButton).whenPressed(relRotCommand.apply(-180)); // flip right
-    rightBumper.on(nick::getXButton).whenPressed(relRotCommand.apply(90));
-
-    new Button(nick::getLeftStickButton)
+    new Button(will::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
+    DoubleSupplier rotation =
+        () ->
+            ControllerUtil.deadband((-will.getRightTriggerAxis() + will.getLeftTriggerAxis()), .1);
+    DoubleSupplier rotationVelocity =
+        () -> rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+
+    new Button(() -> Math.abs(rotation.getAsDouble()) > 0)
+        .whenHeld(
+            new RotateVelocityDriveCommand(
+                drivebaseSubsystem,
+                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                rotationVelocity));
+
+    new Button(
+            () ->
+                Util.vectorMagnitude(will.getRightY(), will.getRightX())
+                    > Drive.ROTATE_VECTOR_MAGNITUDE)
+        .whenPressed(
+            new RotateVectorDriveCommand(
+                drivebaseSubsystem,
+                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                will::getRightY,
+                will::getRightX));
+
+    /**
+     * this curried start end command calls setMode with the passed mode, then calls next mode when
+     * the command is stopped
+     */
+    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
+        mode ->
+            new StartEndCommand(
+                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
+
+    // will controller intakes (temporary)
+    new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+
+    // intake balls
+    new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    // eject unwanted balls
+    new Button(nick::getBButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT));
+    // shoot balls
+    new Button(nick::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    // stop everything
+    new Button(nick::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
   }
 
   /**

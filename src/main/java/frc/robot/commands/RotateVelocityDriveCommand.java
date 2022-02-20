@@ -4,33 +4,29 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.Drive;
 import frc.robot.subsystems.DrivebaseSubsystem;
-import frc.util.Util;
 import java.util.function.DoubleSupplier;
 
-public class RotateAngleDriveCommand extends CommandBase {
+public class RotateVelocityDriveCommand extends CommandBase {
   private final DrivebaseSubsystem drivebaseSubsystem;
 
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
+  private final DoubleSupplier rotationSupplier;
 
-  private final int targetAngle;
-
-  /** Creates a new RotateAngleDriveCommand. */
-  public RotateAngleDriveCommand(
+  /** Creates a new RotateVelocityDriveCommand. */
+  public RotateVelocityDriveCommand(
       DrivebaseSubsystem drivebaseSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
-      int targetAngle) {
+      DoubleSupplier rotationSupplier) {
 
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
-
-    this.targetAngle = targetAngle;
+    this.rotationSupplier = rotationSupplier;
 
     addRequirements(drivebaseSubsystem);
   }
@@ -43,22 +39,24 @@ public class RotateAngleDriveCommand extends CommandBase {
   public void execute() {
     double x = translationXSupplier.getAsDouble();
     double y = translationYSupplier.getAsDouble();
+    double rot = rotationSupplier.getAsDouble();
 
-    drivebaseSubsystem.driveAngle(
-        new Pair<Double, Double>(x, y), targetAngle // the desired angle, gyro relative
-        );
+    // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented
+    // movement
+    drivebaseSubsystem.drive(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            x, y, rot, drivebaseSubsystem.getGyroscopeRotation()));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drivebaseSubsystem.drive(new ChassisSpeeds());
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Util.epsilonZero(
-            Util.relativeAngularDifference(drivebaseSubsystem.getGyroscopeRotation(), targetAngle),
-            Drive.ANGULAR_ERROR)
-        && Util.epsilonEquals(drivebaseSubsystem.getRotVelocity(), 0, 10);
+    return false;
   }
 }
