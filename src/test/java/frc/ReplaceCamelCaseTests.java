@@ -34,6 +34,18 @@ public class ReplaceCamelCaseTests {
         Arguments.of(
             "talonFXTest",
             "talon FX test ",
+            "because next word should be broken off after capital section"),
+        Arguments.of(
+            "aaaAAAaaa",
+            "aaa AA aaaa ",
+            "because next word should be broken off after capital section"),
+        Arguments.of(
+            "aaaAAAAa",
+            "aaa AAA aa ",
+            "because next word should be broken off after capital section"),
+        Arguments.of(
+            "lowerUPPERLower",
+            "lower UPPER lower ",
             "because next word should be broken off after capital section"));
   }
 
