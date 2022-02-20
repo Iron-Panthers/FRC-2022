@@ -6,9 +6,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 public class LazyTalonFX extends TalonFX {
 
-  private TalonFXControlMode mode = null;
-  private double value = 0.0;
-  private IMotorController masterToFollow = null;
+  private static final TalonFXControlMode DEFAULT_MODE = null;
+  private static final double DEFAULT_VALUE = 0d;
+  private static final int DEFAULT_MASTER_TO_FOLLOW_ID =
+      -1; // a can id should never be negative, so no master should ever have this property
+
+  private TalonFXControlMode mode = DEFAULT_MODE;
+  private double value = DEFAULT_VALUE;
+  private int masterToFollowId = DEFAULT_MASTER_TO_FOLLOW_ID;
 
   public LazyTalonFX(int deviceNumber) {
     super(deviceNumber);
@@ -18,10 +23,14 @@ public class LazyTalonFX extends TalonFX {
     return this.mode == mode && this.value == value;
   }
 
-  private void applyValues(TalonFXControlMode mode, double value, TalonFX masterToFollow) {
+  private boolean sameFollowValues(IMotorController masterToFollow) {
+    return masterToFollow.getBaseID() == masterToFollowId;
+  }
+
+  private void applyValues(TalonFXControlMode mode, double value, IMotorController masterToFollow) {
     this.mode = mode;
     this.value = value;
-    this.masterToFollow = masterToFollow;
+    this.masterToFollowId = masterToFollow.getBaseID();
   }
 
   @Override
@@ -33,5 +42,10 @@ public class LazyTalonFX extends TalonFX {
   }
 
   @Override
-  public void follow(IMotorController masterToFollow) {}
+  public void follow(IMotorController masterToFollow) {
+    if (!sameFollowValues(masterToFollow)) {
+      super.follow(masterToFollow);
+      applyValues(null, 0.0, masterToFollow);
+    }
+  }
 }
