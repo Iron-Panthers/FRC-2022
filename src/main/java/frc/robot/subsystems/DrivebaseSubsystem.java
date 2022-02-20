@@ -260,8 +260,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
   }
 
   /**
-   * Updates the robot pose estimation for newly written module states. Should be called everytime outputs are written to the modules.
-   * 
+   * Updates the robot pose estimation for newly written module states. Should be called everytime
+   * outputs are written to the modules.
+   *
    * @param moduleStatesWritten The outputs that you have just written to the modules.
    */
   private void odometryPeriodic(SwerveModuleState[] moduleStatesWritten) {
