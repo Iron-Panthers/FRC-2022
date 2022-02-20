@@ -12,20 +12,53 @@ import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
 import frc.util.Util;
+import java.util.Optional;
 
 public class DrivebaseSubsystem extends SubsystemBase {
+  private final SimpleSwerveTrajectoryFollower follower =
+      new SimpleSwerveTrajectoryFollower(
+          new PIDController(0.4, 0.0, 0.025),
+          new PIDController(0.4, 0.0, 0.025),
+          new ProfiledPIDController(
+              1,
+              0,
+              0,
+              new TrapezoidProfile.Constraints(
+                  MAX_VELOCITY_METERS_PER_SECOND, 0.5 * MAX_VELOCITY_METERS_PER_SECOND)));
+
+  // NOTE: I'm still not sure what's the way to profile this ^
+  // Not mission critical as it "technically" drives fine as of now; but I suspect this is a site
+  // for future improvements
+
+  public SimpleSwerveTrajectoryFollower getFollower() {
+    return follower;
+  }
+
+  private final AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+
+  /**
+   * The kinematics object allows us to encode our relationship between desired speeds (represented
+   * by a ChassisSpeeds object) and our actual drive outputs (what speeds and angles we apply to
+   * each module)
+   */
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(
           // Front right
@@ -37,36 +70,56 @@ public class DrivebaseSubsystem extends SubsystemBase {
           // Back right
           new Translation2d(-Dims.TRACKWIDTH_METERS / 2.0, -Dims.WHEELBASE_METERS / 2.0));
 
-  private final AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+  /** The SwerveDriveOdometry class allows us to estimate the robot's "pose" over time. */
+  private final SwerveDriveOdometry swerveOdometry;
 
-  private final SwerveModule frontLeftModule;
-  private final SwerveModule frontRightModule;
-  private final SwerveModule backLeftModule;
-  private final SwerveModule backRightModule;
+  /**
+   * Keeps track of the current estimated pose (x,y,theta) of the robot, as estimated by odometry.
+   */
+  private Pose2d robotPose = new Pose2d();
 
+  /** The current ChassisSpeeds goal for the drivetrain */
+  private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
+
+  /** The modes of the drivebase subsystem */
+  public enum Modes {
+    DRIVE,
+    DRIVE_ANGLE,
+    DEFENSE,
+  }
+
+  /** The current mode */
+  private Modes mode = Modes.DRIVE;
+
+  /** Contains each swerve module. Order: FR, FL, BL, BR. Or in Quadrants: I, II, III, IV */
   private final SwerveModule[] swerveModules;
 
   private final PIDController rotController;
 
-  private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); // defaults to zeros
   private double targetAngle = 0; // default target angle to zero
   private Pair<Double, Double> xyInput = new Pair<>(0d, 0d); // the x and y for using target angles
+  /**
+   * The Shuffleboard tab which all things related to the drivebase can be put for easy access and
+   * organization
+   */
+  private final ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
 
   /**
-   * initialize a falcon with a shuffleboard tab, and mk4 default gear ratio
+   * Initialize a falcon with a shuffleboard tab, and mk4 default gear ratio
    *
+   * @param tab the shuffleboard tab to use
    * @param title the shuffleboard title
    * @param pos the shuffleboard x position, which is <b>multiplied by 2</b>
    * @param drive the drive motor port const
    * @param steer the steer motor port const
    * @param encoder the encoder port const
    * @param offset the steer offset const, found experimentally
-   * @return an sds swerve module object
+   * @return SDS/swerve-lib SwerveModule object
    */
   private SwerveModule createModule(
       String title, int pos, int drive, int steer, int encoder, double offset) {
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivebase");
-
+    // NOTE: our team uses the MK4 configuration with L2 gearing and Falcon 500s
+    // if this changes, update the helper/method/GearRatio used, as needed.
     return Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout(title, BuiltInLayouts.kList).withSize(2, 4).withPosition(pos * 2, 0),
         Mk4SwerveModuleHelper.GearRatio.L2,
@@ -76,19 +129,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
         offset);
   }
 
-  /** The modes of the drivebase subsystem */
-  public enum Modes {
-    DRIVE,
-    DRIVE_ANGLE,
-    DEFENSE,
-  }
-
-  /** the current mode */
-  private Modes mode = Modes.DRIVE;
-
   /** Creates a new DrivebaseSubsystem. */
   public DrivebaseSubsystem() {
-    frontRightModule =
+    final SwerveModule frontRightModule =
         createModule(
             "Front Right Module #1",
             1,
@@ -97,7 +140,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
             Modules.FrontRight.STEER_ENCODER,
             Modules.FrontRight.STEER_OFFSET);
 
-    frontLeftModule =
+    final SwerveModule frontLeftModule =
         createModule(
             "Front Left Module #2",
             0,
@@ -106,7 +149,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
             Modules.FrontLeft.STEER_ENCODER,
             Modules.FrontLeft.STEER_OFFSET);
 
-    backLeftModule =
+    final SwerveModule backLeftModule =
         createModule(
             "Back Left Module #3",
             2,
@@ -115,7 +158,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
             Modules.BackLeft.STEER_ENCODER,
             Modules.BackLeft.STEER_OFFSET);
 
-    backRightModule =
+    final SwerveModule backRightModule =
         createModule(
             "Back Right Module #4",
             3,
@@ -132,6 +175,18 @@ public class DrivebaseSubsystem extends SubsystemBase {
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
     // tune pid with:
     // Shuffleboard.getTab("Drivebase").add(rotController);
+
+    swerveOdometry = new SwerveDriveOdometry(kinematics, navx.getRotation2d());
+  }
+
+  /** Return the current pose estimation of the robot */
+  public Pose2d getPose() {
+    return robotPose;
+  }
+
+  /** Return the kinematics object, for constructing a trajectory */
+  public SwerveDriveKinematics getKinematics() {
+    return kinematics;
   }
 
   /** Sets the gyro angle to zero, resetting the forward direction */
@@ -176,9 +231,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
    * @param chassisSpeeds the speed of the chassis desired
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
+    this.mode = Modes.DRIVE;
     this.chassisSpeeds = chassisSpeeds;
-
-    mode = Modes.DRIVE;
   }
 
   public void driveAngle(Pair<Double, Double> xyInput, double targetAngle) {
@@ -205,7 +259,17 @@ public class DrivebaseSubsystem extends SubsystemBase {
     mode = Modes.DEFENSE;
   }
 
-  // called when in drive mode
+  /**
+   * Updates the robot pose estimation for newly written module states. Should be called everytime
+   * outputs are written to the modules.
+   *
+   * @param moduleStatesWritten The outputs that you have just written to the modules.
+   */
+  private void odometryPeriodic(SwerveModuleState[] moduleStatesWritten) {
+    this.robotPose = swerveOdometry.update(getGyroscopeRotation(), moduleStatesWritten);
+    SmartDashboard.putString("robot_pose", robotPose.toString());
+  }
+
   private void drivePeriodic() {
     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
@@ -216,6 +280,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
           states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
           states[i].angle.getRadians());
     }
+
+    // Update odometry
+    odometryPeriodic(states);
   }
 
   // called in drive to angle mode
@@ -236,21 +303,29 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     // use the existing drive periodic logic to assign to motors ect
     drivePeriodic();
+
+    // Odometry updates are called in drivePeriodic, so we don't have to worry about them here
   }
 
-  // called in defense mode
+  @SuppressWarnings("java:S1121")
   private void defensePeriodic() {
-    // we want alternating pos and negative 45 degree angles
     int angle = 45;
     for (SwerveModule module : swerveModules) {
-      // the *= -1 operation multiplies the current variable by -1, stores it, and also returns the
-      // value. We can use this to alternate between 45 and -45 for each module.
+      // the *= -1 operation multiplies the current variable by -1, stores it, and also returns
+      // the value. We can use this to alternate between 45 and -45 for each module.
       module.set(0, angle *= -1);
     }
+
+    // No need to call odometry periodic
   }
 
-  @Override
-  public void periodic() {
+  /**
+   * Based on the current Mode of the drivebase, perform the mode-specific logic such as writing
+   * outputs (may vary per mode).
+   *
+   * @param mode The mode to use (should use the current mode value)
+   */
+  public void updateModules(Modes mode) {
     updateRotVelocity();
     switch (mode) {
       case DRIVE:
@@ -263,5 +338,36 @@ public class DrivebaseSubsystem extends SubsystemBase {
         defensePeriodic();
         break;
     }
+  }
+
+  /** For use in #periodic, to calculate the timestamp between motor writes */
+  private double lastTimestamp = 0.0;
+
+  @Override
+  public void periodic() {
+    /* Calculate time since last run and update odometry accordingly */
+    final double timestamp = Timer.getFPGATimestamp();
+    final double dt = timestamp - lastTimestamp;
+    lastTimestamp = timestamp;
+
+    /* get the current set-points for the drivetrain */
+    Modes currentMode = getMode();
+    Pose2d pose = getPose();
+
+    /*
+     * See if there is a new drive signal from the trajectory follower object.
+     * An Optional means that this value might be "present" or not exist (be null),
+     * but provides somewhat more convenient semantics for checking if there is a
+     * value or not without a great risk of causing an Exception.
+     */
+    Optional<ChassisSpeeds> trajectorySpeeds = follower.update(pose, timestamp, dt);
+
+    /* If there is a trajectory signal, overwrite the current chassis speeds setpoint to that trajectory value*/
+    if (trajectorySpeeds.isPresent()) {
+      this.chassisSpeeds = trajectorySpeeds.get();
+    }
+
+    /* Write outputs, corresponding to our current Mode of operation */
+    updateModules(currentMode);
   }
 }
