@@ -25,14 +25,14 @@ public class ReplaceCamelCaseTests {
             "because capitals should be lowercase and given a space prior"),
         Arguments.of(
             "HelloWorld",
-            "hello world ",
-            "because first capital should be ignored, not given a space"),
+            "hello world",
+            "\n\t+ because first capital should be ignored, not given a space\n\t+ because there should be no space after a class name"),
         Arguments.of(
             "talonFX",
             "talon FX ",
             "because multiple capitalized letters should be treated as a word"),
         Arguments.of(
-            "TalonFXTest",
+            "talonFXTest",
             "talon FX test ",
             "because next word should be broken off after capital section"));
   }
@@ -43,6 +43,6 @@ public class ReplaceCamelCaseTests {
     assertEquals(
         sentence,
         replaceCamelCase.replaceCamelCase(camelCase),
-        String.format("replaceCamelCase(\"%s\") == \"%s\" %s", camelCase, sentence, explanation));
+        String.format("replaceCamelCase(\"%s\") == \"%s\" %s\n", camelCase, sentence, explanation));
   }
 }

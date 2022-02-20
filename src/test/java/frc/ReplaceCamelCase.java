@@ -74,7 +74,7 @@ public class ReplaceCamelCase extends DisplayNameGenerator.Standard {
 
       result.append(ch);
     }
-    result.append(' ');
+    if (isLowerCase(charArray[0])) result.append(' ');
     return result.toString();
   }
 }
