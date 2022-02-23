@@ -123,7 +123,7 @@ public class RobotContainer {
 
     // elevator preset position buttons
     new Button(will::getXButton)
-        .whenPressed(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.posistion));
+        .whenPressed(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.POSITION));
     // will controller intakes (temporary)
     new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));

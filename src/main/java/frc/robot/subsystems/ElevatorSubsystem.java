@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonFX left = new TalonFX(Constants.Elevator.ELEVATOR_MOTOR);
-  private final TalonFX right = new TalonFX(Constants.Elevator.ELEVATOR_MOTOR_2);
+  private final TalonFX left = new TalonFX(Constants.Elevator.Ports.ELEVATOR_MOTOR);
+  private final TalonFX right = new TalonFX(Constants.Elevator.Ports.ELEVATOR_MOTOR_2);
   private final PIDController heightController = new PIDController(0.04, 0, 0);
 
   // clockwise moves up
