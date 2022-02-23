@@ -7,13 +7,14 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import java.util.function.DoubleSupplier;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX left = new TalonFX(Constants.Elevator.ELEVATOR_MOTOR);
   private final TalonFX right = new TalonFX(Constants.Elevator.ELEVATOR_MOTOR_2);
+  private final PIDController heightController = new PIDController(0.04, 0, 0);
 
   // clockwise moves up
   // counterclockwise moves down
@@ -29,9 +30,21 @@ public class ElevatorSubsystem extends SubsystemBase {
     left.setInverted(TalonFXInvertType.FollowMaster);
   }
 
-  public void setMotorPosition(DoubleSupplier position) {
-    right.set(TalonFXControlMode.Position, position.getAsDouble());
+  public void setMotorPower(Double power) {
+    right.set(TalonFXControlMode.PercentOutput, power);
   }
+
+  public double getMotorPosition() {
+    return right.getSelectedSensorPosition();
+  }
+
+  public void setHeight(Double goalPosition) {
+    right.set(
+        TalonFXControlMode.PercentOutput,
+        heightController.calculate(getMotorPosition(), goalPosition));
+  }
+
+  public void lock() {}
 
   @Override
   public void periodic() {

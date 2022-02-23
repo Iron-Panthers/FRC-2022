@@ -96,5 +96,6 @@ public final class Constants {
 
     public static final int ELEVATOR_MOTOR = 1; // FIX ME (IN ALL CAPS)
     public static final int ELEVATOR_MOTOR_2 = 1; // FIX ME (IN ALL CAPS)
+    public static final double posistion = 1.0;
   }
 }

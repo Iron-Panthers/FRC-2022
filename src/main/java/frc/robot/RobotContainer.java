@@ -19,10 +19,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.util.ControllerUtil;
 import frc.util.Layer;
 import frc.util.MacUtil;
@@ -40,6 +42,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
   private final XboxController nick = new XboxController(0);
   private final XboxController will = new XboxController(1);
@@ -106,6 +109,10 @@ public class RobotContainer {
 
     new Button(nick::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
+    // elevator preset position buttons
+    new Button(will::getXButton)
+        .whenPressed(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.posistion));
   }
 
   /**

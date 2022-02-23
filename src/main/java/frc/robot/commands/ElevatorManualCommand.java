@@ -6,15 +6,15 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
-import java.util.function.DoubleSupplier;
 
-public class ElevatorCommand extends CommandBase {
-  private ElevatorSubsystem eSystem = new ElevatorSubsystem();
-  private DoubleSupplier position;
+public class ElevatorManualCommand extends CommandBase {
+  private ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private Double power;
   /** Creates a new ElevatorCommand. */
-  public ElevatorCommand(DoubleSupplier position) {
-    addRequirements(eSystem);
-    this.position = position;
+  public ElevatorManualCommand(ElevatorSubsystem subsystem, Double power) {
+    addRequirements(elevatorSubsystem);
+    this.power = power;
+    this.elevatorSubsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -25,7 +25,7 @@ public class ElevatorCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    eSystem.setMotorPosition(position);
+    elevatorSubsystem.setMotorPower(power);
   }
 
   // Called once the command ends or is interrupted.
