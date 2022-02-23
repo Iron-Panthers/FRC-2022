@@ -11,6 +11,10 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.Util;
 import java.util.function.DoubleSupplier;
 
+/**
+ * This command takes a drive angle and a target angle, and snaps the robot to an angle. This is
+ * useful to snap the robot to an angle setpoint with a button, as opposed to using an entire stick.
+ */
 public class RotateAngleDriveCommand extends CommandBase {
   private final DrivebaseSubsystem drivebaseSubsystem;
 
