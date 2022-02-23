@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
     Todo:
         1. Make and initialize two motors
+      
         2. Define functions in this subsystem to move the arm a direction
         3. Make a command ArmCommand.java that has handles moving the arm
         4. Define certain buttons to call command functions that move our arm some amount of degrees
@@ -25,14 +26,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmSubsystem extends SubsystemBase {
   /** Creates a new ArmSubsystem. */
+  public static WPI_TalonFX armMotorOne;
+  public static WPI_TalonFX armMotorTwo;
+
   public ArmSubsystem() {
-    public static WPI_TalonFX ArmMotorOne = new WPI_TalonFX(0);//FIX LATER
-    public static WPI_TalonFX ArmMotorTwo = new WPI_TalonFX(0);//FIX LATER
+    armMotorOne = new WPI_TalonFX(0);//FIX LATER
+    armMotorTwo = new WPI_TalonFX(0);//FIX LATER
   }
 
 public static void setPower(double Power){
-  ArmMotorOne.set(TalonFXControlMode.PercentOutput, Power);
-  ArmMotorTwo.set(TalonFXControlMode.PercentOutput, Power);
+  armMotorOne.set(TalonFXControlMode.PercentOutput, Power);
+  armMotorTwo.set(TalonFXControlMode.PercentOutput, Power);
 }
 
 
