@@ -5,12 +5,14 @@ import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmToTarget extends CommandBase {
     ArmSubsystem arm;
+    double angle;
     
     /**
      * Creates a new ArmCommand
      */
-    public ArmToTarget(ArmSubsystem arm) {
+    public ArmToTarget(ArmSubsystem arm, double angle) {
         this.arm = arm;
+        this.angle = angle;
     }
 
     // Called when command is initially scheduled
