@@ -1,8 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class ArmCommand {
+public class ArmCommand extends CommandBase{
     ArmSubsystem arm;
     
     /**
@@ -24,12 +25,12 @@ public class ArmCommand {
 
     // Called once the command ends or is interrupted
     @Override
-    public void end() {
+    public void end(boolean interrupted) {
     }
 
     // 
     @Override
-    public void isFinished() {
-
+    public boolean isFinished() {
+        return false;
     }
 }
