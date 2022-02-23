@@ -27,14 +27,9 @@ import frc.robot.Constants;
  */
 
 public class ArmSubsystem extends SubsystemBase {
-<<<<<<< Updated upstream
-  private TalonFX armMotorOne;
-  private TalonFX armMotorTwo;
-=======
   private static TalonFX armMotorOne;
   private static TalonFX armMotorTwo;
   private static PIDController pidController;
->>>>>>> Stashed changes
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -44,9 +39,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setPower(double Power) {
-  armMotorOne.set(TalonFXControlMode.PercentOutput, Power);
-  armMotorTwo.set(TalonFXControlMode.PercentOutput, Power);
+    armMotorOne.set(TalonFXControlMode.PercentOutput, Power);
+    armMotorTwo.set(TalonFXControlMode.PercentOutput, -Power);
   }
+
+
 
   @Override
   public void periodic() {
