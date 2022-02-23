@@ -41,6 +41,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void setPower(double Power) {
     armMotorOne.set(TalonFXControlMode.PercentOutput, Power);
     armMotorTwo.set(TalonFXControlMode.PercentOutput, -Power);
+    pidController = new PIDController(1.0, 1.0, 1.0);
   }
 
 
