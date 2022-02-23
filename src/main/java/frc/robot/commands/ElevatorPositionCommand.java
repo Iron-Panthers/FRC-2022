@@ -40,3 +40,10 @@ public class ElevatorPositionCommand extends CommandBase {
     return false;
   }
 }
+
+// 12.75 full motor rotations = 1.5pi inches of height
+
+// 12.75:1 gear ratio
+// talonfx to the entire thing
+// Big gear is 2.6 inches
+// 1.5 sprocket diameter
