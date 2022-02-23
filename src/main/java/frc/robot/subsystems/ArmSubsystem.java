@@ -15,7 +15,7 @@ import frc.robot.Constants;
 /*
 
     Todo:
-        1. Make and initialize two motors
+        1. Make and initialize two motors *DONE*
         2. Define functions in this subsystem to move the arm a direction
         3. Make a command ArmCommand.java that has handles moving the arm
         4. Define certain buttons to call command functions that move our arm some amount of degrees
@@ -24,8 +24,8 @@ import frc.robot.Constants;
  */
 
 public class ArmSubsystem extends SubsystemBase {
-  private static TalonFX armMotorOne;
-  private static TalonFX armMotorTwo;
+  private TalonFX armMotorOne;
+  private TalonFX armMotorTwo;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -33,11 +33,10 @@ public class ArmSubsystem extends SubsystemBase {
     armMotorTwo = new TalonFX(Constants.Arm.MOTOR_2_PORT);//FIX LATER
   }
 
-public static void setPower(double Power){
+  public void setPower(double Power) {
   armMotorOne.set(TalonFXControlMode.PercentOutput, Power);
   armMotorTwo.set(TalonFXControlMode.PercentOutput, Power);
-}
-
+  }
 
   @Override
   public void periodic() {
