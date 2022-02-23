@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmSubsystem extends SubsystemBase {
   /** Creates a new ArmSubsystem. */
-  public ArmSubsystem() {}
+  public ArmSubsystem() {
+    
+  }
 
   @Override
   public void periodic() {
