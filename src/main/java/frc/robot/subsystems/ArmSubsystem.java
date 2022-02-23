@@ -29,6 +29,7 @@ import frc.robot.Constants;
 public class ArmSubsystem extends SubsystemBase {
   private TalonFX armMotorOne;
   private TalonFX armMotorTwo;
+  private static PIDController pidController;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
