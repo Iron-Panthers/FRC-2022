@@ -3,13 +3,13 @@ package frc.robot.commands.Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class ArmMoveUp extends CommandBase {
+public class ArmToTarget extends CommandBase {
     ArmSubsystem arm;
     
     /**
      * Creates a new ArmCommand
      */
-    public ArmMoveUp(ArmSubsystem arm) {
+    public ArmToTarget(ArmSubsystem arm) {
         this.arm = arm;
     }
 
