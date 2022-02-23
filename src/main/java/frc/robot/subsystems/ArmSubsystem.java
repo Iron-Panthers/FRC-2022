@@ -4,6 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import java.lang.FdLibm.Pow;
+
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /*
@@ -20,8 +26,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ArmSubsystem extends SubsystemBase {
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    
+    public static WPI_TalonFX ArmMotorOne = new WPI_TalonFX(0);//FIX LATER
+    public static WPI_TalonFX ArmMotorTwo = new WPI_TalonFX(0);//FIX LATER
   }
+
+public static void setPower(double Power){
+  ArmMotorOne.set(TalonFXControlMode.PercentOutput, Power);
+  ArmMotorTwo.set(TalonFXControlMode.PercentOutput, Power);
+}
+
 
   @Override
   public void periodic() {
