@@ -4,10 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import java.util.function.DoubleSupplier;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX left = new TalonFX(Constants.Elevator.ELEVATOR_MOTOR);
@@ -25,6 +27,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Follow with the left motor and copy any important things
     left.follow(right);
     left.setInverted(TalonFXInvertType.FollowMaster);
+  }
+
+  public void setMotorPosition(DoubleSupplier position) {
+    right.set(TalonFXControlMode.Position, position.getAsDouble());
   }
 
   @Override
