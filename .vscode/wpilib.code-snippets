@@ -36,4 +36,25 @@
 			"this.$1 = $1;$0"
 		]
 	},
+	"TalonFX percent power": {
+		"scope": "java",
+		"prefix": "fxper",
+		"body": [
+			"$1.set(TalonFXControlMode.PercentOutput, $2);$0"
+		]
+	},
+	"New subsystem member for robotcontainer": {
+		"scope": "java",
+		"prefix": "newsub",
+		"body": [
+			"private final $1 $2 = new $1();$0"
+		]
+	},
+	"verify the setting of a talonfx power in a given control mode": {
+		"scope": "java",
+		"prefix": "vfxset",
+		"body": [
+			"verify($1, ${2:times(1)}.description(String.format(\"$3\",$4))).set(TalonFXControlMode.${5:PercentOutput}, $6);$0"
+		]
+	},
 }

@@ -15,5 +15,6 @@ public class ControllerUtilTests {
         1e-5 // epsilon for equality assertion
         ,
         "value should scale such that range from deadband to 1 is mapped to 0 to 1");
+    assertEquals(-.2, ControllerUtil.deadband(-.6, .5), 1e-5, "works for negative numbers");
   }
 }

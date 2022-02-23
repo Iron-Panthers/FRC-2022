@@ -11,6 +11,10 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.Util;
 import java.util.function.DoubleSupplier;
 
+/**
+ * This command takes a drive angle and a target angle, and snaps the robot to an angle. This is
+ * useful to snap the robot to an angle setpoint with a button, as opposed to using an entire stick.
+ */
 public class RotateAngleDriveCommand extends CommandBase {
   private final DrivebaseSubsystem drivebaseSubsystem;
 
@@ -18,8 +22,6 @@ public class RotateAngleDriveCommand extends CommandBase {
   private final DoubleSupplier translationYSupplier;
 
   private final int targetAngle;
-  private double cumTargetAngle;
-  private boolean robotRelative = false;
 
   /** Creates a new RotateAngleDriveCommand. */
   public RotateAngleDriveCommand(
@@ -37,27 +39,8 @@ public class RotateAngleDriveCommand extends CommandBase {
     addRequirements(drivebaseSubsystem);
   }
 
-  public static RotateAngleDriveCommand fromRobotRelative(
-      DrivebaseSubsystem drivebaseSubsystem,
-      DoubleSupplier translationXSupplier,
-      DoubleSupplier translationYSupplier,
-      int targetAngle) {
-
-    var command =
-        new RotateAngleDriveCommand(
-            drivebaseSubsystem, translationXSupplier, translationYSupplier, targetAngle);
-
-    command.robotRelative = true;
-    return command;
-  }
-
   @Override
-  public void initialize() {
-    cumTargetAngle = targetAngle;
-    if (robotRelative) {
-      cumTargetAngle += drivebaseSubsystem.getGyroscopeRotation().getDegrees();
-    }
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -66,7 +49,7 @@ public class RotateAngleDriveCommand extends CommandBase {
     double y = translationYSupplier.getAsDouble();
 
     drivebaseSubsystem.driveAngle(
-        new Pair<Double, Double>(x, y), cumTargetAngle // the desired angle, gyro relative
+        new Pair<Double, Double>(x, y), targetAngle // the desired angle, gyro relative
         );
   }
 
@@ -78,8 +61,7 @@ public class RotateAngleDriveCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     return Util.epsilonZero(
-            Util.relativeAngularDifference(
-                drivebaseSubsystem.getGyroscopeRotation(), cumTargetAngle),
+            Util.relativeAngularDifference(drivebaseSubsystem.getGyroscopeRotation(), targetAngle),
             Drive.ANGULAR_ERROR)
         && Util.epsilonEquals(drivebaseSubsystem.getRotVelocity(), 0, 10);
   }

@@ -45,6 +45,7 @@
     "TRACKWIDTH",
     "deadbanded",
     "drivebase",
+    "Mockito",
     "navx",
     "setpoint",
     "teleop",
