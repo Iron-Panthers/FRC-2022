@@ -9,6 +9,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import java.util.function.DoubleSupplier;
 
+/**
+ * This command takes a drive stick and nothing else, and drives the robot. It does not send any
+ * rotation. This allows the command scheduler to negotiate the different types of rotation without
+ * us worrying about it - if a new rotatoin is introduced, it takes priority, without rotation
+ * inside default command always getting lowest priority.
+ */
 public class DefaultDriveCommand extends CommandBase {
   private final DrivebaseSubsystem drivebaseSubsystem;
 

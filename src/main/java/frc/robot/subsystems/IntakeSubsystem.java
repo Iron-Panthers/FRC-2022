@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
+  // final should be used on these fields, but if we use final mockito cannot inject mocks - use
+  // final when you can
   /** the lower motor, upper motor follows this one - address this motor */
   private TalonFX lowerMotor;
   /** follows lower motor, only address lower motor */

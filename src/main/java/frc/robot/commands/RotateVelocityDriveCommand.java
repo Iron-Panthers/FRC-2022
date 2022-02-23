@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import java.util.function.DoubleSupplier;
 
+/**
+ * This command takes a drive stick, and then a velocity double to drive and rotate the robot. The
+ * velocity is meters per second.
+ */
 public class RotateVelocityDriveCommand extends CommandBase {
   private final DrivebaseSubsystem drivebaseSubsystem;
 
