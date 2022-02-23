@@ -18,6 +18,7 @@ public class ArmToTarget extends CommandBase {
     // Called when command is initially scheduled
     @Override
     public void initialize() {
+        
     }
 
     // Called when scheduler runs when command is initially scheduled
