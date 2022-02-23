@@ -33,8 +33,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    armMotorOne = new TalonFX(Constants.Arm.MOTOR_1_PORT);//FIX LATER
-    armMotorTwo = new TalonFX(Constants.Arm.MOTOR_2_PORT);//FIX LATER
+    armMotorOne = new TalonFX(Constants.Arm.Ports.MOTOR_1_PORT);//FIX LATER
+    armMotorTwo = new TalonFX(Constants.Arm..Ports.MOTOR_2_PORT);//FIX LATER
     pidController = new PIDController(1.0, 1.0, 1.0);               // TODO: Look into having to edit the PID Values to be propert
   }
 
