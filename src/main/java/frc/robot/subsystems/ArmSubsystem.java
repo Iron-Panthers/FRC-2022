@@ -4,19 +4,18 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
-import java.lang.FdLibm.Pow;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 /*
 
     Todo:
         1. Make and initialize two motors
-      
         2. Define functions in this subsystem to move the arm a direction
         3. Make a command ArmCommand.java that has handles moving the arm
         4. Define certain buttons to call command functions that move our arm some amount of degrees
@@ -25,13 +24,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 
 public class ArmSubsystem extends SubsystemBase {
-  /** Creates a new ArmSubsystem. */
-  public static WPI_TalonFX armMotorOne;
-  public static WPI_TalonFX armMotorTwo;
+  private static TalonFX armMotorOne;
+  private static TalonFX armMotorTwo;
 
+  /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    armMotorOne = new WPI_TalonFX(0);//FIX LATER
-    armMotorTwo = new WPI_TalonFX(0);//FIX LATER
+    armMotorOne = new TalonFX(Constants.Arm.MOTOR_1_PORT);//FIX LATER
+    armMotorTwo = new TalonFX(Constants.Arm.MOTOR_2_PORT);//FIX LATER
   }
 
 public static void setPower(double Power){
