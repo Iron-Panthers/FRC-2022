@@ -14,53 +14,52 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /*
-   Todo:
-       1. Make and initialize two motors *DONE*
-       2. Define functions in this subsystem to move the arm a direction *Done*
-         2a. Figure out how to do some cool PID stuff *Done*
-       3. Make a command ArmCommand.java that has handles moving the arm *Done*
-       4. Define certain buttons to call command functions that move our arm some amount of degrees *Done*
-           4a. We should have encoders to be able to move by degrees somehow *Done*
+For Engineering:
+   Need from engineering in ArmSubsystem: Right Motor Port, Left Motor Port, each motor's power attributes (scroll down), and Encoder Port 1 
+   Need from engineering in RobotContainer (Arm Team): Angle values in terms of buttons and the arm
 
-
-      What we need from the robot: 
-        1. Motor Port 1, Motor Port 2, Encoder Port 1
+   Also we defined the following motors "armRightMotor" and "armLeftMotor" in terms of their position from the elevator.
+   "armRightMotor" is the motor right to the elevator (assuming that on a plan view of the robot, the elevator is on the bottom),
+   and "armLeftMotor" is the motor left of the elevator.
 */
 public class ArmSubsystem extends SubsystemBase {
-  private final TalonFX armMotorOne;
-  private final TalonFX armMotorTwo;
+  private final TalonFX armRightMotor;
+  private final TalonFX armLeftMotor;
   private final PIDController pidController;
-
   private final CANCoder armEncoder;
 
   private double desiredAngle = 0; // Figure out what to change to fit the size-parameter
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    armMotorOne = new TalonFX(Constants.Arm.Ports.MOTOR_1_PORT); // FIX LATER
-    armMotorTwo = new TalonFX(Constants.Arm.Ports.MOTOR_2_PORT); // FIX LATER
+    armRightMotor = new TalonFX(Constants.Arm.Ports.RightMotorPort); // FIX ME - Identify motor port
+    armLeftMotor = new TalonFX(Constants.Arm.Ports.LeftMotorPort); // FIX Me
 
     pidController = new PIDController(0.01, 0, 0.01);
     pidController.setTolerance(Constants.Arm.PID.ANGULAR_TOLERANCE);
 
     armEncoder =
         new CANCoder(
-            Constants.Arm.Ports.ENCODER_PORT); // FIXME: we will need to figure out the real value
+            Constants.Arm.Ports.ENCODER_PORT); // FIX ME: we will need to figure out the real value
     armEncoder.configFactoryDefault();
     armEncoder.configSensorInitializationStrategy(
         SensorInitializationStrategy.BootToAbsolutePosition);
     armEncoder.configMagnetOffset(Constants.Arm.PID.ANGULAR_OFFSET);
   }
 
+  /** 
+   * We probably will not be using this too much, more focused into using positional values
+   * Need engineering to figure out if the right or left motor uses positive or negative power, respectively
+   */
   public void setPower(double power) {
-    // We probably will not be using this too much, more focused into using positional values
-    armMotorOne.set(TalonFXControlMode.PercentOutput, power);
-    armMotorTwo.set(TalonFXControlMode.PercentOutput, -power);
+  
+    armRightMotor.set(TalonFXControlMode.PercentOutput, power); //Engineering FIX ME
+    armLeftMotor.set(TalonFXControlMode.PercentOutput, -power);
   }
 
   // Sets the goal of the pid controller
-  public void setAngle(double dAngle) {
-    desiredAngle = dAngle; // Set the setpoint of the PIDController
+  public void setAngle(double desiredAngle) {
+    this.desiredAngle = desiredAngle; // Set the setpoint of the PIDController
   }
 
   public void stopMotor() {
