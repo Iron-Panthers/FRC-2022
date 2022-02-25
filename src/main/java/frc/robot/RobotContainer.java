@@ -126,7 +126,7 @@ public class RobotContainer {
     new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
 
     // Arm up - SET ANGLE!!
-    new Button(will::getAButton).whenHeld(new ArmCommand(armSubsystem, 100));
+    new Button(will::getAButton).whenHeld(new ArmCommand(armSubsystem, 90));
     // Arm down - SET ANGLE!!!
     new Button(will::getBButton).whenHeld(new ArmCommand(armSubsystem, 0));
 
