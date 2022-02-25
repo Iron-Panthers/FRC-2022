@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
@@ -121,9 +122,27 @@ public class RobotContainer {
             new StartEndCommand(
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
-    // elevator preset position buttons
-    new Button(will::getXButton)
-        .whenPressed(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.POSITION));
+    // Elevator preset position buttons
+    new Button(nick::getXButton)
+        .whenPressed(
+            new ElevatorPositionCommand(
+                elevatorSubsystem, Constants.Elevator.maxHeight)); // Elevator goes to top
+    new Button(nick::getYButton)
+        .whenPressed(
+            new ElevatorPositionCommand(
+                elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
+
+    // Elevator Manual controls
+
+    new Button(nick::getAButton)
+        .whileHeld(
+            new ElevatorManualCommand(
+                elevatorSubsystem, Constants.Elevator.POWER)); // Makes elevator go up manually
+    new Button(nick::getBButton)
+        .whileHeld(
+            new ElevatorManualCommand(
+                elevatorSubsystem, -Constants.Elevator.POWER)); // Makes elevator go down manually
+
     // will controller intakes (temporary)
     new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
