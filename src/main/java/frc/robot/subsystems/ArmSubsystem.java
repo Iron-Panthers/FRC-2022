@@ -11,7 +11,6 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -53,9 +52,9 @@ public class ArmSubsystem extends SubsystemBase {
     armMotorTwo.set(TalonFXControlMode.PercentOutput, -power);
   }
 
-  // Sets the goal of the pid controller
   public void setAngle(double dAngle) {
-    desiredAngle = dAngle; // Set the setpoint of the PIDController
+    DesiredAngle = dAngle; // Set the setpoint of the PIDController
+    pidController.setSetpoint(DesiredAngle);
   }
 
   public void stopMotor(){
