@@ -30,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final CANCoder armEncoder;
 
-  private double desiredAngle = Constants.Arm.PID.ANGULAR_OFFSET;
+  private double desiredAngle = 0; // Figure out what to change to fit the size-parameter
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -46,6 +46,7 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configFactoryDefault();
     armEncoder.configSensorInitializationStrategy(
         SensorInitializationStrategy.BootToAbsolutePosition);
+    armEncoder.configMagnetOffset(Constants.Arm.PID.ANGULAR_OFFSET);
   }
 
   public void setPower(double power) {

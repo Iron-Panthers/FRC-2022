@@ -107,7 +107,6 @@ public final class Constants {
     public static final class PID {
       public static final double ANGULAR_TOLERANCE = 1.0;
       public static final double ANGULAR_OFFSET = 0.0;
-      public static final double TICKS_TO_DEGREES = 360.0 / (4096.0 * 4.0);
     }
   }
 
