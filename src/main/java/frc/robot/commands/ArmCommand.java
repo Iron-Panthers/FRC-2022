@@ -24,7 +24,7 @@ public class ArmCommand extends CommandBase {
     // Called when scheduler runs when command is initially scheduled
     @Override
     public void execute() {
-        arm.setAngle(angle);
+        arm.setAngle(target);
     }
 
     // Called once the command ends or is interrupted
