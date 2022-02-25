@@ -16,12 +16,15 @@ import frc.robot.Constants;
 /*
    Todo:
        1. Make and initialize two motors *DONE*
-       2. Define functions in this subsystem to move the arm a direction
-         2a. Figure out how to do some cool PID stuff
-       3. Make a command ArmCommand.java that has handles moving the arm
-       4. Define certain buttons to call command functions that move our arm some amount of degrees
-           4a. We should have encoders to be able to move by degrees somehow
+       2. Define functions in this subsystem to move the arm a direction *Done*
+         2a. Figure out how to do some cool PID stuff *Done*
+       3. Make a command ArmCommand.java that has handles moving the arm *Done*
+       4. Define certain buttons to call command functions that move our arm some amount of degrees *Done*
+           4a. We should have encoders to be able to move by degrees somehow *Done*
 
+
+      What we need from the robot: 
+        1. Motor Port 1, Motor Port 2, Encoder Port 1
 */
 public class ArmSubsystem extends SubsystemBase {
   private final TalonFX armMotorOne;
