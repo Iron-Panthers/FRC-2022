@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,9 +40,12 @@ public class ArmSubsystem extends SubsystemBase {
     pidController = new PIDController(0.01, 0, 0.01);
     pidController.setTolerance(Constants.Arm.PID.ANGULAR_TOLERANCE);
 
-    armEncoder = new CANCoder(200); // FIXME: we will need to figure out the real value
+    armEncoder =
+        new CANCoder(
+            Constants.Arm.Ports.ENCODER_PORT); // FIXME: we will need to figure out the real value
     armEncoder.configFactoryDefault();
-    armEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+    armEncoder.configSensorInitializationStrategy(
+        SensorInitializationStrategy.BootToAbsolutePosition);
   }
 
   public void setPower(double power) {
@@ -52,12 +54,12 @@ public class ArmSubsystem extends SubsystemBase {
     armMotorTwo.set(TalonFXControlMode.PercentOutput, -power);
   }
 
+  // Sets the goal of the pid controller
   public void setAngle(double dAngle) {
-    DesiredAngle = dAngle; // Set the setpoint of the PIDController
-    pidController.setSetpoint(DesiredAngle);
+    desiredAngle = dAngle; // Set the setpoint of the PIDController
   }
 
-  public void stopMotor(){
+  public void stopMotor() {
     setPower(0);
   }
 
@@ -66,13 +68,17 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     double currentAngle = armEncoder.getAbsolutePosition();
 
-    // double output = controller.calculate(measurement (what is actually there), desired value (where we want it to be))
+    // double output = controller.calculate(measurement (what is actually there), desired value
+    // (where we want it to be))
     // -> PID math gibberish -> the output we want to write to our motor(s)
 
     final double output = pidController.calculate(currentAngle, desiredAngle);
     final double clampedOutput = MathUtil.clamp(output, -1, 1);
 
-    setPower(clampedOutput);
+    // Add the gravity offset as a function of cosine
+    final double gOffset = Math.cos(currentAngle) * 0.05;
+
+    setPower(clampedOutput + gOffset);
     // Util.relativeAngularDifference();
   }
 }

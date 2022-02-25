@@ -101,6 +101,7 @@ public final class Constants {
     public static final class Ports {
       public static final int MOTOR_1_PORT = 1;
       public static final int MOTOR_2_PORT = 1;
+      public static final int ENCODER_PORT = 1;
     }
 
     public static final class PID {
