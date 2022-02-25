@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
 
   private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
 
-  /**
+  /**222
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
@@ -62,17 +62,19 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    m_colorSensor.getColor();
+    Color detectedColor = m_colorSensor.getColor();
 
     String colorString;
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
 
     if (match.color == kBlueTarget) {
       colorString = "Blue";
-    } else if (match.color == kRedTarget) {
+    } 
+    else if (match.color == kRedTarget) {
       colorString = "Red";
-    } else {
-      colorString = "Unknown";
+    } 
+    else {
+      colorString = "Not a color";
     }
 
     SmartDashboard.putNumber("Red", detectedColor.red);
