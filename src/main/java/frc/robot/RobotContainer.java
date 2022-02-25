@@ -47,7 +47,7 @@ public class RobotContainer {
 
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  private final ArmSubsystem ArmSubsystem = new ArmSubsystem();
+  private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
   private final XboxController nick = new XboxController(1);
   private final XboxController will = new XboxController(0);
