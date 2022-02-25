@@ -45,6 +45,7 @@
   "java.test.defaultConfig": "WPIlibUnitTests",
   "cSpell.words": [
     "AHRS",
+    "colorsensor",
     "Deadband",
     "deadbanded",
     "drivebase",

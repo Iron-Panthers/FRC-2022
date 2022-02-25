@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.util.Color;
 
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
+import javax.lang.model.util.ElementScanner6;
 import com.revrobotics.ColorMatch;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -14,17 +15,14 @@ public class ColorSensors
 
     private final ColorMatch m_colorMatcher = new ColorMatch();
 
-    ColorSensor colorSensor = new ColorSensor(Port.kOnboard);
+    private ColorSensorV3 colorsensor3;
 
-    public ColorSensor(I2C.Port port)
+
+    public ColorSensors(I2C.Port port, ColorSensorV3 colorsensor3)
     {
         this.port = port;
+        this.colorsensor3 = colorsensor3;
     }
-
-
-    private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
-    private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
-
 
 
     enum Colors
@@ -47,35 +45,27 @@ public class ColorSensors
 
 
 
-//Testing enums
-
-public Colors getValue()
-{
-
-    if (match.color == blue) 
+    public Colors getValue()
     {
-        return BLUE;
-    } 
+   
+        if(colorsensor3.getProximity()<=240)
+        {
+            Color detectedColor = colorsensor3.getColor();
     
-    else if (match.color == red) 
-    {
-        return RED;
+            if(detectedColor )
+            {
+                return Colors.RED;
+            }
 
-      } 
-    else 
-    {
-        return NONE;
+            else if(detectedColor )
+            {
+                return Colors.BLUE;
+            }
+            else
+            {
+                return Colors.NONE; 
+            }
+
+        }
     }
-}
-
-
-switch(red)
-{
-    case RED:
-    System.out.println("RED");
-    case BLUE:
-    System.out.println("BLUE");
-    case NONE;
-    System.out.println("NONE");
-}
 }
