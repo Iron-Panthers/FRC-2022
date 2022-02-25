@@ -49,10 +49,7 @@ public class ArmSubsystem extends SubsystemBase {
     
   }
 
-  public void stop(){
     setPower(0);
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
