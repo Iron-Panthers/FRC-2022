@@ -15,10 +15,9 @@ import frc.robot.Constants;
 public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX left = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
   private final TalonFX right = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
-  private double totalMotorRotation;
+  private double totalMotorRotationTicks;
+  private double motorRotations;
   private double absoluteHeight;
-  private double pastMotorRotation;
-  private double currentMotorRotation;
   private double targetHeight;
   private double motorPower;
   private final PIDController heightController = new PIDController(0.04, 0, 0);
@@ -29,7 +28,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
 
-    this.totalMotorRotation = 0.0;
+    this.totalMotorRotationTicks = 0.0;
     this.absoluteHeight = 0.0;
     // Configure the right motor
     right.setInverted(true);
@@ -44,7 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /**
-   * stores the target height for the elevator, to be reached with motor adjustment
+   * Stores the target height for the elevator, to be reached with motor adjustment
    *
    * @param targetHeight Uses Inches
    */
@@ -52,36 +51,33 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetHeight = targetHeight;
   }
 
-  public double getHeightInInches() {
+  /**
+   * Calculate absolute height of elevator
+   *
+   * @return Absolute Height in inches
+   */
+  public double getHeight() {
 
-    this.pastMotorRotation = this.currentMotorRotation;
-    this.currentMotorRotation = right.getSelectedSensorPosition();
-
-    /* this was the old way, which was too idealisitic
-        if (currentMotorRotation == 0 && pastMotorRotation == 4096) {
-          this.totalMotorRotation += 4096;
-        } else if (currentMotorRotation == 4096 && pastMotorRotation == 0) {
-          this.totalMotorRotation -= 4096;
-        } else {
-
+    /* Lexie's code
+        if (motorPower >= 0) {
+          if (currentMotorRotation < pastMotorRotation) {
+            this.totalMotorRotation += 4096;
+          }
+          this.totalMotorRotation += (currentMotorRotation - pastMotorRotation);
+        } else if (motorPower < 0) {
+          if (currentMotorRotation > pastMotorRotation) {
+            this.totalMotorRotation -= 4096;
+          }
+          this.totalMotorRotation += (currentMotorRotation - pastMotorRotation);
         }
     */
 
-    if (motorPower >= 0) {
-      if (currentMotorRotation < pastMotorRotation) {
-        this.totalMotorRotation += 4096;
-      }
-      this.totalMotorRotation += (currentMotorRotation - pastMotorRotation);
-    } else if (motorPower < 0) {
-      if (currentMotorRotation > pastMotorRotation) {
-        this.totalMotorRotation -= 4096;
-      }
-      this.totalMotorRotation += (currentMotorRotation - pastMotorRotation);
-    }
+    this.totalMotorRotationTicks = right.getSelectedSensorPosition();
+    this.motorRotations = this.totalMotorRotationTicks / 4096; // There are 4096 units per rotation
 
     this.absoluteHeight =
-        (((this.totalMotorRotation + this.currentMotorRotation) / 4096) / 12.75)
-            * (1.5 * Math.PI); // number of motor rotations converted to height in inches
+        ((motorRotations / 12.75) // 12.75:1 gear ratio
+            * (1.5 * Math.PI)); // Circumference of gear multiplied by rotations to get height
 
     return absoluteHeight;
   }
@@ -93,7 +89,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    this.motorPower = heightController.calculate(getHeightInInches(), targetHeight);
+    this.motorPower = heightController.calculate(getHeight(), targetHeight);
     right.set(TalonFXControlMode.PercentOutput, motorPower);
     // This method will be called once per scheduler run
   }
