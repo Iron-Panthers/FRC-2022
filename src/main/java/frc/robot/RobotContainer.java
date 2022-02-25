@@ -19,12 +19,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
@@ -45,6 +47,7 @@ public class RobotContainer {
 
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
   private final XboxController nick = new XboxController(1);
   private final XboxController will = new XboxController(0);
@@ -122,6 +125,11 @@ public class RobotContainer {
     new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
 
+    // Arm up - SET ANGLE!!
+    new Button(will::getAButton).whenHeld(new ArmCommand(armSubsystem, 100));
+    // Arm down - SET ANGLE!!!
+    new Button(will::getBButton).whenHeld(new ArmCommand(armSubsystem, 0));
+
     // intake balls
     new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     // eject unwanted balls
@@ -170,6 +178,7 @@ public class RobotContainer {
     // Square the axis
     value = Math.copySign(value * value, value);
 
-    return value;
+    return value;  
+
   }
 }

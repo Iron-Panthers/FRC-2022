@@ -8,6 +8,14 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+<<<<<<< HEAD
+=======
+
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+
+
+
+>>>>>>> Arm
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -46,11 +54,19 @@ public class ArmSubsystem extends SubsystemBase {
     armMotorTwo.set(TalonFXControlMode.PercentOutput, -Power);
   }
 
+<<<<<<< HEAD
   public void setAngle(double dAngle) {
     DesiredAngle = dAngle; // Set the setpoint of the PIDController
     pidController.setSetpoint(DesiredAngle);
+=======
+  public void setAngle(double Angle) {
+    
+>>>>>>> Arm
   }
 
+  public void stopMotor(){
+    setPower(0);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
