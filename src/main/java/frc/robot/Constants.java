@@ -93,17 +93,20 @@ public final class Constants {
                 ? -Math.toRadians(20.9152 + 180.0) // comp bot offset
                 : -Math.toRadians(329.6777); // practice bot offset
       }
-
-
-
     }
   }
 
-  public static final class Arm{
+  public static final class Arm {
     // Throw any Arm constants in this file
     public static final class Ports {
-    public static int MOTOR_1_PORT = 1;
-    public static int MOTOR_2_PORT = 1;
+      public static final int MOTOR_1_PORT = 1;
+      public static final int MOTOR_2_PORT = 1;
+    }
+
+    public static final class PID {
+      public static final double ANGULAR_TOLERANCE = 1.0;
+      public static final double ANGULAR_OFFSET = 0.0;
+      public static final double TICKS_TO_DEGREES = 360.0 / (4096.0 * 4.0);
     }
   }
 
