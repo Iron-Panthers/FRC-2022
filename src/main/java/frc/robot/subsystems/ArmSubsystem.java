@@ -50,8 +50,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void stop(){
-    stopMotor(armMotorOne);
-    stopMotor(armMotorTwo);
+    setPower(0);
   }
 
   @Override
