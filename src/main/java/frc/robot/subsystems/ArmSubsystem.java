@@ -11,6 +11,8 @@ import edu.wpi.first.math.controller.PIDController;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 
+
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -43,8 +45,13 @@ public class ArmSubsystem extends SubsystemBase {
     armMotorTwo.set(TalonFXControlMode.PercentOutput, -Power);
   }
 
-  public void setAngle() {
+  public void setAngle(double Angle) {
     
+  }
+
+  public void stop(){
+    stopMotor(armMotorOne);
+    stopMotor(armMotorTwo);
   }
 
   @Override
