@@ -125,9 +125,11 @@ public class RobotContainer {
     new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
 
-    // Arm up - SET ANGLE!!
+    // Arm up FIX ME: get the actual angles when programming has robot access
     new Button(will::getAButton).whenHeld(new ArmCommand(armSubsystem, 90));
-    // Arm down - SET ANGLE!!!
+    // Low goal position
+    new Button(will::getXButton).whenHeld(new ArmCommand(armSubsystem, 45))
+    // Arm down
     new Button(will::getBButton).whenHeld(new ArmCommand(armSubsystem, 0));
 
     // intake balls
