@@ -7,12 +7,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.RobotParamTest;
 import frc.RobotTest;
 import frc.robot.Constants.Intake;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
+import frc.util.LazyTalonFX;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,15 +31,15 @@ public class IntakeSubsystemTest {
 
   @InjectMocks private IntakeSubsystem intakeSubsystem;
 
-  @Mock private TalonFX lowerMotor;
-  @Mock private TalonFX upperMotor;
-  @Mock private TalonFX idlerMotor;
+  @Mock private LazyTalonFX lowerMotor;
+  @Mock private LazyTalonFX upperMotor;
+  @Mock private LazyTalonFX idlerMotor;
 
   /**
    * contains [lowerMotor, idlerMotor] but not upper motor because calls should not be made against
    * upper motor - it is a follower
    */
-  private TalonFX[] motorArray = new TalonFX[2];
+  private LazyTalonFX[] motorArray = new LazyTalonFX[2];
 
   @BeforeEach
   public void setup() {
