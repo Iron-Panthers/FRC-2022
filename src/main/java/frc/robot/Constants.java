@@ -109,8 +109,10 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double OUTTAKE_POSITION = 12.5;
+      public static final double OUTTAKE_HIGH_POSITION = 12.5;
+      public static final double OUTTAKE_LOW_POSITION = 327;
       public static final double INTAKE_POSITION = 269;
+      public static final double MAX_HEIGHT = 17.1;
     }
   }
 

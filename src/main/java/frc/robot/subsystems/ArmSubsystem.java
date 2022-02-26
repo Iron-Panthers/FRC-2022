@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.util.Util;
 
 /*
 For Engineering:
@@ -29,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final PIDController pidController;
   private final CANCoder armEncoder;
 
-  private double desiredAngle = 0; // Figure out what to change to fit the size-parameter
+  private double desiredAngle = Constants.Arm.Setpoints.MAX_HEIGHT;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -38,6 +39,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     pidController = new PIDController(0.01, 0, 0.01);
     pidController.setTolerance(Constants.Arm.PID.ANGULAR_TOLERANCE);
+    pidController.setSetpoint(0);
 
     armEncoder =
         new CANCoder(
@@ -79,13 +81,14 @@ public class ArmSubsystem extends SubsystemBase {
     // (where we want it to be))
     // -> PID math gibberish -> the output we want to write to our motor(s)
 
-    final double output = pidController.calculate(currentAngle, desiredAngle);
+    final double output =
+        pidController.calculate(Util.relativeAngularDifference(currentAngle, desiredAngle));
     final double clampedOutput = MathUtil.clamp(output, -1, 1);
 
     // Add the gravity offset as a function of cosine
     final double gOffset = Math.cos(currentAngle) * 0.05;
 
-    setPower(clampedOutput + gOffset);
+    setPower(-(clampedOutput + gOffset));
     // Util.relativeAngularDifference();
   }
 }
