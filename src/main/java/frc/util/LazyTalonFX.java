@@ -61,7 +61,10 @@ public class LazyTalonFX {
   }
 
   public void follow(LazyTalonFX masterToFollow) {
-    masterToFollow.forgetPastCalls();
-    follow(masterToFollow.getInternalMotor());
+    if (!sameFollowValues(masterToFollow.getInternalMotor())) {
+      masterToFollow.forgetPastCalls();
+      talonFX.follow(masterToFollow.getInternalMotor());
+      applyValues(null, 0.0, masterToFollow.getInternalMotor());
+    }
   }
 }
