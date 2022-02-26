@@ -21,6 +21,10 @@ public class LazyTalonFX {
     talonFX = new TalonFX(deviceNumber);
   }
 
+  protected TalonFX getInternalMotor() {
+    return talonFX;
+  }
+
   private boolean sameSetValues(TalonFXControlMode mode, double value) {
     return this.mode == mode && this.value == value;
   }
@@ -48,5 +52,9 @@ public class LazyTalonFX {
       talonFX.follow(masterToFollow);
       applyValues(null, 0.0, masterToFollow);
     }
+  }
+
+  public void follow(LazyTalonFX masterToFollow) {
+    follow(masterToFollow.getInternalMotor());
   }
 }
