@@ -101,6 +101,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** periodic helper method to make intention more readable. Stops the idler motor */
   private void stopIdler() {
+    leftEjectMotor.follow(rightEjectMotor);
     stopMotor(rightEjectMotor);
   }
 
@@ -111,15 +112,20 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void idlingModePeriodic() {
     stopIntake();
+
+    leftEjectMotor.follow(rightEjectMotor);
     rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.IDLE);
   }
 
   private void intakeModePeriodic() {
     idlingModePeriodic();
+
+    upperMotor.follow(lowerMotor);
     lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
   }
 
   private void outtakeModePeriodic() {
+    leftEjectMotor.follow(rightEjectMotor);
     rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.IDLE);
 
     lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
