@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.util.LazyTalonFX;
 
-public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
+public class IntakeSubsystem extends SubsystemBase {
 
   // final should be used on these fields, but if we use final mockito cannot inject mocks - use
   // final when you can

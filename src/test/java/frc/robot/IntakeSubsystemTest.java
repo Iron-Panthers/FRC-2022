@@ -71,7 +71,6 @@ public class IntakeSubsystemTest {
 
   @AfterEach
   public void shutdown() {
-    intakeSubsystem.close();
     try {
       closeable.close();
     } catch (Exception e) {
