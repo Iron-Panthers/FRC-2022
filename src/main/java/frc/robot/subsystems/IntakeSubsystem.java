@@ -95,6 +95,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** periodic helper method to make intention more readable. Stops the intake motors */
   private void stopIntake() {
+    upperMotor.follow(lowerMotor);
     stopMotor(lowerMotor);
   }
 
@@ -120,11 +121,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void outtakeModePeriodic() {
     rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.IDLE);
-    lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE);
+
+    lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
+    upperMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
   }
 
   private void ejectModePeriodic() {
+    upperMotor.follow(lowerMotor);
     lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
+
+    leftEjectMotor.follow(rightEjectMotor);
     rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.EJECT);
   }
 
