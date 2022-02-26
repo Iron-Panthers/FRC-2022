@@ -8,25 +8,25 @@ import static frc.robot.Constants.Intake;
 import static frc.robot.Constants.Intake.Ports;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.util.LazyTalonFX;
 
 public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   // final should be used on these fields, but if we use final mockito cannot inject mocks - use
   // final when you can
   /** the lower motor, upper motor follows this one - address this motor */
-  private TalonFX lowerMotor;
+  private LazyTalonFX lowerMotor;
   /** follows lower motor, only address lower motor */
-  private TalonFX upperMotor;
+  private LazyTalonFX upperMotor;
   /** the idler motor, aligns balls and allows rejections */
-  private TalonFX idlerMotor;
+  private LazyTalonFX idlerMotor;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    lowerMotor = new TalonFX(Ports.LOWER_MOTOR);
-    upperMotor = new TalonFX(Ports.UPPER_MOTOR);
-    idlerMotor = new TalonFX(Ports.IDLER_MOTOR);
+    lowerMotor = new LazyTalonFX(Ports.LOWER_MOTOR);
+    upperMotor = new LazyTalonFX(Ports.UPPER_MOTOR);
+    idlerMotor = new LazyTalonFX(Ports.IDLER_MOTOR);
     upperMotor.follow(lowerMotor);
   }
 
@@ -83,7 +83,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /** periodic helper method, easy way to turn a motor off, by setting to 0 percent output */
-  private void stopMotor(TalonFX motor) {
+  private void stopMotor(LazyTalonFX motor) {
     motor.set(TalonFXControlMode.PercentOutput, 0);
   }
 
@@ -142,13 +142,5 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
         ejectModePeriodic();
         break;
     }
-  }
-
-  @Override
-  public void close() {
-    // these error codes are ignored. this may be undesirable in the future.
-    lowerMotor.DestroyObject();
-    upperMotor.DestroyObject();
-    idlerMotor.DestroyObject();
   }
 }
