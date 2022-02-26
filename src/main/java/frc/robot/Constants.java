@@ -1,13 +1,13 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
+ 
 package frc.robot;
-
+ 
 import static frc.util.MacUtil.IS_COMP_BOT;
-
+ 
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-
+ 
 @SuppressWarnings("java:S1118")
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -36,58 +36,58 @@ public final class Constants {
         MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0)
             * .5;
-
+ 
     /** the maximum amount of angular error pid loops will tolerate for rotation */
     public static final double ANGULAR_ERROR = 1.0;
     /** the minimum magnitude of the right stick for it to be used as a new rotation angle */
     public static final double ROTATE_VECTOR_MAGNITUDE = .7;
-
+ 
     public static final class Dims {
       // FIXME validate with hardware
       public static final double TRACKWIDTH_METERS =
           .5207; // 20.5 inches (source: cad) converted to meters
       public static final double WHEELBASE_METERS = TRACKWIDTH_METERS; // robot is square
     }
-
+ 
     public static final class Modules {
       public static final class FrontRight { // Module 1
         public static final int DRIVE_MOTOR = 4;
         public static final int STEER_MOTOR = 3;
         public static final int STEER_ENCODER = 24;
-
+ 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(329.4937 + 180.0) // comp bot offset
                 : -Math.toRadians(40.333 + 180.0); // practice bot offset
       }
-
+ 
       public static final class FrontLeft { // Module 2
         public static final int DRIVE_MOTOR = 11;
         public static final int STEER_MOTOR = 10;
         public static final int STEER_ENCODER = 25;
-
+ 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(209.0836) // comp bot offset
                 : -Math.toRadians(218.7512 + 180.0); // practice bot offset
       }
-
+ 
       public static final class BackLeft { // Module 3
         public static final int DRIVE_MOTOR = 13;
         public static final int STEER_MOTOR = 12;
         public static final int STEER_ENCODER = 26;
-
+ 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(183.5815) // comp bot offset
                 : -Math.toRadians(188.6133); // practice bot offset
       }
-
+ 
       public static final class BackRight { // Module 4
         public static final int DRIVE_MOTOR = 2;
         public static final int STEER_MOTOR = 1;
         public static final int STEER_ENCODER = 27;
-
+ 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(20.9152 + 180.0) // comp bot offset
@@ -95,25 +95,27 @@ public final class Constants {
       }
     }
   }
-
+ 
   public static final class Elevator {
-
+ 
     public static final double POSITION = 1.0;
     public static final double POWER = 0.3;
-
+ 
     // Heights
     /** Max height is 21.75 inches (adjusted for overshoot) */
     public static final double maxHeight = 20;
-
+ 
     /** Minimum height is 0 inches */
     public static final double minHeight = 0;
-
+ 
     public static final class Ports {
-      public static final int ELEVATOR_MOTOR = 1; // FIX ME (IN ALL CAPS)
-      public static final int ELEVATOR_MOTOR_2 = 1; // FIX ME (IN ALL CAPS)
+      public static final int LEFT_MOTOR = 1; // FIX ME (IN ALL CAPS)
+      public static final int RIGHT_MOTOR = 1; // FIX ME (IN ALL CAPS)
+      public static final int BOTTOM_SWITCH = 1; // FIX ME
+      public static final int TOP_SWITCH = 2; // FIX ME
     }
   }
-
+ 
   public static final class Intake {
     /** the percent to run the idler motor at in the idling state */
     public static final double IDLER_PERCENT = 1;
@@ -123,7 +125,7 @@ public final class Constants {
     public static final double OUTTAKE_PERCENT = .7;
     /** the percent to run the idler motor at in the ejection state */
     public static final double EJECT_PERCENT = -.9;
-
+ 
     public static final class Ports {
       public static final int LOWER_MOTOR = 14;
       public static final int UPPER_MOTOR = 6;
