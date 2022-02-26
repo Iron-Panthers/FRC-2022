@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.Intake;
-import static frc.robot.Constants.Intake.Ports;
-
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Intake.EjectRollers;
+import frc.robot.Constants.Intake.IntakeRollers;
+import frc.robot.Constants.Intake.Ports;
 import frc.util.LazyTalonFX;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -110,22 +110,22 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void idlingModePeriodic() {
     stopIntake();
-    rightEjectMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.IDLE);
   }
 
   private void intakeModePeriodic() {
     idlingModePeriodic();
-    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
+    lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
   }
 
   private void outtakeModePeriodic() {
-    rightEjectMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
-    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.IDLE);
+    lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE);
   }
 
   private void ejectModePeriodic() {
-    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
-    rightEjectMotor.set(TalonFXControlMode.PercentOutput, Intake.EJECT_PERCENT);
+    lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.EJECT);
   }
 
   @Override

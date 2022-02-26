@@ -9,7 +9,8 @@ import static org.mockito.Mockito.verify;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import frc.RobotParamTest;
 import frc.RobotTest;
-import frc.robot.Constants.Intake;
+import frc.robot.Constants.Intake.EjectRollers;
+import frc.robot.Constants.Intake.IntakeRollers;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.util.LazyTalonFX;
@@ -89,9 +90,9 @@ public class IntakeSubsystemTest {
   public void intakeMotorsAndEjectSpunDuringIntake() {
     intakeSubsystem.setMode(Modes.INTAKE);
     tick();
-    verify(lowerMotor).set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
+    verify(lowerMotor).set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
     // there is no need to test upper motor, it is already following lower motor
-    verify(rightEjectMotor).set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
+    verify(rightEjectMotor).set(TalonFXControlMode.PercentOutput, EjectRollers.IDLE);
   }
 
   @RobotTest
@@ -99,7 +100,7 @@ public class IntakeSubsystemTest {
     intakeSubsystem.setMode(Modes.INTAKE);
     int calls = 3;
     tick(calls);
-    verify(lowerMotor, times(calls)).set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
+    verify(lowerMotor, times(calls)).set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
   }
 
   private static Stream<Arguments> nextModeProgressionProvider() {
@@ -140,13 +141,10 @@ public class IntakeSubsystemTest {
   private static Stream<Arguments> modeMotorStatesProvider() {
     return Stream.of(
         Arguments.of(Modes.OFF, targetMotorPercents(0, 0)),
-        Arguments.of(Modes.IDLING, targetMotorPercents(0, Intake.IDLER_PERCENT)),
-        Arguments.of(
-            Modes.INTAKE, targetMotorPercents(Intake.INTAKE_PERCENT, Intake.IDLER_PERCENT)),
-        Arguments.of(
-            Modes.OUTTAKE, targetMotorPercents(Intake.OUTTAKE_PERCENT, Intake.IDLER_PERCENT)),
-        Arguments.of(
-            Modes.EJECT, targetMotorPercents(Intake.INTAKE_PERCENT, Intake.EJECT_PERCENT)));
+        Arguments.of(Modes.IDLING, targetMotorPercents(0, EjectRollers.IDLE)),
+        Arguments.of(Modes.INTAKE, targetMotorPercents(IntakeRollers.INTAKE, EjectRollers.IDLE)),
+        Arguments.of(Modes.OUTTAKE, targetMotorPercents(IntakeRollers.OUTTAKE, EjectRollers.IDLE)),
+        Arguments.of(Modes.EJECT, targetMotorPercents(IntakeRollers.INTAKE, EjectRollers.EJECT)));
   }
 
   @RobotParamTest
