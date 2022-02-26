@@ -19,15 +19,21 @@ public class IntakeSubsystem extends SubsystemBase {
   private LazyTalonFX lowerMotor;
   /** follows lower motor, only address lower motor */
   private LazyTalonFX upperMotor;
-  /** the idler motor, aligns balls and allows rejections */
-  private LazyTalonFX idlerMotor;
+  /** the right eject motor, aligns balls and allows rejections */
+  private LazyTalonFX rightEjectMotor;
+  /** the left eject motor, aligns balls and allows rejections */
+  private LazyTalonFX leftEjectMotor;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     lowerMotor = new LazyTalonFX(Ports.LOWER_MOTOR);
     upperMotor = new LazyTalonFX(Ports.UPPER_MOTOR);
-    idlerMotor = new LazyTalonFX(Ports.IDLER_MOTOR);
+
+    rightEjectMotor = new LazyTalonFX(Ports.RIGHT_EJECT_MOTOR);
+    leftEjectMotor = new LazyTalonFX(Ports.LEFT_EJECT_MOTOR);
+
     upperMotor.follow(lowerMotor);
+    leftEjectMotor.follow(rightEjectMotor);
   }
 
   /** the different modes the intake subsystem state machine can be in */
@@ -94,7 +100,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** periodic helper method to make intention more readable. Stops the idler motor */
   private void stopIdler() {
-    stopMotor(idlerMotor);
+    stopMotor(rightEjectMotor);
   }
 
   private void offModePeriodic() {
@@ -104,7 +110,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void idlingModePeriodic() {
     stopIntake();
-    idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
   }
 
   private void intakeModePeriodic() {
@@ -113,13 +119,13 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private void outtakeModePeriodic() {
-    idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
     lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
   }
 
   private void ejectModePeriodic() {
     lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
-    idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.EJECT_PERCENT);
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, Intake.EJECT_PERCENT);
   }
 
   @Override

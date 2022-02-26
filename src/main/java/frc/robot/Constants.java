@@ -97,19 +97,20 @@ public final class Constants {
   }
 
   public static final class Intake {
-    /** the percent to run the idler motor at in the idling state */
+    /** the percent to run the eject motor at in the idling state */
     public static final double IDLER_PERCENT = 1;
     /** the percent to run the intake motors during the intake state */
     public static final double INTAKE_PERCENT = -.55;
     /** the percent to run the outtake motors during the outtake state */
     public static final double OUTTAKE_PERCENT = .7;
-    /** the percent to run the idler motor at in the ejection state */
+    /** the percent to run the eject motor at in the ejection state */
     public static final double EJECT_PERCENT = -.9;
 
     public static final class Ports {
       public static final int LOWER_MOTOR = 14;
       public static final int UPPER_MOTOR = 6;
-      public static final int IDLER_MOTOR = 15;
+      public static final int RIGHT_EJECT_MOTOR = 15;
+      public static final int LEFT_EJECT_MOTOR = 0; // fixme
     }
   }
 }

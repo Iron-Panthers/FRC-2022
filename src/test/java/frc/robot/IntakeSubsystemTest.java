@@ -33,11 +33,12 @@ public class IntakeSubsystemTest {
 
   @Mock private LazyTalonFX lowerMotor;
   @Mock private LazyTalonFX upperMotor;
-  @Mock private LazyTalonFX idlerMotor;
+  @Mock private LazyTalonFX rightEjectMotor;
+  @Mock private LazyTalonFX leftEjectMotor;
 
   /**
-   * contains [lowerMotor, idlerMotor] but not upper motor because calls should not be made against
-   * upper motor - it is a follower
+   * contains [lowerMotor, rightEjectMotor] but not upper motor because calls should not be made
+   * against upper motor - it is a follower
    */
   private LazyTalonFX[] motorArray = new LazyTalonFX[2];
 
@@ -45,7 +46,7 @@ public class IntakeSubsystemTest {
   public void setup() {
     closeable = MockitoAnnotations.openMocks(intakeSubsystem);
     motorArray[0] = lowerMotor;
-    motorArray[1] = idlerMotor;
+    motorArray[1] = rightEjectMotor;
   }
 
   /**
@@ -85,12 +86,12 @@ public class IntakeSubsystemTest {
   }
 
   @RobotTest
-  public void intakeMotorsAndIdlerSpunDuringIntake() {
+  public void intakeMotorsAndEjectSpunDuringIntake() {
     intakeSubsystem.setMode(Modes.INTAKE);
     tick();
     verify(lowerMotor).set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
     // there is no need to test upper motor, it is already following lower motor
-    verify(idlerMotor).set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
+    verify(rightEjectMotor).set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
   }
 
   @RobotTest
