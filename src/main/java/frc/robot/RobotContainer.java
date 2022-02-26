@@ -126,9 +126,10 @@ public class RobotContainer {
     new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
 
     // Arm to highest - high goal
-    new Button(will::getAButton).whenPressed(new ArmCommand(armSubsystem, 90)); 
+    new Button(will::getAButton).whenPressed(new ArmCommand(armSubsystem, 90));
     // Arm to low goal - shortcut for engineering
-    new Button(will::getXButton).whenPressed(new ArmCommand(armSubsystem, 45)); //FIX ME -> What angle should this be? 
+    new Button(will::getXButton)
+        .whenPressed(new ArmCommand(armSubsystem, 45)); // FIX ME -> What angle should this be?
     // Arm to lowest
     new Button(will::getBButton).whenPressed(new ArmCommand(armSubsystem, 0));
 
@@ -180,7 +181,6 @@ public class RobotContainer {
     // Square the axis
     value = Math.copySign(value * value, value);
 
-    return value;  
-
+    return value;
   }
 }

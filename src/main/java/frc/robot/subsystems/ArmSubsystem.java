@@ -10,12 +10,13 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /*
 For Engineering:
-   Need from engineering in ArmSubsystem: Right Motor Port, Left Motor Port, each motor's power attributes (scroll down), and Encoder Port 1 
+   Need from engineering in ArmSubsystem: Right Motor Port, Left Motor Port, each motor's power attributes (scroll down), and Encoder Port 1
    Need from engineering in RobotContainer (Arm Team): Angle values in terms of buttons and the arm
 
    Also we defined the following motors "armRightMotor" and "armLeftMotor" in terms of their position from the elevator.
@@ -44,16 +45,17 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configFactoryDefault();
     armEncoder.configSensorInitializationStrategy(
         SensorInitializationStrategy.BootToAbsolutePosition);
-    armEncoder.configMagnetOffset(Constants.Arm.PID.ANGULAR_OFFSET);
+    // armEncoder.configMagnetOffset(Constants.Arm.ANGULAR_OFFSET);
   }
 
-  /** 
-   * We probably will not be using this too much, more focused into using positional values
-   * Need engineering to figure out if the right or left motor uses positive or negative power, respectively
+  /**
+   * We probably will not be using this too much, more focused into using positional values Need
+   * engineering to figure out if the right or left motor uses positive or negative power,
+   * respectively
    */
   public void setPower(double power) {
-  
-    armRightMotor.set(TalonFXControlMode.PercentOutput, power); //Engineering FIX ME
+
+    armRightMotor.set(TalonFXControlMode.PercentOutput, power); // Engineering FIX ME
     armLeftMotor.set(TalonFXControlMode.PercentOutput, -power);
   }
 
@@ -70,6 +72,8 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     double currentAngle = armEncoder.getAbsolutePosition();
+
+    SmartDashboard.putNumber("currentAngle", currentAngle);
 
     // double output = controller.calculate(measurement (what is actually there), desired value
     // (where we want it to be))

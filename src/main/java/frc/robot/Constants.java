@@ -99,14 +99,18 @@ public final class Constants {
   public static final class Arm {
     // Throw any Arm constants in this file
     public static final class Ports {
-      public static final int RightMotorPort = 1;
-      public static final int LeftMotorPort = 1;
-      public static final int ENCODER_PORT = 1;
+      public static final int RightMotorPort = 14;
+      public static final int LeftMotorPort = 5;
+      public static final int ENCODER_PORT = 22;
     }
 
     public static final class PID {
       public static final double ANGULAR_TOLERANCE = 1.0;
-      public static final double ANGULAR_OFFSET = 0.0;
+    }
+
+    public static final class Setpoints {
+      public static final double OUTTAKE_POSITION = 12.5;
+      public static final double INTAKE_POSITION = 269;
     }
   }
 
