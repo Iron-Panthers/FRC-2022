@@ -9,12 +9,19 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Elevator;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX left = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
   private final TalonFX right = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
+  private final DigitalInput bottomLimitSwitch =
+      new DigitalInput(Elevator.Ports.BOTTOM_SWITCH); // do we need to put constants?
+  private final DigitalInput topLimitSwitch =
+      new DigitalInput(Elevator.Ports.TOP_SWITCH); // do we need to put constants?
+
   private double totalMotorRotationTicks;
   private double motorRotations;
   private double absoluteHeight;
@@ -72,7 +79,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     */
 
-    this.totalMotorRotationTicks = right.getSelectedSensorPosition();
+    if (bottomLimitSwitchPressed()) {
+      this.totalMotorRotationTicks = 0;
+    } else {
+      this.totalMotorRotationTicks = right.getSelectedSensorPosition();
+    }
+
     this.motorRotations = this.totalMotorRotationTicks / 4096; // There are 4096 units per rotation
 
     this.absoluteHeight =
@@ -87,16 +99,28 @@ public class ElevatorSubsystem extends SubsystemBase {
     right.setNeutralMode(NeutralMode.Brake);
   }
 
+  public boolean topLimitSwitchPressed() {
+
+    return topLimitSwitch.get();
+  }
+
+  public boolean bottomLimitSwitchPressed() {
+
+    return bottomLimitSwitch.get();
+  }
+
   @Override
   public void periodic() {
     this.motorPower = heightController.calculate(getHeight(), targetHeight);
     right.set(TalonFXControlMode.PercentOutput, motorPower);
+    if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
+      lock();
+    } // FIX ME (Isaac, we don't know if it'll be stuck at the limit switch)
     // This method will be called once per scheduler run
   }
 }
 
 // 12.75 full motor rotations = 1.5pi inches of height
-
 // 12.75:1 gear ratio
 // talonfx to the entire thing
 // Big gear is 2.6 inches
