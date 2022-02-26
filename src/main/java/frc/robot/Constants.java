@@ -109,8 +109,8 @@ public final class Constants {
     public static final double minHeight = 0;
  
     public static final class Ports {
-      public static final int LEFT_MOTOR = 1; // FIX ME (IN ALL CAPS)
-      public static final int RIGHT_MOTOR = 1; // FIX ME (IN ALL CAPS)
+      public static final int LEFT_MOTOR = 6;
+      public static final int RIGHT_MOTOR = 7; 
       public static final int BOTTOM_SWITCH = 1; // FIX ME
       public static final int TOP_SWITCH = 2; // FIX ME
     }
