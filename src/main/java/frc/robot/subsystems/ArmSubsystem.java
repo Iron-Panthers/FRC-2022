@@ -47,17 +47,14 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configFactoryDefault();
     armEncoder.configSensorInitializationStrategy(
         SensorInitializationStrategy.BootToAbsolutePosition);
-    // armEncoder.configMagnetOffset(Constants.Arm.ANGULAR_OFFSET);
   }
 
-  /**
-   * We probably will not be using this too much, more focused into using positional values Need
-   * engineering to figure out if the right or left motor uses positive or negative power,
-   * respectively
-   */
-  public void setPower(double power) {
+  public double getAngle() {
+    return Util.relativeAngularDifference(armEncoder.getPosition(), Constants.Arm.ANGULAR_OFFSET);
+  }
 
-    armRightMotor.set(TalonFXControlMode.PercentOutput, power); // Engineering FIX ME
+  private void setPercentOutput(double power) {
+    armRightMotor.set(TalonFXControlMode.PercentOutput, power);
     armLeftMotor.set(TalonFXControlMode.PercentOutput, -power);
   }
 
@@ -67,15 +64,18 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void stopMotor() {
-    setPower(0);
+    setPercentOutput(0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    double currentAngle = armEncoder.getAbsolutePosition();
+    double currentAngle = getAngle();
 
     SmartDashboard.putNumber("currentAngle", currentAngle);
+
+    SmartDashboard.putNumber(
+        "angular diff", Util.relativeAngularDifference(currentAngle, desiredAngle));
 
     // double output = controller.calculate(measurement (what is actually there), desired value
     // (where we want it to be))
@@ -83,12 +83,14 @@ public class ArmSubsystem extends SubsystemBase {
 
     final double output =
         pidController.calculate(Util.relativeAngularDifference(currentAngle, desiredAngle));
+
+    SmartDashboard.putNumber("output", output);
     final double clampedOutput = MathUtil.clamp(output, -1, 1);
 
     // Add the gravity offset as a function of cosine
     final double gOffset = Math.cos(currentAngle) * 0.05;
 
-    setPower(-(clampedOutput + gOffset));
+    // setPercentOutput(-(clampedOutput + gOffset));
     // Util.relativeAngularDifference();
   }
 }

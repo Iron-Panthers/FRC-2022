@@ -104,6 +104,8 @@ public final class Constants {
       public static final int ENCODER_PORT = 22;
     }
 
+    public static final double ANGULAR_OFFSET = 260.24;
+
     public static final class PID {
       public static final double ANGULAR_TOLERANCE = 1.0;
     }
