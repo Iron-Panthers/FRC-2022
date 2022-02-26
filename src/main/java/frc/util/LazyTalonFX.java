@@ -21,7 +21,7 @@ public class LazyTalonFX {
     talonFX = new TalonFX(deviceNumber);
   }
 
-  protected TalonFX getInternalMotor() {
+  private TalonFX getInternalMotor() {
     return talonFX;
   }
 
@@ -47,6 +47,12 @@ public class LazyTalonFX {
     }
   }
 
+  private void forgetPastCalls() {
+    mode = DEFAULT_MODE;
+    value = DEFAULT_VALUE;
+    masterToFollowId = DEFAULT_MASTER_TO_FOLLOW_ID;
+  }
+
   public void follow(IMotorController masterToFollow) {
     if (!sameFollowValues(masterToFollow)) {
       talonFX.follow(masterToFollow);
@@ -55,6 +61,7 @@ public class LazyTalonFX {
   }
 
   public void follow(LazyTalonFX masterToFollow) {
+    masterToFollow.forgetPastCalls();
     follow(masterToFollow.getInternalMotor());
   }
 }
