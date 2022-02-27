@@ -74,6 +74,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("currentAngle", currentAngle);
 
+    SmartDashboard.putNumber("true angle", armEncoder.getPosition());
+
     SmartDashboard.putNumber(
         "angular diff", Util.relativeAngularDifference(currentAngle, desiredAngle));
 
@@ -88,7 +90,8 @@ public class ArmSubsystem extends SubsystemBase {
     final double clampedOutput = MathUtil.clamp(output, -1, 1);
 
     // Add the gravity offset as a function of cosine
-    final double gOffset = Math.cos(currentAngle) * 0.05;
+    final double gOffset = Math.cos(Math.toRadians(currentAngle)) * 0.05;
+    SmartDashboard.putNumber("gOffset", gOffset);
 
     // setPercentOutput(-(clampedOutput + gOffset));
     // Util.relativeAngularDifference();
