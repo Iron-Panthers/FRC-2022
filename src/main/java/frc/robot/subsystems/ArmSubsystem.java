@@ -12,7 +12,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.Arm;
 import frc.util.Util;
 
 /*
@@ -30,27 +30,26 @@ public class ArmSubsystem extends SubsystemBase {
   private final PIDController pidController;
   private final CANCoder armEncoder;
 
-  private double desiredAngle = Constants.Arm.Setpoints.MAX_HEIGHT;
+  private double desiredAngle = Arm.Setpoints.MAX_HEIGHT;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    armRightMotor = new TalonFX(Constants.Arm.Ports.RightMotorPort); // FIX ME - Identify motor port
-    armLeftMotor = new TalonFX(Constants.Arm.Ports.LeftMotorPort); // FIX Me
+    armRightMotor = new TalonFX(Arm.Ports.RightMotorPort); // FIX ME - Identify motor port
+    armLeftMotor = new TalonFX(Arm.Ports.LeftMotorPort); // FIX Me
 
     pidController = new PIDController(0.01, 0, 0.01);
-    pidController.setTolerance(Constants.Arm.PID.ANGULAR_TOLERANCE);
+    pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
     pidController.setSetpoint(0);
 
     armEncoder =
-        new CANCoder(
-            Constants.Arm.Ports.ENCODER_PORT); // FIX ME: we will need to figure out the real value
+        new CANCoder(Arm.Ports.ENCODER_PORT); // FIX ME: we will need to figure out the real value
     armEncoder.configFactoryDefault();
     armEncoder.configSensorInitializationStrategy(
         SensorInitializationStrategy.BootToAbsolutePosition);
   }
 
   public double getAngle() {
-    return Util.relativeAngularDifference(armEncoder.getPosition(), Constants.Arm.ANGULAR_OFFSET);
+    return Util.relativeAngularDifference(armEncoder.getPosition(), Arm.ANGULAR_OFFSET);
   }
 
   private void setPercentOutput(double power) {
@@ -87,13 +86,17 @@ public class ArmSubsystem extends SubsystemBase {
         pidController.calculate(Util.relativeAngularDifference(currentAngle, desiredAngle));
 
     SmartDashboard.putNumber("output", output);
-    final double clampedOutput = MathUtil.clamp(output, -1, 1);
+    final double clampedOutput =
+        MathUtil.clamp(output, -1 + Arm.GRAVITY_CONTROL_PERCENT, 1 - Arm.GRAVITY_CONTROL_PERCENT);
 
     // Add the gravity offset as a function of cosine
-    final double gOffset = Math.cos(Math.toRadians(currentAngle)) * 0.05;
+    final double gOffset = Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
     SmartDashboard.putNumber("gOffset", gOffset);
 
-    // setPercentOutput(-(clampedOutput + gOffset));
-    // Util.relativeAngularDifference();
+    final double motorPercent = clampedOutput + gOffset;
+
+    SmartDashboard.putNumber("motor target percent", motorPercent);
+
+    setPercentOutput(MathUtil.clamp(motorPercent, -.3, .3));
   }
 }
