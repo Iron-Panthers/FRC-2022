@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
-import frc.robot.commands.ArmCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
@@ -128,16 +127,20 @@ public class RobotContainer {
 
     // Arm to highest - high goal
     new Button(nick::getAButton)
-        .whenPressed(new ArmCommand(armSubsystem, Arm.Setpoints.OUTTAKE_HIGH_POSITION));
+        .whenPressed(
+            new InstantCommand(
+                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION), armSubsystem));
     // Arm to low goal - shortcut for engineering
     new Button(nick::getXButton)
         .whenPressed(
-            new ArmCommand(
-                armSubsystem,
-                Arm.Setpoints.OUTTAKE_LOW_POSITION)); // FIX ME -> What angle should this be?
+            new InstantCommand(
+                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION),
+                armSubsystem)); // FIX ME -> What angle should this be?
     // Arm to lowest
     new Button(nick::getBButton)
-        .whenPressed(new ArmCommand(armSubsystem, Arm.Setpoints.INTAKE_POSITION));
+        .whenPressed(
+            new InstantCommand(
+                () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION), armSubsystem));
 
     // intake balls
     new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));

@@ -104,7 +104,7 @@ public final class Constants {
       public static final int ENCODER_PORT = 22;
     }
 
-    public static final double ANGULAR_OFFSET = 295.8;
+    public static final double ANGULAR_OFFSET = 320;
     public static final double GRAVITY_CONTROL_PERCENT = .145;
 
     public static final class PID {
@@ -112,10 +112,10 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double OUTTAKE_HIGH_POSITION = 75.53;
-      public static final double OUTTAKE_LOW_POSITION = 48.5;
-      public static final double INTAKE_POSITION = -26.15;
-      public static final double MAX_HEIGHT = 81.07;
+      public static final double OUTTAKE_HIGH_POSITION = 42;
+      public static final double OUTTAKE_LOW_POSITION = 17;
+      public static final double INTAKE_POSITION = -50;
+      public static final double MAX_HEIGHT = 55.6;
     }
   }
 
