@@ -9,7 +9,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem elevatorSubsystem;
-  private Double targetHeight;
+  private final Double targetHeight;
   /** Creates a new ElevatorCommand. */
   public ElevatorPositionCommand(ElevatorSubsystem subsystem, Double targetHeight) {
     this.elevatorSubsystem = subsystem;
@@ -26,8 +26,6 @@ public class ElevatorPositionCommand extends CommandBase {
   @Override
   public void execute() {
     elevatorSubsystem.setTargetHeight(targetHeight);
-    elevatorSubsystem.periodic();
-
     // get current height
   }
 

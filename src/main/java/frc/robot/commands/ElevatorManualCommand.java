@@ -9,7 +9,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorManualCommand extends CommandBase {
   private ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  private Double power;
+  private final Double power;
   /** Creates a new ElevatorCommand. */
   public ElevatorManualCommand(ElevatorSubsystem subsystem, Double power) {
     addRequirements(elevatorSubsystem);

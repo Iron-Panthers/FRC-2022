@@ -123,22 +123,22 @@ public class RobotContainer {
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
     // Elevator preset position buttons
-    new Button(nick::getXButton)
+    new Button(nick::getBButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.maxHeight)); // Elevator goes to top
-    new Button(nick::getYButton)
+    new Button(nick::getXButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
 
     // Elevator Manual controls
 
-    new Button(nick::getAButton)
+    new Button(nick::getYButton)
         .whileHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, Constants.Elevator.POWER)); // Makes elevator go up manually
-    new Button(nick::getBButton)
+    new Button(nick::getAButton)
         .whileHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, -Constants.Elevator.POWER)); // Makes elevator go down manually
