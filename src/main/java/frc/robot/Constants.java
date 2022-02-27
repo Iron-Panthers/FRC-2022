@@ -105,7 +105,7 @@ public final class Constants {
     }
 
     public static final double ANGULAR_OFFSET = 295.8;
-    public static final double GRAVITY_CONTROL_PERCENT = .1;
+    public static final double GRAVITY_CONTROL_PERCENT = .145;
 
     public static final class PID {
       public static final double ANGULAR_TOLERANCE = 1.0;
