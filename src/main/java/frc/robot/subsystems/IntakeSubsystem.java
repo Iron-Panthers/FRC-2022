@@ -16,9 +16,9 @@ public class IntakeSubsystem extends SubsystemBase {
   // final should be used on these fields, but if we use final mockito cannot inject mocks - use
   // final when you can
   /** the lower motor, upper motor follows this one - address this motor */
-  private LazyTalonFX lowerMotor;
+  private LazyTalonFX lowerIntakeMotor;
   /** follows lower motor, only address lower motor */
-  private LazyTalonFX upperMotor;
+  private LazyTalonFX upperIntakeMotor;
   /** the right eject motor, aligns balls and allows rejections */
   private LazyTalonFX rightEjectMotor;
   /** the left eject motor, aligns balls and allows rejections */
@@ -26,13 +26,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    lowerMotor = new LazyTalonFX(Ports.LOWER_MOTOR);
-    upperMotor = new LazyTalonFX(Ports.UPPER_MOTOR);
+    lowerIntakeMotor = new LazyTalonFX(Ports.LOWER_MOTOR);
+    upperIntakeMotor = new LazyTalonFX(Ports.UPPER_MOTOR);
 
     rightEjectMotor = new LazyTalonFX(Ports.RIGHT_EJECT_MOTOR);
     leftEjectMotor = new LazyTalonFX(Ports.LEFT_EJECT_MOTOR);
 
-    upperMotor.follow(lowerMotor);
+    upperIntakeMotor.follow(lowerIntakeMotor);
     leftEjectMotor.follow(rightEjectMotor);
   }
 
@@ -94,50 +94,54 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /** periodic helper method to make intention more readable. Stops the intake motors */
-  private void stopIntake() {
-    upperMotor.follow(lowerMotor);
-    stopMotor(lowerMotor);
+  private void stopIntakeRollers() {
+    upperIntakeMotor.follow(lowerIntakeMotor);
+    stopMotor(lowerIntakeMotor);
   }
 
   /** periodic helper method to make intention more readable. Stops the idler motor */
-  private void stopIdler() {
+  private void stopEjectRollers() {
     leftEjectMotor.follow(rightEjectMotor);
     stopMotor(rightEjectMotor);
   }
 
+  private void runEjectRollers(double percent) {
+    leftEjectMotor.follow(rightEjectMotor);
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
+  private void runIntakeRollers(double percent) {
+    upperIntakeMotor.follow(lowerIntakeMotor);
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
   private void offModePeriodic() {
-    stopIdler();
-    stopIntake();
+    stopEjectRollers();
+    stopIntakeRollers();
   }
 
   private void idlingModePeriodic() {
-    stopIntake();
-
-    leftEjectMotor.follow(rightEjectMotor);
-    rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.IDLE);
+    stopIntakeRollers();
+    runIntakeRollers(EjectRollers.IDLE);
   }
 
   private void intakeModePeriodic() {
-    idlingModePeriodic();
-
-    upperMotor.follow(lowerMotor);
-    lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
+    runEjectRollers(EjectRollers.IDLE);
+    runIntakeRollers(IntakeRollers.INTAKE);
   }
 
   private void outtakeModePeriodic() {
-    leftEjectMotor.follow(rightEjectMotor);
-    rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.IDLE);
+    runEjectRollers(EjectRollers.IDLE);
 
-    lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
-    upperMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
   }
 
   private void ejectModePeriodic() {
-    upperMotor.follow(lowerMotor);
-    lowerMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
 
-    leftEjectMotor.follow(rightEjectMotor);
-    rightEjectMotor.set(TalonFXControlMode.PercentOutput, EjectRollers.EJECT);
+    runEjectRollers(EjectRollers.EJECT);
   }
 
   @Override
