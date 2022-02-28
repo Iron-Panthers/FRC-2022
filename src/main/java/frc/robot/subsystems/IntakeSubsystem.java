@@ -122,7 +122,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void idlingModePeriodic() {
     stopIntakeRollers();
-    runIntakeRollers(EjectRollers.IDLE);
+    runEjectRollers(EjectRollers.IDLE);
   }
 
   private void intakeModePeriodic() {

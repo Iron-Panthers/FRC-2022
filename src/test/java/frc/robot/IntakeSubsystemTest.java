@@ -240,17 +240,29 @@ public class IntakeSubsystemTest {
 
   private static Stream<Arguments> modeMotorStatesProvider() {
     return Stream.of(
-        targetMotorPercentsAndFollowers(Modes.OFF, 0, 0),
-        targetMotorPercentsAndFollowers(Modes.IDLING, 0, EjectRollers.IDLE),
-        targetMotorPercentsAndFollowers(Modes.INTAKE, IntakeRollers.INTAKE, EjectRollers.IDLE),
-        targetMotorPercents(
-            Modes.OUTTAKE,
-            IntakeRollers.OUTTAKE_LOWER,
-            IntakeRollers.OUTTAKE_UPPER,
-            EjectRollers.IDLE,
-            EjectRollers.IDLE),
+        // off, turn everything off
+        targetMotorPercentsAndFollowers(Modes.OFF, 0 /*intake*/, 0 /*eject*/),
+
+        // idling, run only the eject motors to align balls
+        targetMotorPercentsAndFollowers(Modes.IDLING, 0 /*intake*/, EjectRollers.IDLE /*eject*/),
+
+        // intake, run the eject for alignment and the intake to hoover balls
+        targetMotorPercentsAndFollowers(
+            Modes.INTAKE, IntakeRollers.INTAKE /*intake*/, EjectRollers.IDLE /*eject*/),
+
+        // outtake, run the eject to feed the balls in and run the intake in reverse
         targetIntakeMotorPercentsAndEjectFollower(
-            Modes.EJECT, 0, IntakeRollers.INTAKE, EjectRollers.EJECT));
+            Modes.OUTTAKE,
+            IntakeRollers.OUTTAKE_LOWER /*lower intake*/,
+            IntakeRollers.OUTTAKE_UPPER /*upper intake*/,
+            EjectRollers.IDLE /*eject*/),
+
+        // eject, run the upper intake to feed the balls into the ejection rollers to expel
+        targetIntakeMotorPercentsAndEjectFollower(
+            Modes.EJECT,
+            0 /*lower intake*/,
+            IntakeRollers.INTAKE /*upper intake*/,
+            EjectRollers.EJECT /*eject*/));
   }
 
   @RobotParamTest
@@ -280,6 +292,8 @@ public class IntakeSubsystemTest {
               .set(TalonFXControlMode.PercentOutput, motorCommand.getPercent());
           break;
       }
+
+      // remove this line to get more useful failures for the above tests
       verifyNoMoreInteractions(motorArray[i]);
     }
   }
