@@ -49,7 +49,9 @@ public class RobotContainer {
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
+  /** controller 1 */
   private final XboxController nick = new XboxController(1);
+  /** controller 0 */
   private final XboxController will = new XboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */

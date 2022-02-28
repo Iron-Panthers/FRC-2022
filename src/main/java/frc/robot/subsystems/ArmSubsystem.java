@@ -11,6 +11,7 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
 import frc.util.Util;
@@ -47,35 +48,6 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configFactoryDefault();
     armEncoder.configSensorInitializationStrategy(
         SensorInitializationStrategy.BootToAbsolutePosition);
-
-    Shuffleboard.getTab("arm").addNumber("current angle with offset", this::getAngle);
-    Shuffleboard.getTab("arm").addNumber("true angle", armEncoder::getPosition);
-
-    Shuffleboard.getTab("arm")
-        .addNumber("angular diff", () -> Util.relativeAngularDifference(getAngle(), desiredAngle));
-
-    Shuffleboard.getTab("arm")
-        .addNumber(
-            "output",
-            () ->
-                pidController.calculate(Util.relativeAngularDifference(getAngle(), desiredAngle)));
-
-    Shuffleboard.getTab("arm")
-        .addNumber(
-            "gOffset", () -> Math.cos(Math.toRadians(getAngle())) * Arm.GRAVITY_CONTROL_PERCENT);
-
-    Shuffleboard.getTab("arm")
-        .addNumber(
-            "motor target percent",
-            () ->
-                (Math.cos(Math.toRadians(getAngle())) * Arm.GRAVITY_CONTROL_PERCENT)
-                    + (MathUtil.clamp(
-                        pidController.calculate(
-                            Util.relativeAngularDifference(getAngle(), desiredAngle)),
-                        -1 + Arm.GRAVITY_CONTROL_PERCENT,
-                        1 - Arm.GRAVITY_CONTROL_PERCENT)));
-
-    Shuffleboard.getTab("arm").addNumber("desired angle", () -> desiredAngle);
   }
 
   public double getAngle() {
@@ -101,19 +73,35 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     double currentAngle = getAngle();
 
+    SmartDashboard.putNumber("current angle", currentAngle);
+    SmartDashboard.putNumber("desired angle", desiredAngle);
+
     // double output = controller.calculate(measurement (what is actually there), desired value
     // (where we want it to be))
     // -> PID math gibberish -> the output we want to write to our motor(s)
 
-    final double output =
-        pidController.calculate(Util.relativeAngularDifference(currentAngle, desiredAngle));
+    final double angularDiff =
+        Math.abs(currentAngle - desiredAngle) * (desiredAngle < currentAngle ? -1 : 1);
+
+    SmartDashboard.putNumber("angular diff", angularDiff);
+
+    final double output = pidController.calculate(angularDiff);
+
+    SmartDashboard.putNumber("output", output);
 
     final double clampedOutput =
         MathUtil.clamp(output, -1 + Arm.GRAVITY_CONTROL_PERCENT, 1 - Arm.GRAVITY_CONTROL_PERCENT);
 
+    SmartDashboard.putNumber("clamped output", clampedOutput);
+
     // Add the gravity offset as a function of cosine
     final double gOffset = Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
+
+    SmartDashboard.putNumber("gOffset", gOffset);
+
     final double motorPercent = clampedOutput + gOffset;
+
+    SmartDashboard.putNumber("motor percent", motorPercent);
 
     setPercentOutput(MathUtil.clamp(motorPercent, -.3, .3));
   }
