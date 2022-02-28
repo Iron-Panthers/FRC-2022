@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class LazyTalonFXTest {
   private AutoCloseable closeable;
 
-  @Mock private TalonFX talonFX;
+  @Mock TalonFX talonFX;
 
   @InjectMocks LazyTalonFX lazyTalonFX = new LazyTalonFX(1);
 
@@ -147,5 +147,32 @@ public class LazyTalonFXTest {
                   String.format("inner talon fx .set(MusicTone, %s) should be called", value)))
           .set(TalonFXControlMode.MusicTone, value);
     }
+  }
+
+  @UtilTest
+  public void commandsAreResentOnMasterOfFollowIfNeeded() {
+    LazyTalonFX follower1 = new LazyTalonFX(3);
+    LazyTalonFX follower2 = new LazyTalonFX(4);
+    follower1.follow(lazyTalonFX);
+
+    lazyTalonFX.set(TalonFXControlMode.PercentOutput, .2);
+    verify(talonFX).set(TalonFXControlMode.PercentOutput, .2);
+
+    follower1.follow(lazyTalonFX);
+
+    lazyTalonFX.set(TalonFXControlMode.PercentOutput, .2);
+    // verify it did not get called again, cause it would be a noop
+    verify(
+            talonFX,
+            times(1)
+                .description(
+                    "set should not be called again, even though follow happened, because it was the same follower"))
+        .set(TalonFXControlMode.PercentOutput, .2);
+
+    follower2.follow(lazyTalonFX);
+    lazyTalonFX.set(TalonFXControlMode.PercentOutput, .2); // calling the same set, a third time
+
+    verify(talonFX, times(2).description("set should be called again to alert new follower"))
+        .set(TalonFXControlMode.PercentOutput, .2);
   }
 }
