@@ -10,11 +10,13 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
 
-public class ElevatorSubsystem extends SubsystemBase {
+public class ElevatorSubsystem extends SubsystemBase implements AutoCloseable {
   private final TalonFX left = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
   private final TalonFX right = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
   private final DigitalInput bottomLimitSwitch =
@@ -34,6 +36,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   // clockwise moves up
   // counterclockwise moves down
 
+  private final ShuffleboardTab ElevatorTab = Shuffleboard.getTab("ElevatorTab");
+
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
 
@@ -45,6 +49,19 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Follow with the left motor and copy any important things
     left.follow(right);
     left.setInverted(TalonFXInvertType.FollowMaster);
+
+    // soft limits, stops 3 rotations before bottom/top (4.5 inches)
+    right.configForwardSoftLimitThreshold(12.75 * 4096, 0);
+    right.configReverseSoftLimitThreshold(12.75 * 4096, 0);
+
+    left.configForwardSoftLimitThreshold(12.75 * 4096, 0);
+    left.configReverseSoftLimitThreshold(12.75 * 4096, 0);
+
+    right.configForwardSoftLimitEnable(true, 0);
+    right.configReverseSoftLimitEnable(true, 0);
+
+    left.configForwardSoftLimitEnable(true, 0);
+    left.configReverseSoftLimitEnable(true, 0);
   }
 
   public void setMotorPower(Double power) {
@@ -65,21 +82,11 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @return current Height in inches
    */
-  public double getHeight() {
+  public double getsensorposition() {
+    return right.getSelectedSensorPosition();
+  }
 
-    /* Lexie's code
-        if (motorPower >= 0) {
-          if (currentMotorRotation < pastMotorRotation) {
-            this.totalMotorRotation += 4096;
-          }
-          this.totalMotorRotation += (currentMotorRotation - pastMotorRotation);
-        } else if (motorPower < 0) {
-          if (currentMotorRotation > pastMotorRotation) {
-            this.totalMotorRotation -= 4096;
-          }
-          this.totalMotorRotation += (currentMotorRotation - pastMotorRotation);
-        }
-    */
+  public double getHeight() {
 
     if (bottomLimitSwitchPressed()) {
       this.totalMotorRotationTicks = 0;
@@ -94,6 +101,11 @@ public class ElevatorSubsystem extends SubsystemBase {
             * (1.5 * Math.PI)); // Circumference of gear multiplied by rotations to get height
 
     return currentHeight;
+  }
+
+  public double sensorTests() {
+    right.set(TalonFXControlMode.PercentOutput, 1);
+    return right.getSelectedSensorPosition();
   }
 
   public static boolean epsilonEquals(double a, double b, double epsilon) {
@@ -127,6 +139,13 @@ public class ElevatorSubsystem extends SubsystemBase {
       lock();
     } // FIX ME (Isaac, we don't know if it'll be stuck at the limit switch)
     // This method will be called once per scheduler run
+  }
+
+  @Override
+  public void close() {
+    // these error codes are ignored. this may be undesirable in the future.
+    right.DestroyObject();
+    left.DestroyObject();
   }
 }
 
