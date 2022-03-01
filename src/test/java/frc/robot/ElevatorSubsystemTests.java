@@ -1,38 +1,48 @@
 package frc.robot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.when;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.ElevatorSubsystem;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class ElevatorSubsystemTests {
 
   private AutoCloseable closeable;
 
-  @InjectMocks private ElevatorSubsystem elevatorSubsystem;
+  @InjectMocks ElevatorSubsystem elevatorSubsystem;
 
   @Mock private TalonFX right;
   @Mock private TalonFX left;
+  @Mock private DigitalInput bottomLimitSwitch;
+  @Mock private DigitalInput topLimitSwitch;
 
   @BeforeEach
   public void setup() {
-    right = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
-    left = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
-    elevatorSubsystem = new ElevatorSubsystem();
     closeable = MockitoAnnotations.openMocks(elevatorSubsystem);
   }
 
   @AfterEach
   public void shutdown() {
-    elevatorSubsystem.close();
+    doCallRealMethod().when(topLimitSwitch).close();
+    topLimitSwitch.close();
+    doCallRealMethod().when(bottomLimitSwitch).close();
+    bottomLimitSwitch.close();
+
     try {
       closeable.close();
     } catch (Exception e) {
@@ -42,10 +52,6 @@ public class ElevatorSubsystemTests {
 
   private void tick() {
     elevatorSubsystem.periodic();
-  }
-
-  public double sensors() {
-    return elevatorSubsystem.getsensorposition();
   }
 
   /**
@@ -59,6 +65,9 @@ public class ElevatorSubsystemTests {
     for (int i = 0; i < amount; i++) elevatorSubsystem.periodic();
   }
 
+  @Test
+  public void sanityCheck() {}
+
   /** Tests whether X button works. AKA, if we press it, it goesdown to the bottom */
   /*
     @Test
@@ -71,7 +80,9 @@ public class ElevatorSubsystemTests {
     }
   */
   @Test
-  public void getSensor() {
+  public void sensorPositionIsZeroAtStart() {
+
+    when(right.getSelectedSensorPosition()).thenReturn(0d);
 
     assertEquals(0, elevatorSubsystem.getsensorposition());
   }
@@ -80,14 +91,14 @@ public class ElevatorSubsystemTests {
   public void setPower() {
 
     right.set(TalonFXControlMode.PercentOutput, 1);
-    assertEquals(0, sensors());
+    assertNotEquals(0, elevatorSubsystem.getsensorposition());
   }
 
   @Test
   public void YButtonTest() {
 
     elevatorSubsystem.setTargetHeight(20.0);
-    tick(10000);
+    tick(10);
     assertEquals(20.0, elevatorSubsystem.getHeight());
     // spotless gradle no mad
   }

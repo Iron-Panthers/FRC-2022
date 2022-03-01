@@ -111,8 +111,8 @@ public final class Constants {
     public static final class Ports {
       public static final int LEFT_MOTOR = 6;
       public static final int RIGHT_MOTOR = 7;
-      public static final int BOTTOM_SWITCH = 1; // FIX ME
-      public static final int TOP_SWITCH = 2; // FIX ME
+      public static final int BOTTOM_SWITCH = 9; // FIX ME
+      public static final int TOP_SWITCH = 8; // FIX ME
     }
   }
 
@@ -127,9 +127,9 @@ public final class Constants {
     public static final double EJECT_PERCENT = -.9;
 
     public static final class Ports {
-      public static final int LOWER_MOTOR = 14;
-      public static final int UPPER_MOTOR = 6;
-      public static final int IDLER_MOTOR = 15;
+      public static final int LOWER_MOTOR = 29; // FIXME
+      public static final int UPPER_MOTOR = 30; // FIXME
+      public static final int IDLER_MOTOR = 31; // FIXME
     }
   }
 }

@@ -15,14 +15,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
+import frc.util.Util;
 
-public class ElevatorSubsystem extends SubsystemBase implements AutoCloseable {
-  private final TalonFX left = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
-  private final TalonFX right = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
-  private final DigitalInput bottomLimitSwitch =
-      new DigitalInput(Elevator.Ports.BOTTOM_SWITCH); // do we need to put constants?
-  private final DigitalInput topLimitSwitch =
-      new DigitalInput(Elevator.Ports.TOP_SWITCH); // do we need to put constants?
+public class ElevatorSubsystem extends SubsystemBase {
+  private TalonFX left = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
+  private TalonFX right = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
+
+  private DigitalInput bottomLimitSwitch;
+  private DigitalInput topLimitSwitch;
 
   private double totalMotorRotationTicks;
   private double motorRotations;
@@ -40,6 +40,9 @@ public class ElevatorSubsystem extends SubsystemBase implements AutoCloseable {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
+    topLimitSwitch = new DigitalInput(Elevator.Ports.TOP_SWITCH); // do we need to put constants?
+    bottomLimitSwitch =
+        new DigitalInput(Elevator.Ports.BOTTOM_SWITCH); // do we need to put constants?
 
     this.totalMotorRotationTicks = 0.0;
     this.currentHeight = 0.0;
@@ -108,10 +111,6 @@ public class ElevatorSubsystem extends SubsystemBase implements AutoCloseable {
     return right.getSelectedSensorPosition();
   }
 
-  public static boolean epsilonEquals(double a, double b, double epsilon) {
-    return (a - epsilon <= b) && (a + epsilon >= b);
-  }
-
   public void lock() {
 
     right.setNeutralMode(NeutralMode.Brake);
@@ -132,20 +131,13 @@ public class ElevatorSubsystem extends SubsystemBase implements AutoCloseable {
     currentHeight = getHeight();
     this.motorPower = heightController.calculate(getHeight(), targetHeight);
     right.set(TalonFXControlMode.PercentOutput, motorPower);
-    if (epsilonEquals(currentHeight, targetHeight, .1)) {
+    if (Util.epsilonEquals(currentHeight, targetHeight, .1)) {
       lock();
     }
     if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
       lock();
     } // FIX ME (Isaac, we don't know if it'll be stuck at the limit switch)
     // This method will be called once per scheduler run
-  }
-
-  @Override
-  public void close() {
-    // these error codes are ignored. this may be undesirable in the future.
-    right.DestroyObject();
-    left.DestroyObject();
   }
 }
 
