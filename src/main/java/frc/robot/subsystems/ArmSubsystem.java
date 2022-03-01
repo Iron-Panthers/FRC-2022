@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
@@ -14,7 +15,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
-import frc.util.Util;
 
 /*
 For Engineering:
@@ -40,7 +40,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     pidController = new PIDController(0.0001, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
-    pidController.setSetpoint(0);
     Shuffleboard.getTab("arm").add(pidController);
 
     armEncoder =
@@ -48,10 +47,12 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configFactoryDefault();
     armEncoder.configSensorInitializationStrategy(
         SensorInitializationStrategy.BootToAbsolutePosition);
+    armEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+    armEncoder.configMagnetOffset(Arm.ANGULAR_OFFSET);
   }
 
   public double getAngle() {
-    return Util.relativeAngularDifference(armEncoder.getPosition(), Arm.ANGULAR_OFFSET);
+    return armEncoder.getAbsolutePosition();
   }
 
   private void setPercentOutput(double power) {
@@ -80,12 +81,7 @@ public class ArmSubsystem extends SubsystemBase {
     // (where we want it to be))
     // -> PID math gibberish -> the output we want to write to our motor(s)
 
-    final double angularDiff =
-        Math.abs(currentAngle - desiredAngle) * (desiredAngle < currentAngle ? -1 : 1);
-
-    SmartDashboard.putNumber("angular diff", angularDiff);
-
-    final double output = pidController.calculate(angularDiff);
+    final double output = pidController.calculate(currentAngle, desiredAngle);
 
     SmartDashboard.putNumber("output", output);
 
@@ -99,10 +95,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("gOffset", gOffset);
 
-    final double motorPercent = clampedOutput + gOffset;
+    final double motorPercent = MathUtil.clamp(clampedOutput + gOffset, -.3, .3);
 
     SmartDashboard.putNumber("motor percent", motorPercent);
 
-    setPercentOutput(MathUtil.clamp(motorPercent, -.3, .3));
+    setPercentOutput(motorPercent);
   }
 }
