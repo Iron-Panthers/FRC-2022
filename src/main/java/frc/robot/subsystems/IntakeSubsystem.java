@@ -5,32 +5,33 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
 import frc.robot.Constants.Intake.Ports;
-import frc.util.LazyTalonFX;
 
 public class IntakeSubsystem extends SubsystemBase {
 
   // final should be used on these fields, but if we use final mockito cannot inject mocks - use
   // final when you can
   /** the lower motor, upper motor follows this one - address this motor */
-  private LazyTalonFX lowerIntakeMotor;
+  private TalonFX lowerIntakeMotor;
   /** follows lower motor, only address lower motor */
-  private LazyTalonFX upperIntakeMotor;
+  private TalonFX upperIntakeMotor;
   /** the right eject motor, aligns balls and allows rejections */
-  private LazyTalonFX rightEjectMotor;
+  private TalonFX rightEjectMotor;
   /** the left eject motor, aligns balls and allows rejections */
-  private LazyTalonFX leftEjectMotor;
+  private TalonFX leftEjectMotor;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    lowerIntakeMotor = new LazyTalonFX(Ports.LOWER_MOTOR);
-    upperIntakeMotor = new LazyTalonFX(Ports.UPPER_MOTOR);
+    lowerIntakeMotor = new TalonFX(Ports.LOWER_MOTOR);
+    upperIntakeMotor = new TalonFX(Ports.UPPER_MOTOR);
 
-    rightEjectMotor = new LazyTalonFX(Ports.RIGHT_EJECT_MOTOR);
-    leftEjectMotor = new LazyTalonFX(Ports.LEFT_EJECT_MOTOR);
+    rightEjectMotor = new TalonFX(Ports.RIGHT_EJECT_MOTOR);
+    rightEjectMotor.setInverted(true);
+    leftEjectMotor = new TalonFX(Ports.LEFT_EJECT_MOTOR);
 
     upperIntakeMotor.follow(lowerIntakeMotor);
     leftEjectMotor.follow(rightEjectMotor);
@@ -89,7 +90,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /** periodic helper method, easy way to turn a motor off, by setting to 0 percent output */
-  private void stopMotor(LazyTalonFX motor) {
+  private void stopMotor(TalonFX motor) {
     motor.set(TalonFXControlMode.PercentOutput, 0);
   }
 
