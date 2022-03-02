@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -37,6 +38,9 @@ public class ArmSubsystem extends SubsystemBase {
   public ArmSubsystem() {
     armRightMotor = new TalonFX(Arm.Ports.RIGHT_MOTOR_PORT);
     armLeftMotor = new TalonFX(Arm.Ports.LEFT_MOTOR_PORT);
+
+    armRightMotor.setNeutralMode(NeutralMode.Brake);
+    armLeftMotor.setNeutralMode(NeutralMode.Brake);
 
     pidController = new PIDController(0.0001, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
