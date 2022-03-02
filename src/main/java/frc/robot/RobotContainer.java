@@ -136,8 +136,7 @@ public class RobotContainer {
     new Button(nick::getXButton)
         .whenPressed(
             new InstantCommand(
-                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION),
-                armSubsystem)); // FIX ME -> What angle should this be?
+                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION), armSubsystem));
     // Arm to lowest
     new Button(nick::getBButton)
         .whenPressed(

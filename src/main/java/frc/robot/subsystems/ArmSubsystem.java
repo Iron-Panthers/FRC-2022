@@ -35,8 +35,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    armRightMotor = new TalonFX(Arm.Ports.RightMotorPort); // FIX ME - Identify motor port
-    armLeftMotor = new TalonFX(Arm.Ports.LeftMotorPort); // FIX Me
+    armRightMotor = new TalonFX(Arm.Ports.RIGHT_MOTOR_PORT);
+    armLeftMotor = new TalonFX(Arm.Ports.LEFT_MOTOR_PORT);
 
     pidController = new PIDController(0.0001, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
@@ -65,14 +65,10 @@ public class ArmSubsystem extends SubsystemBase {
     this.desiredAngle = desiredAngle; // Set the setpoint of the PIDController
   }
 
-  public void stopMotor() {
-    setPercentOutput(0);
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    double currentAngle = getAngle();
+    final double currentAngle = getAngle();
 
     SmartDashboard.putNumber("current angle", currentAngle);
     SmartDashboard.putNumber("desired angle", desiredAngle);
@@ -81,21 +77,23 @@ public class ArmSubsystem extends SubsystemBase {
     // (where we want it to be))
     // -> PID math gibberish -> the output we want to write to our motor(s)
 
-    final double output = pidController.calculate(currentAngle, desiredAngle);
+    final double pidOutput = pidController.calculate(currentAngle, desiredAngle);
 
-    SmartDashboard.putNumber("output", output);
+    SmartDashboard.putNumber("output", pidOutput);
 
     final double clampedOutput =
-        MathUtil.clamp(output, -1 + Arm.GRAVITY_CONTROL_PERCENT, 1 - Arm.GRAVITY_CONTROL_PERCENT);
+        MathUtil.clamp(
+            pidOutput, -1 + Arm.GRAVITY_CONTROL_PERCENT, 1 - Arm.GRAVITY_CONTROL_PERCENT);
 
     SmartDashboard.putNumber("clamped output", clampedOutput);
 
     // Add the gravity offset as a function of cosine
-    final double gOffset = Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
+    final double gravityOffset =
+        Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
 
-    SmartDashboard.putNumber("gOffset", gOffset);
+    SmartDashboard.putNumber("gravityOffset", gravityOffset);
 
-    final double motorPercent = MathUtil.clamp(clampedOutput + gOffset, -.3, .3);
+    final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.3, .3);
 
     SmartDashboard.putNumber("motor percent", motorPercent);
 
