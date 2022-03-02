@@ -60,7 +60,7 @@ public class RotateVectorDriveCommand extends CommandBase {
 
     // if stick magnitude is greater then rotate angle mag
     if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE) {
-      angle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles);
+      angle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles) + 180;
     }
 
     drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle);
