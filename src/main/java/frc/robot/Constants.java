@@ -116,10 +116,10 @@ public final class Constants {
     }
 
     public static final class Ports {
-      public static final int LOWER_MOTOR = 14;
-      public static final int UPPER_MOTOR = 6;
-      public static final int RIGHT_EJECT_MOTOR = 15;
-      public static final int LEFT_EJECT_MOTOR = 0; // fixme
+      public static final int LOWER_MOTOR = 15;
+      public static final int UPPER_MOTOR = 14;
+      public static final int RIGHT_EJECT_MOTOR = 16;
+      public static final int LEFT_EJECT_MOTOR = 9; // fixme
     }
   }
 }
