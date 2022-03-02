@@ -42,7 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.setNeutralMode(NeutralMode.Brake);
     armLeftMotor.setNeutralMode(NeutralMode.Brake);
 
-    pidController = new PIDController(0.0001, 0, 0);
+    pidController = new PIDController(0.004, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
     Shuffleboard.getTab("arm").add(pidController);
 
@@ -97,7 +97,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("gravityOffset", gravityOffset);
 
-    final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.3, .3);
+    final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
 
     SmartDashboard.putNumber("motor percent", motorPercent);
 
