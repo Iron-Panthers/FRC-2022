@@ -133,9 +133,9 @@ public final class Constants {
       /** the percent to run the intake motors during the intake state */
       public static final double INTAKE = .55;
       /** the percent to run the upper outtake during the outtake state */
-      public static final double OUTTAKE_UPPER = -.7;
+      public static final double OUTTAKE_UPPER = -.55;
       /** the percent to run the lower outtake during the outtake state */
-      public static final double OUTTAKE_LOWER = -.75;
+      public static final double OUTTAKE_LOWER = -.4;
     }
 
     public static final class Ports {
