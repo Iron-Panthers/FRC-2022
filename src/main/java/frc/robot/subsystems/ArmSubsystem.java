@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -42,6 +43,15 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.setNeutralMode(NeutralMode.Brake);
     armLeftMotor.setNeutralMode(NeutralMode.Brake);
 
+    armLeftMotor.follow(armRightMotor);
+    armLeftMotor.setInverted(InvertType.OpposeMaster);
+
+    armRightMotor.setStatusFramePeriod(1, 100);
+    armRightMotor.setStatusFramePeriod(2, 100);
+
+    armLeftMotor.setStatusFramePeriod(1, 500);
+    armLeftMotor.setStatusFramePeriod(2, 500);
+
     pidController = new PIDController(0.004, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
     Shuffleboard.getTab("arm").add(pidController);
@@ -61,7 +71,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   private void setPercentOutput(double power) {
     armRightMotor.set(TalonFXControlMode.PercentOutput, power);
-    armLeftMotor.set(TalonFXControlMode.PercentOutput, -power);
   }
 
   // Sets the goal of the pid controller

@@ -24,6 +24,11 @@ public class IntakeSubsystem extends SubsystemBase {
   /** the left eject motor, aligns balls and allows rejections */
   private TalonFX leftEjectMotor;
 
+  private void configStatusFramePeriods(TalonFX talon) {
+    talon.setStatusFramePeriod(1, 100);
+    talon.setStatusFramePeriod(2, 100);
+  }
+
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     lowerIntakeMotor = new TalonFX(Ports.LOWER_MOTOR);
@@ -35,6 +40,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     upperIntakeMotor.follow(lowerIntakeMotor);
     leftEjectMotor.follow(rightEjectMotor);
+
+    configStatusFramePeriods(lowerIntakeMotor);
+    configStatusFramePeriods(upperIntakeMotor);
+    configStatusFramePeriods(rightEjectMotor);
+    configStatusFramePeriods(leftEjectMotor);
   }
 
   /** the different modes the intake subsystem state machine can be in */
