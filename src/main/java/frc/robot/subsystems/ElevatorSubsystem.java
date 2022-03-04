@@ -33,6 +33,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double motorPower;
   private final PIDController heightController = new PIDController(0.04, 0, 0);
 
+  private boolean presetTrue;
+
   // clockwise moves up
   // counterclockwise moves down
 
@@ -54,11 +56,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     left.setInverted(TalonFXInvertType.FollowMaster);
 
     // soft limits, stops 3 rotations before bottom/top (4.5 inches)
-    right.configForwardSoftLimitThreshold(12.75 * 4096, 0);
-    right.configReverseSoftLimitThreshold(12.75 * 4096, 0);
+    right.configForwardSoftLimitThreshold(4 * 12.75 * 4096, 0);
+    right.configReverseSoftLimitThreshold(12.75 * 4096 / 3, 0);
 
-    left.configForwardSoftLimitThreshold(12.75 * 4096, 0);
-    left.configReverseSoftLimitThreshold(12.75 * 4096, 0);
+    left.configForwardSoftLimitThreshold(4 * 12.75 * 4096, 0);
+    left.configReverseSoftLimitThreshold(12.75 * 4096 / 3, 0);
 
     right.configForwardSoftLimitEnable(true, 0);
     right.configReverseSoftLimitEnable(true, 0);
@@ -87,6 +89,11 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public double getsensorposition() {
     return right.getSelectedSensorPosition();
+  }
+
+  public void setPreset(boolean presetTrue) {
+
+    this.presetTrue = presetTrue;
   }
 
   public double getHeight() {
@@ -128,15 +135,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    currentHeight = getHeight();
-    this.motorPower = heightController.calculate(getHeight(), targetHeight);
-    right.set(TalonFXControlMode.PercentOutput, motorPower);
-    if (Util.epsilonEquals(currentHeight, targetHeight, .1)) {
+    if (presetTrue) {
+      currentHeight = getHeight();
+      this.motorPower = heightController.calculate(getHeight(), targetHeight);
+      right.set(TalonFXControlMode.PercentOutput, motorPower);
+      if (Util.epsilonEquals(currentHeight, targetHeight, .1)) {
+        lock();
+      }
+      if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
+        lock();
+      } // FIXME (Isaac, we don't know if it'll be stuck at the limit switch)
+    } else {
       lock();
     }
-    if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
-      lock();
-    } // FIX ME (Isaac, we don't know if it'll be stuck at the limit switch)
     // This method will be called once per scheduler run
   }
 }

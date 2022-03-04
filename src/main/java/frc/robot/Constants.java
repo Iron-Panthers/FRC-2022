@@ -111,8 +111,8 @@ public final class Constants {
     public static final class Ports {
       public static final int LEFT_MOTOR = 6;
       public static final int RIGHT_MOTOR = 7;
-      public static final int BOTTOM_SWITCH = 9; // FIX ME
-      public static final int TOP_SWITCH = 8; // FIX ME
+      public static final int BOTTOM_SWITCH = 9; // FIXME
+      public static final int TOP_SWITCH = 8; // FIXME
     }
   }
 
