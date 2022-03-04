@@ -128,17 +128,17 @@ public class RobotContainer {
     new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
 
     // Arm to highest - high goal
-    new Button(nick::getAButton)
+    new Button(nick::getLeftBumper)
         .whenPressed(
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION), armSubsystem));
     // Arm to low goal - shortcut for engineering
-    new Button(nick::getXButton)
+    new Button(nick::getStartButton)
         .whenPressed(
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION), armSubsystem));
     // Arm to lowest
-    new Button(nick::getBButton)
+    new Button(nick::getRightBumper)
         .whenPressed(
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION), armSubsystem));
