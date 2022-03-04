@@ -69,7 +69,7 @@ public final class Constants {
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(209.0836) // comp bot offset
-                : -Math.toRadians(217.172); // practice bot offset
+                : -Math.toRadians(180 + 269.207); // practice bot offset
       }
 
       public static final class BackLeft { // Module 3
