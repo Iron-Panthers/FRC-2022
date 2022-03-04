@@ -90,7 +90,7 @@ public class RobotContainer {
 
     DoubleSupplier rotation =
         () ->
-            ControllerUtil.deadband((-will.getRightTriggerAxis() + will.getLeftTriggerAxis()), .1);
+            ControllerUtil.deadband((will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1);
     DoubleSupplier rotationVelocity =
         () -> rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
 
