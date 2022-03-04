@@ -43,7 +43,7 @@ public class ColorSensors {
       We are using the method of matchClosestColor to match the colors.
       */
 
-      if (detectedColor == kRedTarget) {
+      if (match.color == kRedTarget) {
         return Colors.RED;
       } else {
         return Colors.BLUE;
