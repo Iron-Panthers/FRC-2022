@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
+import frc.util.Util;
 
 /*
 For Engineering:
@@ -109,6 +110,12 @@ public class ArmSubsystem extends SubsystemBase {
     final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
 
     SmartDashboard.putNumber("motor percent", motorPercent);
+
+    if (Util.epsilonEquals(currentAngle, Arm.Setpoints.INTAKE_POSITION, 15)
+        && Util.epsilonEquals(desiredAngle, Arm.Setpoints.INTAKE_POSITION, 1)) {
+      setPercentOutput(0);
+      return;
+    }
 
     setPercentOutput(motorPercent);
   }
