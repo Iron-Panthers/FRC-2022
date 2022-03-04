@@ -5,6 +5,8 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 public class ColorSensors {
   private final I2C.Port port;
@@ -36,6 +38,8 @@ public class ColorSensors {
       Color detectedColor = colorsensor3.getColor();
 
       ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
+      SmartDashboard.putNumber("Red", detectedColor.red);
+      SmartDashboard.putNumber("Blue", detectedColor.blue);
 
       /*
       If the ball matches the target color we set before, it will return the enum for the color.
@@ -43,11 +47,7 @@ public class ColorSensors {
       We are using the method of matchClosestColor to match the colors.
       */
 
-<<<<<<< HEAD
-      if (detectedColor == kRedTarget) {
-=======
       if (match.color == kRedTarget) {
->>>>>>> ColorSensors
         return Colors.RED;
       } else {
         return Colors.BLUE;
