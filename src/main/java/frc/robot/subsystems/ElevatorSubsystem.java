@@ -145,6 +145,12 @@ public class ElevatorSubsystem extends SubsystemBase {
       if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
         lock();
       } // FIXME (Isaac, we don't know if it'll be stuck at the limit switch)
+
+      // shuffleboard?
+      ElevatorTab.add("Height", currentHeight);
+      ElevatorTab.add("Motor Power", motorPower);
+      ElevatorTab.add("Top Limit Switch Pressed", topLimitSwitchPressed());
+      ElevatorTab.add("Bottom Limit Switch Pressed", bottomLimitSwitchPressed());
     } else {
       lock();
     }

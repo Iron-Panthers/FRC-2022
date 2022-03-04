@@ -26,6 +26,7 @@ public class ElevatorManualCommand extends CommandBase {
   @Override
   public void execute() {
     elevatorSubsystem.setMotorPower(power);
+    elevatorSubsystem.setPreset(false);
   }
 
   // Called once the command ends or is interrupted.
