@@ -164,8 +164,27 @@ public class RobotContainer {
     Button ejectLeft = new Layer(nick::getBButton).on(() -> nick.getLeftTriggerAxis() > 0.5);
     Button ejectRight = new Layer(nick::getBButton).on(() -> nick.getRightTriggerAxis() > 0.5);
 
-    ejectLeft.whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
-    ejectRight.whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
+    // eject left side
+    new Button(
+            () ->
+                nick.getBButton()
+                    && nick.getLeftTriggerAxis() > .5
+                    && nick.getRightTriggerAxis() <= .5)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
+    // eject right side
+    new Button(
+            () ->
+                nick.getBButton()
+                    && nick.getLeftTriggerAxis() <= .5
+                    && nick.getRightTriggerAxis() > .5)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
+    // eject everything
+    new Button(
+            () ->
+                nick.getBButton()
+                    && nick.getLeftTriggerAxis() > .5
+                    && nick.getRightTriggerAxis() > .5)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
   /**
