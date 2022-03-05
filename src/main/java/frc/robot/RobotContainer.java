@@ -93,14 +93,18 @@ public class RobotContainer {
         () ->
             ControllerUtil.deadband((will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1);
     DoubleSupplier rotationVelocity =
-        () -> rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        () ->
+            rotation.getAsDouble()
+                * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+                * .5 /* half speed trigger rotation per will */;
 
     new Button(() -> Math.abs(rotation.getAsDouble()) > 0)
         .whenHeld(
             new RotateVelocityDriveCommand(
                 drivebaseSubsystem,
-                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND * 1 / 2),
-                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND * 1 / 2),
+                /* drive joystick "y" is passed to x because controller is inverted */
+                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 rotationVelocity));
 
     new Button(
