@@ -209,7 +209,7 @@ public class IntakeSubsystemTest {
 
         // same but eject right
         targetMotorPercents(
-            Modes.EJECT_LEFT,
+            Modes.EJECT_RIGHT,
             0 /*lower intake*/,
             IntakeRollers.INTAKE /*upper intake*/,
             EjectRollers.EJECT /*right eject*/,
