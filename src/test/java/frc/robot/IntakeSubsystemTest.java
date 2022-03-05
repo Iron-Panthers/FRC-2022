@@ -132,43 +132,21 @@ public class IntakeSubsystemTest {
     assertSame(targetMode, intakeSubsystem.getMode());
   }
 
-  // mega test below, here be dragons.
+  // here be dragons...
 
-  private static enum Commands {
-    FOLLOW,
-    PER
-  }
-
-  private static class MotorCommand {
-    private double percent = 0;
-    private int masterIndex = -1;
-    private Commands command;
-
-    public MotorCommand(double percent, int masterIndex, Commands command) {
-      this.percent = percent;
-      this.masterIndex = masterIndex;
-      this.command = command;
-    }
-
-    public static MotorCommand percent(double percent) {
-      return new MotorCommand(percent, -1, Commands.PER);
-    }
-
-    public static MotorCommand follow(int masterIndex) {
-      return new MotorCommand(0, masterIndex, Commands.FOLLOW);
-    }
-
-    public Commands getCommand() {
-      return command;
-    }
-
-    public double getPercent() {
-      return percent;
-    }
-
-    public int getMasterIndex() {
-      return masterIndex;
-    }
+  /**
+   * returns the arguments to validate motor commands for a given mode
+   *
+   * @param mode the mode that the percentages apply to
+   * @param intakePercent Intake motor percent
+   * @param ejectPercent Ejection motor percent
+   * @return <code>Arguments.of(Modes, MotorCommand[4])</code> to describe motor percents for a
+   *     given mode
+   */
+  private static Arguments targetMotorPercents(
+      Modes mode, double intakePercent, double ejectPercent) {
+    return Arguments.of(
+        mode, new double[] {intakePercent, intakePercent, ejectPercent, ejectPercent});
   }
 
   /**
@@ -190,125 +168,76 @@ public class IntakeSubsystemTest {
       double leftEjectPercent) {
     return Arguments.of(
         mode,
-        new MotorCommand[] {
-          MotorCommand.percent(lowerIntakePercent),
-          MotorCommand.percent(upperIntakePercent),
-          MotorCommand.percent(rightEjectPercent),
-          MotorCommand.percent(leftEjectPercent)
-        });
-  }
-
-  /**
-   * returns the arguments to validate motor commands for a given mode
-   *
-   * @param mode the mode that the percentages apply to
-   * @param lowerIntakePercent lower Intake motor percent
-   * @param upperIntakePercent upper Intake motor percent
-   * @param rightEjectPercent right ejection motor percent
-   * @return <code>Arguments.of(Modes, MotorCommand[4])</code> to describe motor percents for a
-   *     given mode
-   */
-  private static Arguments targetIntakeMotorPercentsAndEjectFollower(
-      Modes mode, double lowerIntakePercent, double upperIntakePercent, double rightEjectPercent) {
-    return Arguments.of(
-        mode,
-        new MotorCommand[] {
-          MotorCommand.percent(lowerIntakePercent),
-          MotorCommand.percent(upperIntakePercent),
-          MotorCommand.percent(rightEjectPercent),
-          MotorCommand.follow(2)
-        });
-  }
-
-  /**
-   * returns the arguments to validate motor commands for a given mode
-   *
-   * @param mode the mode that the percentages apply to
-   * @param lowerIntakePercent lower Intake motor percent
-   * @param rightEjectPercent right ejection motor percent
-   * @return <code>Arguments.of(Modes, MotorCommand[4])</code> to describe motor percents for a
-   *     given mode
-   */
-  private static Arguments targetMotorPercentsAndFollowers(
-      Modes mode, double lowerIntakePercent, double rightEjectPercent) {
-    return Arguments.of(
-        mode,
-        new MotorCommand[] {
-          MotorCommand.percent(lowerIntakePercent),
-          MotorCommand.follow(0),
-          MotorCommand.percent(rightEjectPercent),
-          MotorCommand.follow(2)
-        });
+        new double[] {lowerIntakePercent, upperIntakePercent, rightEjectPercent, leftEjectPercent});
   }
 
   private static Stream<Arguments> modeMotorStatesProvider() {
     return Stream.of(
         // off, turn everything off
-        targetMotorPercentsAndFollowers(Modes.OFF, 0 /*intake*/, 0 /*eject*/),
+        targetMotorPercents(Modes.OFF, 0 /*intake*/, 0 /*eject*/),
 
         // idling, run only the eject motors to align balls
-        targetMotorPercentsAndFollowers(Modes.IDLING, 0 /*intake*/, EjectRollers.IDLE /*eject*/),
+        targetMotorPercents(Modes.IDLING, 0 /*intake*/, EjectRollers.IDLE /*eject*/),
 
         // intake, run the eject for alignment and the intake to hoover balls
-        targetMotorPercentsAndFollowers(
+        targetMotorPercents(
             Modes.INTAKE, IntakeRollers.INTAKE /*intake*/, EjectRollers.IDLE /*eject*/),
 
         // outtake, run the eject to feed the balls in and run the intake in reverse
-        targetIntakeMotorPercentsAndEjectFollower(
+        targetMotorPercents(
             Modes.OUTTAKE,
             IntakeRollers.OUTTAKE_LOWER /*lower intake*/,
             IntakeRollers.OUTTAKE_UPPER /*upper intake*/,
-            EjectRollers.IDLE /*eject*/),
+            EjectRollers.IDLE /*right eject*/,
+            EjectRollers.IDLE /*left eject*/),
 
         // outtake, run the eject to feed the balls in and run the intake in reverse
-        targetIntakeMotorPercentsAndEjectFollower(
+        targetMotorPercents(
             Modes.OUTTAKE_FAST,
             IntakeRollers.OUTTAKE_LOWER_FAST /*lower intake*/,
             IntakeRollers.OUTTAKE_UPPER_FAST /*upper intake*/,
-            EjectRollers.IDLE /*eject*/),
+            EjectRollers.IDLE /*right eject*/,
+            EjectRollers.IDLE /*left eject*/),
 
         // eject left, run the upper intake to feed the balls into the ejection rollers to expel
-        targetIntakeMotorPercentsAndEjectFollower(
+        targetMotorPercents(
             Modes.EJECT_LEFT,
             0 /*lower intake*/,
             IntakeRollers.INTAKE /*upper intake*/,
-            EjectRollers.EJECT /*eject*/),
+            EjectRollers.IDLE /*right eject*/,
+            EjectRollers.EJECT /*left eject*/),
 
         // same but eject right
-        targetIntakeMotorPercentsAndEjectFollower(
-            Modes.EJECT_RIGHT,
+        targetMotorPercents(
+            Modes.EJECT_LEFT,
             0 /*lower intake*/,
             IntakeRollers.INTAKE /*upper intake*/,
-            EjectRollers.EJECT /*eject*/));
+            EjectRollers.EJECT /*right eject*/,
+            EjectRollers.IDLE /*left eject*/),
+
+        // run both ejection rollers
+        targetMotorPercents(
+            Modes.EJECT_ALL,
+            0 /*lower intake*/,
+            IntakeRollers.INTAKE /*upper intake*/,
+            EjectRollers.EJECT /*right eject*/,
+            EjectRollers.EJECT /*left eject*/));
   }
 
   @RobotParamTest
   @MethodSource("modeMotorStatesProvider")
-  public void motorStatesMatchConstantsForMode(Modes mode, MotorCommand[] motorCommandArray) {
+  public void motorStatesMatchConstantsForMode(Modes mode, double[] motorPercentArray) {
     intakeSubsystem.setMode(mode);
     tick();
     for (int i = 0; i < motorArray.length; i++) {
-      MotorCommand motorCommand = motorCommandArray[i];
-      switch (motorCommand.getCommand()) {
-        case FOLLOW:
-          verify(
-                  motorArray[i],
-                  description(
-                      String.format(
-                          "mode %s should have %s following %s, once",
-                          mode, motorNames[i], motorNames[motorCommand.getMasterIndex()])))
-              .follow(motorArray[motorCommand.getMasterIndex()]);
-          break;
-        case PER:
-          verify(
-                  motorArray[i],
-                  description(
-                      String.format(
-                          "mode %s should have %s running at %s percent, once",
-                          mode, motorNames[i], motorCommand.getPercent())))
-              .set(TalonFXControlMode.PercentOutput, motorCommand.getPercent());
-          break;
-      }
+      double percent = motorPercentArray[i];
+      verify(
+              motorArray[i],
+              description(
+                  String.format(
+                      "mode %s should have %s running at %s percent, once",
+                      mode, motorNames[i], percent)))
+          .set(TalonFXControlMode.PercentOutput, percent);
 
       // remove this line to get more useful failures for the above tests
       verifyNoMoreInteractions(motorArray[i]);
