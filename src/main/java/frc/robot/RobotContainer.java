@@ -160,10 +160,6 @@ public class RobotContainer {
         new Layer(() -> nick.getRightTriggerAxis() > 0.5).on(() -> nick.getLeftTriggerAxis() > 0.5);
     stopEverything.whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
 
-    // eject unwanted balls
-    Button ejectLeft = new Layer(nick::getBButton).on(() -> nick.getLeftTriggerAxis() > 0.5);
-    Button ejectRight = new Layer(nick::getBButton).on(() -> nick.getRightTriggerAxis() > 0.5);
-
     // eject left side
     new Button(
             () ->
