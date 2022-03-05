@@ -9,13 +9,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.RobotParamTest;
 import frc.RobotTest;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
-import frc.util.LazyTalonFX;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,22 +34,22 @@ public class IntakeSubsystemTest {
 
   @InjectMocks private IntakeSubsystem intakeSubsystem;
 
-  @Mock private LazyTalonFX lowerIntakeMotor;
-  @Mock private LazyTalonFX upperIntakeMotor;
-  @Mock private LazyTalonFX rightEjectMotor;
-  @Mock private LazyTalonFX leftEjectMotor;
+  @Mock private TalonFX lowerIntakeMotor;
+  @Mock private TalonFX upperIntakeMotor;
+  @Mock private TalonFX rightEjectMotor;
+  @Mock private TalonFX leftEjectMotor;
 
   private static String[] motorNames = {
     "lowerIntakeMotor", "upperIntakeMotor", "rightEjectMotor", "leftEjectMotor"
   };
   /** [lowerIntakeMotor, upperIntakeMotor, rightEjectMotor, leftEjectMotor] */
-  private LazyTalonFX[] motorArray;
+  private TalonFX[] motorArray;
 
   @BeforeEach
   public void setup() {
     closeable = MockitoAnnotations.openMocks(intakeSubsystem);
     motorArray =
-        new LazyTalonFX[] {lowerIntakeMotor, upperIntakeMotor, rightEjectMotor, leftEjectMotor};
+        new TalonFX[] {lowerIntakeMotor, upperIntakeMotor, rightEjectMotor, leftEjectMotor};
   }
 
   /**
