@@ -58,6 +58,7 @@ public class IntakeSubsystem extends SubsystemBase {
     OUTTAKE_FAST,
     EJECT_LEFT,
     EJECT_RIGHT,
+    EJECT_ALL,
   }
 
   /** the current mode of the subsystem */
@@ -87,6 +88,7 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case EJECT_LEFT:
       case EJECT_RIGHT:
+      case EJECT_ALL:
       case OUTTAKE:
       case OUTTAKE_FAST:
         // after ejection and outtake, we should stop all motors, because there shouldn't still be
@@ -181,6 +183,13 @@ public class IntakeSubsystem extends SubsystemBase {
     runRightEjectRoller(EjectRollers.EJECT);
   }
 
+  private void ejectAllModePeriodic() {
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
+
+    runEjectRollers(EjectRollers.EJECT);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -205,6 +214,9 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case EJECT_RIGHT:
         ejectRightModePeriodic();
+        break;
+      case EJECT_ALL:
+        ejectAllModePeriodic();
         break;
     }
   }
