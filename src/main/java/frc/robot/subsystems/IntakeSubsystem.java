@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
@@ -53,6 +54,7 @@ public class IntakeSubsystem extends SubsystemBase {
     IDLING,
     INTAKE,
     OUTTAKE,
+    OUTTAKE_FAST,
     EJECT
   }
 
@@ -83,6 +85,7 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case EJECT:
       case OUTTAKE:
+      case OUTTAKE_FAST:
         // after ejection and outtake, we should stop all motors, because there shouldn't still be
         // balls in the intake
         setMode(Modes.OFF);
@@ -144,8 +147,21 @@ public class IntakeSubsystem extends SubsystemBase {
   private void outtakeModePeriodic() {
     runEjectRollers(EjectRollers.IDLE);
 
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
+    double realVolts = RobotController.getBatteryVoltage();
+    lowerIntakeMotor.set(
+        TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER * 12 / realVolts);
+    upperIntakeMotor.set(
+        TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER * 12 / realVolts);
+  }
+
+  private void outtakeFastModePeriodic() {
+    runEjectRollers(EjectRollers.IDLE);
+
+    double realVolts = RobotController.getBatteryVoltage();
+    lowerIntakeMotor.set(
+        TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_FAST * 12 / realVolts);
+    upperIntakeMotor.set(
+        TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_FAST * 12 / realVolts);
   }
 
   private void ejectModePeriodic() {
@@ -170,6 +186,9 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case OUTTAKE:
         outtakeModePeriodic();
+        break;
+      case OUTTAKE_FAST:
+        outtakeFastModePeriodic();
         break;
       case EJECT:
         ejectModePeriodic();

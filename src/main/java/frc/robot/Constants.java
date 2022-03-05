@@ -133,9 +133,19 @@ public final class Constants {
       /** the percent to run the intake motors during the intake state */
       public static final double INTAKE = .55;
       /** the percent to run the upper outtake during the outtake state */
-      public static final double OUTTAKE_UPPER = -.55;
+      public static final double OUTTAKE_UPPER = -0.3;
       /** the percent to run the lower outtake during the outtake state */
-      public static final double OUTTAKE_LOWER = -.4;
+      public static final double OUTTAKE_LOWER = -0.225;
+      /**
+       * the percent to run the upper outtake during the outtake fast state (~1 robot's distance
+       * from the goal)
+       */
+      public static final double OUTTAKE_UPPER_FAST = -0.565;
+      /**
+       * the percent to run the lower outtake during the outtake fast state (~1 robot's distance
+       * from the goal)
+       */
+      public static final double OUTTAKE_LOWER_FAST = -0.275;
     }
 
     public static final class Ports {

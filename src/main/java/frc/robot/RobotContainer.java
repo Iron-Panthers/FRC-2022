@@ -30,6 +30,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
+import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
 import java.util.List;
@@ -98,8 +99,8 @@ public class RobotContainer {
         .whenHeld(
             new RotateVelocityDriveCommand(
                 drivebaseSubsystem,
-                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND * 1 / 2),
+                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND * 1 / 2),
                 rotationVelocity));
 
     new Button(
@@ -149,8 +150,13 @@ public class RobotContainer {
     new Button(nick::getBButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT));
     // shoot balls
     new Button(nick::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-    // stop everything
-    new Button(nick::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
+    // fast outtake
+    new Button(nick::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+
+    // Stops all the intake subsystem rollers
+    Button stopEverything =
+        new Layer(() -> nick.getRightTriggerAxis() > 0.5).on(() -> nick.getLeftTriggerAxis() > 0.5);
+    stopEverything.whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
   }
 
   /**
