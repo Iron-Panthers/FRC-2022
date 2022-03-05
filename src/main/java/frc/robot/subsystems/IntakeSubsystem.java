@@ -55,7 +55,8 @@ public class IntakeSubsystem extends SubsystemBase {
     INTAKE,
     OUTTAKE,
     OUTTAKE_FAST,
-    EJECT
+    EJECT_LEFT,
+    EJECT_RIGHT,
   }
 
   /** the current mode of the subsystem */
@@ -83,7 +84,8 @@ public class IntakeSubsystem extends SubsystemBase {
         // after intake, we should run the idling motor to align balls for shooting and outtake
         setMode(Modes.IDLING);
         break;
-      case EJECT:
+      case EJECT_LEFT:
+      case EJECT_RIGHT:
       case OUTTAKE:
       case OUTTAKE_FAST:
         // after ejection and outtake, we should stop all motors, because there shouldn't still be
@@ -115,12 +117,20 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** periodic helper method to make intention more readable. Stops the idler motor */
   private void stopEjectRollers() {
-    leftEjectMotor.follow(rightEjectMotor);
+    stopMotor(leftEjectMotor);
     stopMotor(rightEjectMotor);
   }
 
   private void runEjectRollers(double percent) {
-    leftEjectMotor.follow(rightEjectMotor);
+    leftEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
+  private void runLeftEjectMotor(double percent) {
+    leftEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
+  private void runRightEjectRoller(double percent) {
     rightEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
   }
 
@@ -164,11 +174,18 @@ public class IntakeSubsystem extends SubsystemBase {
         TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_FAST * 12 / realVolts);
   }
 
-  private void ejectModePeriodic() {
+  private void ejectLeftModePeriodic() {
     stopMotor(lowerIntakeMotor);
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
 
-    runEjectRollers(EjectRollers.EJECT);
+    runLeftEjectMotor(EjectRollers.EJECT);
+  }
+
+  private void ejectRightModePeriodic() {
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
+
+    runRightEjectRoller(EjectRollers.EJECT);
   }
 
   @Override
@@ -190,8 +207,11 @@ public class IntakeSubsystem extends SubsystemBase {
       case OUTTAKE_FAST:
         outtakeFastModePeriodic();
         break;
-      case EJECT:
-        ejectModePeriodic();
+      case EJECT_LEFT:
+        ejectLeftModePeriodic();
+        break;
+      case EJECT_RIGHT:
+        ejectRightModePeriodic();
         break;
     }
   }

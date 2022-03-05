@@ -146,8 +146,6 @@ public class RobotContainer {
 
     // intake balls
     new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    // eject unwanted balls
-    new Button(nick::getBButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT));
     // shoot balls
     new Button(nick::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
     // fast outtake
@@ -157,6 +155,13 @@ public class RobotContainer {
     Button stopEverything =
         new Layer(() -> nick.getRightTriggerAxis() > 0.5).on(() -> nick.getLeftTriggerAxis() > 0.5);
     stopEverything.whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
+
+    // eject unwanted balls
+    Button ejectLeft = new Layer(nick::getBButton).on(() -> nick.getLeftTriggerAxis() > 0.5);
+    Button ejectRight = new Layer(nick::getBButton).on(() -> nick.getRightTriggerAxis() > 0.5);
+
+    ejectLeft.whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
+    ejectRight.whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
   }
 
   /**
