@@ -24,7 +24,7 @@ public class DPadCluster {
 
   private boolean get(Direction direction) {
     int currentAngle = controller.getPOV();
-    return Util.epsilonEquals(direction.angle, currentAngle, 45);
+    return Math.abs(Util.relativeAngularDifference(direction.angle, currentAngle)) <= 45;
   }
 
   public boolean getUpButton() {
