@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
@@ -25,9 +24,11 @@ public class IntakeSubsystem extends SubsystemBase {
   /** the left eject motor, aligns balls and allows rejections */
   private TalonFX leftEjectMotor;
 
-  private void configStatusFramePeriods(TalonFX talon) {
+  private void configStatusFramePeriodsAndBatteryComp(TalonFX talon) {
     talon.setStatusFramePeriod(1, 100);
     talon.setStatusFramePeriod(2, 100);
+    talon.enableVoltageCompensation(true);
+    talon.configVoltageCompSaturation(12);
   }
 
   /** Creates a new IntakeSubsystem. */
@@ -42,10 +43,10 @@ public class IntakeSubsystem extends SubsystemBase {
     upperIntakeMotor.follow(lowerIntakeMotor);
     leftEjectMotor.follow(rightEjectMotor);
 
-    configStatusFramePeriods(lowerIntakeMotor);
-    configStatusFramePeriods(upperIntakeMotor);
-    configStatusFramePeriods(rightEjectMotor);
-    configStatusFramePeriods(leftEjectMotor);
+    configStatusFramePeriodsAndBatteryComp(lowerIntakeMotor);
+    configStatusFramePeriodsAndBatteryComp(upperIntakeMotor);
+    configStatusFramePeriodsAndBatteryComp(rightEjectMotor);
+    configStatusFramePeriodsAndBatteryComp(leftEjectMotor);
   }
 
   /** the different modes the intake subsystem state machine can be in */
@@ -156,22 +157,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void outtakeModePeriodic() {
     runEjectRollers(EjectRollers.IDLE);
-
-    double realVolts = RobotController.getBatteryVoltage();
-    lowerIntakeMotor.set(
-        TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER * 12 / realVolts);
-    upperIntakeMotor.set(
-        TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER * 12 / realVolts);
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
   }
 
   private void outtakeFastModePeriodic() {
     runEjectRollers(EjectRollers.IDLE);
-
-    double realVolts = RobotController.getBatteryVoltage();
-    lowerIntakeMotor.set(
-        TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_FAST * 12 / realVolts);
-    upperIntakeMotor.set(
-        TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_FAST * 12 / realVolts);
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_FAST);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_FAST);
   }
 
   private void ejectLeftModePeriodic() {
