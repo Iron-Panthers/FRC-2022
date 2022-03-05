@@ -115,7 +115,7 @@ public final class Constants {
       public static final double OUTTAKE_HIGH_POSITION = 68;
       public static final double OUTTAKE_LOW_POSITION = 50;
       public static final double INTAKE_POSITION = -30;
-      public static final double INTAKE_HIGHER_POSITION = 10;
+      public static final double INTAKE_HIGHER_POSITION = -20;
       public static final double MAX_HEIGHT = 74.35;
     }
   }

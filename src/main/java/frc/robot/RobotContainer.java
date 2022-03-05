@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
@@ -31,7 +31,6 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
-import frc.util.DPadCluster;
 import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
@@ -55,8 +54,6 @@ public class RobotContainer {
 
   /** controller 1 */
   private final XboxController nick = new XboxController(1);
-  /** controller 1 dpad cluster */
-  private final DPadCluster nickDPad = new DPadCluster(nick);
   /** controller 0 */
   private final XboxController will = new XboxController(0);
 
@@ -143,21 +140,20 @@ public class RobotContainer {
     // Arm to high goal
     new Button(nick::getLeftBumper)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
-    new Button(nickDPad::getUpButton)
-        .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
 
     // Arm to intake position
     new Button(nick::getRightBumper)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
-    new Button(nickDPad::getDownButton)
-        .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
 
     // hold arm up for sideways intake
-    new Button(nickDPad::getRightButton)
+    new Button(nick::getStartButton)
         .whenHeld(
-            new RunCommand(
-                    () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_HIGHER_POSITION), armSubsystem)
-                .andThen(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION)));
+            new FunctionalCommand(
+                () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_HIGHER_POSITION),
+                () -> {},
+                (interrupted) -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION),
+                () -> false,
+                armSubsystem));
 
     // intake balls
     new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
