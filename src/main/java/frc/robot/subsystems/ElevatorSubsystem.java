@@ -86,7 +86,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.add(heightController);
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
-    ElevatorTab.addNumber("right motor sensor value", right_motor::getSelectedSensorPosition);
+    ElevatorTab.addNumber("right motor sensor value", this::getHeight);
   }
 
   /**
