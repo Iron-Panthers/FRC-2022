@@ -10,10 +10,10 @@ public final class Waypoints {
         "don't construct an instance of Waypoints, a static helper class");
   }
 
-  // Baseline autonomous
-  public static final Pose2d BASELINE_START_METERS =
-      new Pose2d(5.9, 3.855, Rotation2d.fromDegrees(0));
-  public static final Translation2d BASELINE_LINEARIZE_POINT_ONE = new Translation2d(5, 3.855);
-  public static final Pose2d BASELINE_END_METERS =
-      new Pose2d(3.61, 3.855, Rotation2d.fromDegrees(10));
+  public static final class Baseline {
+    // Baseline autonomous
+    public static final Pose2d START_METERS = new Pose2d(5.9, 3.855, Rotation2d.fromDegrees(0));
+    public static final Translation2d LINEARIZE_POINT_ONE = new Translation2d(5, 3.855);
+    public static final Pose2d END_METERS = new Pose2d(3.61, 3.855, Rotation2d.fromDegrees(10));
+  }
 }

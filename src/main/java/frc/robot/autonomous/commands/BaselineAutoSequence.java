@@ -10,7 +10,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.autonomous.Waypoints;
+import frc.robot.autonomous.Waypoints.Baseline;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import java.util.List;
@@ -29,9 +29,9 @@ public class BaselineAutoSequence extends SequentialCommandGroup {
     // Generate the baseline trajectory
     Trajectory baselineTrajectory =
         TrajectoryGenerator.generateTrajectory(
-            Waypoints.BASELINE_START_METERS,
-            List.of(Waypoints.BASELINE_LINEARIZE_POINT_ONE),
-            Waypoints.BASELINE_END_METERS,
+            Baseline.START_METERS,
+            List.of(Baseline.LINEARIZE_POINT_ONE),
+            Baseline.END_METERS,
             trajectoryConfig);
 
     // Create command to follow the baseline trajectory
