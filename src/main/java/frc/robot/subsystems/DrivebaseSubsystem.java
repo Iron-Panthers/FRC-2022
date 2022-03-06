@@ -38,7 +38,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
           new PIDController(0.4, 0.0, 0.025),
           new PIDController(0.4, 0.0, 0.025),
           new ProfiledPIDController(
-              1,
+              .147,
               0,
               0,
               new TrapezoidProfile.Constraints(
@@ -192,6 +192,16 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** Sets the gyro angle to zero, resetting the forward direction */
   public void zeroGyroscope() {
     navx.zeroYaw();
+  }
+
+  /**
+   * Resets the odometry estimate to a specific pose. Angle is substituted with the angle read from
+   * the gyroscope.
+   *
+   * @param pose The pose to reset to.
+   */
+  public void resetOdometryToPose(Pose2d pose) {
+    swerveOdometry.resetPosition(pose, getGyroscopeRotation());
   }
 
   public Rotation2d getGyroscopeRotation() {

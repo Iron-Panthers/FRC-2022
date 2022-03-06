@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -11,11 +12,41 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 public class FollowTrajectoryCommand extends CommandBase {
   private final DrivebaseSubsystem drivebaseSubsystem;
   private final Trajectory trajectory;
+  /**
+   * True if the swerve drive subsystem should localize to the trajectory's starting point in the
+   * initialization block. Calls the underlying SwerveDriveOdometry.resetOdometry(pose, angle).
+   */
+  private final boolean localizeToStartPose;
 
-  /** Creates a new FollowTrajectoryCommand. */
+  /**
+   * Creates a new FollowTrajectoryCommand. If you would like to localize to the start pose of the
+   * trajectory, instead use the constructor with a boolean parameter.
+   *
+   * @param trajectory The desired trajectory to track.
+   * @param drivebaseSubsystem The instance of the Drivebase subsystem (should come from
+   *     RobotContainer)
+   */
   public FollowTrajectoryCommand(Trajectory trajectory, DrivebaseSubsystem drivebaseSubsystem) {
     this.trajectory = trajectory;
     this.drivebaseSubsystem = drivebaseSubsystem;
+    this.localizeToStartPose = false;
+    addRequirements(drivebaseSubsystem);
+  }
+
+  /**
+   * Creates a new FollowTrajectoryCommand. Adds a parameter to optionally localize to the start
+   * point of this trajectory.
+   *
+   * @param trajectory The desired trajectory to track.
+   * @param localizeToStartPose If true, the drivebase will reset odometry to trajectory_state[0]
+   * @param drivebaseSubsystem The instance of the Drivebase subsystem (should come from
+   *     RobotContainer)
+   */
+  public FollowTrajectoryCommand(
+      Trajectory trajectory, boolean localizeToStartPose, DrivebaseSubsystem drivebaseSubsystem) {
+    this.trajectory = trajectory;
+    this.drivebaseSubsystem = drivebaseSubsystem;
+    this.localizeToStartPose = localizeToStartPose;
     addRequirements(drivebaseSubsystem);
   }
 
@@ -23,6 +54,12 @@ public class FollowTrajectoryCommand extends CommandBase {
   @Override
   public void initialize() {
     drivebaseSubsystem.getFollower().follow(trajectory);
+
+    if (localizeToStartPose) {
+      // sample the trajectory at 0 seconds (its beginning)
+      Pose2d firstPoseMeters = trajectory.sample(0).poseMeters;
+      drivebaseSubsystem.resetOdometryToPose(firstPoseMeters);
+    }
   }
 
   // Called once the command ends or is interrupted.
