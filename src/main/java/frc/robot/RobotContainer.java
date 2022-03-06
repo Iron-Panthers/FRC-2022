@@ -135,11 +135,11 @@ public class RobotContainer {
     // Elevator Manual controls
 
     new Button(nick::getYButton)
-        .whileHeld(
+        .whenHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, Constants.Elevator.POWER)); // Makes elevator go up manually
     new Button(nick::getAButton)
-        .whileHeld(
+        .whenHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, -Constants.Elevator.POWER)); // Makes elevator go down manually
 

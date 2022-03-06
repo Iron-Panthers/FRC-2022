@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Elevator;
 import frc.util.Util;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -42,9 +41,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    topLimitSwitch = new DigitalInput(Elevator.Ports.TOP_SWITCH); // do we need to put constants?
-    bottomLimitSwitch =
-        new DigitalInput(Elevator.Ports.BOTTOM_SWITCH); // do we need to put constants?
+    topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
+    bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
 
     this.totalMotorRotationTicks = 0.0;
     this.currentHeight = 0.0;
