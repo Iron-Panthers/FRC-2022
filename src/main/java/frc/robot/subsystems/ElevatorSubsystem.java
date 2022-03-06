@@ -113,7 +113,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     // if (bottomLimitSwitchPressed()) {
     // this.totalMotorRotationTicks = 0;
     // } else {
-    this.totalMotorRotationTicks = right_motor.getSelectedSensorPosition();
+
+      // we take the negative, because running it in reverse goes up
+    this.totalMotorRotationTicks = -right_motor.getSelectedSensorPosition();
 
     this.motorRotations = this.totalMotorRotationTicks / 2048; // There are 2048 units per rotation
 
