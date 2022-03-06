@@ -23,7 +23,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // private DigitalInput bottomLimitSwitch;
   // private DigitalInput topLimitSwitch;
 
-  /** 4096 to a rotation */
+  /** 2048 to a rotation */
   private double totalMotorRotationTicks;
   /** total rotations as a double */
   private double motorRotations;
@@ -54,13 +54,19 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.currentHeight = 0.0;
     this.targetHeight = 0.0;
 
+    right_motor.configFactoryDefault();
+    left_motor.configFactoryDefault();
+
+    right_motor.clearStickyFaults();
+    left_motor.clearStickyFaults();
+
     right_motor.configForwardSoftLimitThreshold(
-        -4096 * 2, 0); // this is the bottom limit, we stop two full rotation before bottoming out
+        -2048 * 3, 0); // this is the bottom limit, we stop three full rotation before bottoming out
     right_motor.configReverseSoftLimitThreshold(
-        -4096 * 8, 0); // this is the top limit, we stop before running out
+        -2048 * 62, 0); // this is the top limit, we stop before running out
 
     // // left_motor.configForwardSoftLimitThreshold(0, 0);
-    // // left_motor.configReverseSoftLimitThreshold(4096 * 2, 0);
+    // // left_motor.configReverseSoftLimitThreshold(2048 * 2, 0);
 
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
@@ -109,7 +115,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // } else {
     this.totalMotorRotationTicks = right_motor.getSelectedSensorPosition();
 
-    this.motorRotations = this.totalMotorRotationTicks / 4096; // There are 4096 units per rotation
+    this.motorRotations = this.totalMotorRotationTicks / 2048; // There are 2048 units per rotation
 
     this.currentHeight =
         ((motorRotations / 12.75) // 12.75:1 gear ratio
