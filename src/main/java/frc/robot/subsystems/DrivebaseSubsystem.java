@@ -170,11 +170,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    rotController = new PIDController(.0175, 0, 0.0015);
+    rotController = new PIDController(0.04, 0.001, 0.003);
     rotController.setSetpoint(0);
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
     // tune pid with:
-    // Shuffleboard.getTab("Drivebase").add(rotController);
+    Shuffleboard.getTab("Drivebase").add(rotController);
 
     swerveOdometry = new SwerveDriveOdometry(kinematics, navx.getRotation2d());
   }
@@ -287,7 +287,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   // called in drive to angle mode
   private void driveAnglePeriodic() {
-    double angularDifference = Util.relativeAngularDifference(getGyroscopeRotation(), targetAngle);
+    double angularDifference = -Util.relativeAngularDifference(getGyroscopeRotation(), targetAngle);
     double rotationValue = rotController.calculate(angularDifference);
 
     // we are treating this like a joystick, so -1 and 1 are its lower and upper bound

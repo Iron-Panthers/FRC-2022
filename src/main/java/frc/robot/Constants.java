@@ -57,8 +57,8 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(330.7297) // comp bot offset
-                : -Math.toRadians(40.333 + 180.0); // practice bot offset
+                ? -Math.toRadians(329.4937 + 180.0) // comp bot offset
+                : -Math.toRadians(39.1937); // practice bot offset
       }
 
       public static final class FrontLeft { // Module 2
@@ -68,8 +68,8 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(31.0226) // comp bot offset
-                : -Math.toRadians(218.7512 + 180.0); // practice bot offset
+                ? -Math.toRadians(209.0836) // comp bot offset
+                : -Math.toRadians(180 + 269.207); // practice bot offset
       }
 
       public static final class BackLeft { // Module 3
@@ -79,8 +79,8 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(133.9371) // comp bot offset
-                : -Math.toRadians(188.6133); // practice bot offset
+                ? -Math.toRadians(183.5815) // comp bot offset
+                : -Math.toRadians(8.075); // practice bot offset
       }
 
       public static final class BackRight { // Module 4
@@ -90,26 +90,70 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(18.0175) // comp bot offset
-                : -Math.toRadians(329.6777); // practice bot offset
+                ? -Math.toRadians(20.9152 + 180.0) // comp bot offset
+                : -Math.toRadians(152.655); // practice bot offset
       }
     }
   }
 
+  public static final class Arm {
+    // Throw any Arm constants in this file
+    public static final class Ports {
+      public static final int RIGHT_MOTOR_PORT = 14;
+      public static final int LEFT_MOTOR_PORT = 5;
+      public static final int ENCODER_PORT = 22;
+    }
+
+    public static final double ANGULAR_OFFSET = 58;
+    public static final double GRAVITY_CONTROL_PERCENT = .135;
+
+    public static final class PID {
+      public static final double ANGULAR_TOLERANCE = 1.0;
+    }
+
+    public static final class Setpoints {
+      public static final double OUTTAKE_HIGH_POSITION = 68;
+      public static final double OUTTAKE_LOW_POSITION = 50;
+      public static final double INTAKE_POSITION = -30;
+      public static final double INTAKE_HIGHER_POSITION = -20;
+      public static final double MAX_HEIGHT = 74.35;
+    }
+  }
+
   public static final class Intake {
-    /** the percent to run the idler motor at in the idling state */
-    public static final double IDLER_PERCENT = 1;
-    /** the percent to run the intake motors during the intake state */
-    public static final double INTAKE_PERCENT = -.55;
-    /** the percent to run the outtake motors during the outtake state */
-    public static final double OUTTAKE_PERCENT = .7;
-    /** the percent to run the idler motor at in the ejection state */
-    public static final double EJECT_PERCENT = -.9;
+    /** percent to run motors at for given states */
+    public static final class EjectRollers {
+      /** the percent to run the eject motor at in the idling state */
+      public static final double IDLE = 1;
+      /** the percent to run the eject motor at in the ejection state */
+      public static final double EJECT = -.9;
+    }
+
+    /** percent to run motors at for given states */
+    public static final class IntakeRollers {
+      /** the percent to run the intake motors during the intake state */
+      public static final double INTAKE = .55;
+      /** the percent to run the upper outtake during the outtake state */
+      public static final double OUTTAKE_UPPER = -0.3;
+      /** the percent to run the lower outtake during the outtake state */
+      public static final double OUTTAKE_LOWER = -0.225;
+      /**
+       * the percent to run the upper outtake during the outtake fast state (~1 robot's distance
+       * from the goal)
+       */
+      public static final double OUTTAKE_UPPER_FAST = -0.565;
+      /**
+       * the percent to run the lower outtake during the outtake fast state (~1 robot's distance
+       * from the goal)
+       */
+      public static final double OUTTAKE_LOWER_FAST = -0.275;
+    }
 
     public static final class Ports {
-      public static final int LOWER_MOTOR = 14;
-      public static final int UPPER_MOTOR = 6;
-      public static final int IDLER_MOTOR = 15;
+      public static final int LOWER_MOTOR = 15;
+      public static final int UPPER_MOTOR = 8;
+      public static final int RIGHT_EJECT_MOTOR = 16;
+      public static final int LEFT_EJECT_MOTOR = 9; // fixme
     }
   }
 }
