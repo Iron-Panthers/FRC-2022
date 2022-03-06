@@ -16,9 +16,9 @@ import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** follower */
-  private TalonFX left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
+  private TalonFX left_motor;
   /** leader */
-  private TalonFX right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
+  private TalonFX right_motor;
 
   // private DigitalInput bottomLimitSwitch;
   // private DigitalInput topLimitSwitch;
@@ -44,6 +44,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorSubsystem() {
     heightController = new PIDController(0.000075, 0, 0);
 
+    left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
+    right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
+
     // topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
     // bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
 
@@ -51,12 +54,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.currentHeight = 0.0;
     this.targetHeight = 0.0;
 
-    // soft limits, stops 3 rotations before bottom/top (4.5 inches)
-    right_motor.configForwardSoftLimitThreshold(4 * 12.75 * 4096, 0);
-    right_motor.configReverseSoftLimitThreshold(0, 0);
+    right_motor.configForwardSoftLimitThreshold(
+        -4096 * 2, 0); // this is the bottom limit, we stop two full rotation before bottoming out
+    right_motor.configReverseSoftLimitThreshold(
+        -4096 * 8, 0); // this is the top limit, we stop before running out
 
-    left_motor.configForwardSoftLimitThreshold(4 * 12.75 * 4096, 0);
-    left_motor.configReverseSoftLimitThreshold(0, 0);
+    // // left_motor.configForwardSoftLimitThreshold(0, 0);
+    // // left_motor.configReverseSoftLimitThreshold(4096 * 2, 0);
 
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
@@ -74,6 +78,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.follow(right_motor);
 
     ElevatorTab.add(heightController);
+    ElevatorTab.addNumber("height", () -> this.currentHeight);
+    ElevatorTab.addNumber("target height", () -> this.targetHeight);
+    ElevatorTab.addNumber("right motor sensor value", right_motor::getSelectedSensorPosition);
   }
 
   /**
@@ -130,19 +137,19 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    currentHeight = getHeight();
-    double motorPower = heightController.calculate(getHeight(), targetHeight);
-    right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
+    // currentHeight = getHeight();
+    // double motorPower = heightController.calculate(getHeight(), targetHeight);
+    // right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
 
-    // if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
-    //   lock();
-    // } // FIXME (Isaac, we don't know if it'll be stuck at the limit switch)
+    // // if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
+    // //   lock();
+    // // } // FIXME (Isaac, we don't know if it'll be stuck at the limit switch)
 
-    // // shuffleboard?
-    SmartDashboard.putNumber("Height", currentHeight);
-    SmartDashboard.putNumber("Target Height", targetHeight);
+    // // // shuffleboard?
+    // SmartDashboard.putNumber("Height", currentHeight);
+    // SmartDashboard.putNumber("Target Height", targetHeight);
 
-    SmartDashboard.putNumber("Motor Power", motorPower);
+    // SmartDashboard.putNumber("Motor Power", motorPower);
     // SmartDashboard.putNumber("Top Limit Switch Pressed", topLimitSwitchPressed());
     // SmartDashboard.putNumber("Bottom Limit Switch Pressed", bottomLimitSwitchPressed());
     // This method will be called once per scheduler run
