@@ -13,22 +13,27 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.util.Util;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private TalonFX left = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
-  private TalonFX right = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
+  /** follower */
+  private TalonFX left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
+  /** leader */
+  private TalonFX right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
 
   // private DigitalInput bottomLimitSwitch;
   // private DigitalInput topLimitSwitch;
 
+  /** 4096 to a rotation */
   private double totalMotorRotationTicks;
+  /** total rotations as a double */
   private double motorRotations;
   /** Elevator's current height in inches */
   private double currentHeight;
 
+  /** desired height in inches */
   private double targetHeight;
-  private final PIDController heightController = new PIDController(0.04, 0, 0);
+
+  private final PIDController heightController;
 
   // clockwise moves up
   // counterclockwise moves down
@@ -37,6 +42,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
+    heightController = new PIDController(0.000075, 0, 0);
+
     // topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
     // bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
 
@@ -44,24 +51,29 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.currentHeight = 0.0;
     this.targetHeight = 0.0;
 
-    // Configure the right motor
-    right.setInverted(true);
-
-    // Follow with the left motor and copy any important things
-    left.follow(right);
-
     // soft limits, stops 3 rotations before bottom/top (4.5 inches)
-    right.configForwardSoftLimitThreshold(4 * 12.75 * 4096, 0);
-    right.configReverseSoftLimitThreshold(12.75 * 4096 / 3, 0);
+    right_motor.configForwardSoftLimitThreshold(4 * 12.75 * 4096, 0);
+    right_motor.configReverseSoftLimitThreshold(0, 0);
 
-    left.configForwardSoftLimitThreshold(4 * 12.75 * 4096, 0);
-    left.configReverseSoftLimitThreshold(12.75 * 4096 / 3, 0);
+    left_motor.configForwardSoftLimitThreshold(4 * 12.75 * 4096, 0);
+    left_motor.configReverseSoftLimitThreshold(0, 0);
 
-    right.configForwardSoftLimitEnable(true, 0);
-    right.configReverseSoftLimitEnable(true, 0);
+    right_motor.configForwardSoftLimitEnable(true, 0);
+    right_motor.configReverseSoftLimitEnable(true, 0);
 
-    left.configForwardSoftLimitEnable(true, 0);
-    left.configReverseSoftLimitEnable(true, 0);
+    left_motor.configForwardSoftLimitEnable(true, 0);
+    left_motor.configReverseSoftLimitEnable(true, 0);
+
+    left_motor.setSelectedSensorPosition(0);
+    right_motor.setSelectedSensorPosition(0);
+
+    // make sure we hold our height when we get disabled
+    right_motor.setNeutralMode(NeutralMode.Brake);
+    left_motor.setNeutralMode(NeutralMode.Brake);
+
+    left_motor.follow(right_motor);
+
+    ElevatorTab.add(heightController);
   }
 
   /**
@@ -69,9 +81,13 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @param targetHeight Uses Inches
    */
-  public void setTargetHeight(Double targetHeight) {
+  public void setTargetHeight(double targetHeight) {
     SmartDashboard.putNumber("set target height", targetHeight);
     this.targetHeight = targetHeight;
+  }
+
+  public void setPercent(double percent) {
+    right_motor.set(TalonFXControlMode.PercentOutput, percent);
   }
 
   /**
@@ -84,7 +100,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // if (bottomLimitSwitchPressed()) {
     // this.totalMotorRotationTicks = 0;
     // } else {
-    this.totalMotorRotationTicks = right.getSelectedSensorPosition();
+    this.totalMotorRotationTicks = right_motor.getSelectedSensorPosition();
 
     this.motorRotations = this.totalMotorRotationTicks / 4096; // There are 4096 units per rotation
 
@@ -97,16 +113,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public double getTargetHeight() {
     return targetHeight;
-  }
-
-  public double sensorTests() {
-    right.set(TalonFXControlMode.PercentOutput, 1);
-    return right.getSelectedSensorPosition();
-  }
-
-  public void lock() {
-
-    right.setNeutralMode(NeutralMode.Brake);
   }
 
   public boolean topLimitSwitchPressed() {
@@ -123,20 +129,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     currentHeight = getHeight();
     double motorPower = heightController.calculate(getHeight(), targetHeight);
-    if (Util.epsilonEquals(currentHeight, targetHeight, .1)) {
-      SmartDashboard.putBoolean("locked", true);
-      lock();
-    } else {
-      SmartDashboard.putBoolean("locked", false);
-      right.set(TalonFXControlMode.PercentOutput, motorPower);
-    }
+    right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
+
     // if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
     //   lock();
     // } // FIXME (Isaac, we don't know if it'll be stuck at the limit switch)
 
-    // shuffleboard?
+    // // shuffleboard?
     SmartDashboard.putNumber("Height", currentHeight);
     SmartDashboard.putNumber("Target Height", targetHeight);
 

@@ -99,7 +99,7 @@ public final class Constants {
   public static final class Elevator {
 
     public static final double POSITION = 1.0;
-    public static final double RATE = 0.05;
+    public static final double RATE = 0.025;
 
     // Heights
     /** Max height is 21.75 inches (adjusted for overshoot) */

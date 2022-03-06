@@ -66,6 +66,10 @@ public class RobotContainer {
             () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
             () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND)));
 
+    elevatorSubsystem.setDefaultCommand(
+        new InstantCommand(
+            () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(nick.getRightY(), .4))));
+
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
     // Configure the button bindings
@@ -133,7 +137,6 @@ public class RobotContainer {
                 elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
 
     // Elevator Manual controls
-
     new Button(nick::getYButton)
         .whenHeld(
             new ElevatorManualCommand(
