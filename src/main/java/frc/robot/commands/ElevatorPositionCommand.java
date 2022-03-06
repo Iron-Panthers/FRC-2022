@@ -22,13 +22,12 @@ public class ElevatorPositionCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevatorSubsystem.setPreset(true);
+    elevatorSubsystem.setTargetHeight(targetHeight);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setTargetHeight(targetHeight);
     // get current height
   }
 

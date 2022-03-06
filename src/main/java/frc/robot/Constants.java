@@ -99,7 +99,7 @@ public final class Constants {
   public static final class Elevator {
 
     public static final double POSITION = 1.0;
-    public static final double POWER = 0.3;
+    public static final double RATE = 0.05;
 
     // Heights
     /** Max height is 21.75 inches (adjusted for overshoot) */
@@ -111,8 +111,8 @@ public final class Constants {
     public static final class Ports {
       public static final int LEFT_MOTOR = 6;
       public static final int RIGHT_MOTOR = 7;
-      public static final int BOTTOM_SWITCH = 9; // FIXME
-      public static final int TOP_SWITCH = 8; // FIXME
+      public static final int BOTTOM_SWITCH = 9;
+      public static final int TOP_SWITCH = 0;
     }
   }
 

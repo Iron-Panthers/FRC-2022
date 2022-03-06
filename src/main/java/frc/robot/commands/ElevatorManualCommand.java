@@ -4,30 +4,31 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorManualCommand extends CommandBase {
-  private ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  private final Double power;
+  private ElevatorSubsystem elevatorSubsystem;
+  private final Double rate;
   /** Creates a new ElevatorCommand. */
-  public ElevatorManualCommand(ElevatorSubsystem subsystem, Double power) {
-    addRequirements(elevatorSubsystem);
-    this.power = power;
+  public ElevatorManualCommand(ElevatorSubsystem subsystem, Double rate) {
+    this.rate = rate;
     this.elevatorSubsystem = subsystem;
+    addRequirements(elevatorSubsystem);
+
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    elevatorSubsystem.setPreset(false);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setMotorPower(power);
+    SmartDashboard.putNumber("rate", rate);
+    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getTargetHeight() + rate);
   }
 
   // Called once the command ends or is interrupted.

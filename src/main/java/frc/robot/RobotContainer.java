@@ -137,11 +137,11 @@ public class RobotContainer {
     new Button(nick::getYButton)
         .whenHeld(
             new ElevatorManualCommand(
-                elevatorSubsystem, Constants.Elevator.POWER)); // Makes elevator go up manually
+                elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
     new Button(nick::getAButton)
         .whenHeld(
             new ElevatorManualCommand(
-                elevatorSubsystem, -Constants.Elevator.POWER)); // Makes elevator go down manually
+                elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
 
     // will controller intakes (temporary)
     new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
