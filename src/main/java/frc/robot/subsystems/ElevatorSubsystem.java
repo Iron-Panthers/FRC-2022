@@ -64,7 +64,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     right_motor.configForwardSoftLimitThreshold(
         -Elevator.TICKS, 0); // this is the bottom limit, we stop three full rotation before bottoming out
     right_motor.configReverseSoftLimitThreshold(
-        -heightToTicks(21.75), 0); // this is the top limit, we stop before running out
+        -heightToTicks(24), 0); // this is the top limit, we stop before running out
 
 
     right_motor.configForwardSoftLimitEnable(true, 0);
