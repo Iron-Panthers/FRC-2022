@@ -62,7 +62,8 @@ public class ReplaceFalconCode {
     in.nextLine();
 
     String code = clipboard();
-    code = code.replace("wayPoints = listOf(", "");
+
+    code = code.replace("wayPoints = listOf(\n", "");
     code = code.replace("\n),", "");
     code = code.replace("),", ")");
     code = code.replace("    ", "");
@@ -91,5 +92,11 @@ public class ReplaceFalconCode {
     code = code.replace(".degrees", "");
 
     println(code);
+
+    String[] points = code.split("\n");
+
+    for (String point : points) {
+      println("lol '" + point + "'\n");
+    }
   }
 }
