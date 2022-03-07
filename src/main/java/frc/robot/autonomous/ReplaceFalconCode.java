@@ -25,6 +25,11 @@ public class ReplaceFalconCode {
     println("copy the falcon code, then press enter.");
     in.nextLine();
 
-    println(clipboard());
+    String code = clipboard();
+    code = code.replace("wayPoints = listOf(\n", "");
+    code = code.replace("\n),", "");
+    code = code.replace("    ", "");
+
+    println(code);
   }
 }
