@@ -62,16 +62,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.clearStickyFaults();
 
     right_motor.configForwardSoftLimitThreshold(
-        -Elevator.TICKS, 0); // this is the bottom limit, we stop three full rotation before bottoming out
+        -Elevator.TICKS,
+        0); // this is the bottom limit, we stop three full rotation before bottoming out
     right_motor.configReverseSoftLimitThreshold(
-        -heightToTicks(24), 0); // this is the top limit, we stop before running out
-
+        -heightToTicks(24), 0); // this is the top limit, we stop before running out (1 inch leeway)
 
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
-
-    left_motor.configForwardSoftLimitEnable(true, 0);
-    left_motor.configReverseSoftLimitEnable(true, 0);
 
     left_motor.setSelectedSensorPosition(0);
     right_motor.setSelectedSensorPosition(0);
@@ -89,11 +86,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public static double heightToTicks(double height) {
-    return height * ((Elevator.GEAR_RATIO * Elevator.TICKS)/(Elevator.GEAR_CIRCUMFERENCE));
+    return height * ((Elevator.GEAR_RATIO * Elevator.TICKS) / (Elevator.GEAR_CIRCUMFERENCE));
   }
 
   public static double ticksToHeight(double ticks) {
-    return (ticks * Elevator.GEAR_CIRCUMFERENCE) /(Elevator.TICKS * Elevator.GEAR_RATIO);
+    return (ticks * Elevator.GEAR_CIRCUMFERENCE) / (Elevator.TICKS * Elevator.GEAR_RATIO);
   }
 
   /**
