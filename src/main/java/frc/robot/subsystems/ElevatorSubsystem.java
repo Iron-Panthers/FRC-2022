@@ -64,7 +64,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     right_motor.configForwardSoftLimitThreshold(
         -Elevator.TICKS, 0); // this is the bottom limit, we stop three full rotation before bottoming out
     right_motor.configReverseSoftLimitThreshold(
-        -heightToTicks(21.75) + Elevator.TICKS, 0); // this is the top limit, we stop before running out
+        -heightToTicks(21.75), 0); // this is the top limit, we stop before running out
 
 
     right_motor.configForwardSoftLimitEnable(true, 0);
@@ -93,7 +93,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public static double ticksToHeight(double ticks) {
-    return (ticks * Elevator.GEAR_CIRCUMFERENCE) /(Elevator.TICKS * Elevator.GEAR_RATIO)
+    return (ticks * Elevator.GEAR_CIRCUMFERENCE) /(Elevator.TICKS * Elevator.GEAR_RATIO);
   }
 
   /**
