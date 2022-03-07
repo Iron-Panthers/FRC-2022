@@ -108,9 +108,12 @@ public class ReplaceFalconCode {
         output.append(points[i]);
       } else {
         output.append("Translation2d ");
-        output.append(String.format("MIDDLE_%S", ALPHABET[i]));
+        output.append(String.format("MIDDLE_%S ", ALPHABET[i]));
         output.append("= ");
-        output.append(points[i]);
+        String objectInit = points[i];
+        objectInit = objectInit.replace("Pose2d", "Translation2d");
+        objectInit = objectInit.replaceAll(Pattern.compile(", Rotation2d.*?\\)").toString(), "");
+        output.append(objectInit);
       }
       output.append(";\n");
     }
