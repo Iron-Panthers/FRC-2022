@@ -4,30 +4,46 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.Intake;
-import static frc.robot.Constants.Intake.Ports;
-
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Intake.EjectRollers;
+import frc.robot.Constants.Intake.IntakeRollers;
+import frc.robot.Constants.Intake.Ports;
 
-public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
+public class IntakeSubsystem extends SubsystemBase {
 
   // final should be used on these fields, but if we use final mockito cannot inject mocks - use
   // final when you can
   /** the lower motor, upper motor follows this one - address this motor */
-  private TalonFX lowerMotor;
+  private TalonFX lowerIntakeMotor;
   /** follows lower motor, only address lower motor */
-  private TalonFX upperMotor;
-  /** the idler motor, aligns balls and allows rejections */
-  private TalonFX idlerMotor;
+  private TalonFX upperIntakeMotor;
+  /** the right eject motor, aligns balls and allows rejections */
+  private TalonFX rightEjectMotor;
+  /** the left eject motor, aligns balls and allows rejections */
+  private TalonFX leftEjectMotor;
+
+  private void configStatusFramePeriodsAndBatteryComp(TalonFX talon) {
+    talon.setStatusFramePeriod(1, 100);
+    talon.setStatusFramePeriod(2, 100);
+    talon.enableVoltageCompensation(true);
+    talon.configVoltageCompSaturation(12);
+  }
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    lowerMotor = new TalonFX(Ports.LOWER_MOTOR);
-    upperMotor = new TalonFX(Ports.UPPER_MOTOR);
-    idlerMotor = new TalonFX(Ports.IDLER_MOTOR);
-    upperMotor.follow(lowerMotor);
+    lowerIntakeMotor = new TalonFX(Ports.LOWER_MOTOR);
+    upperIntakeMotor = new TalonFX(Ports.UPPER_MOTOR);
+
+    rightEjectMotor = new TalonFX(Ports.RIGHT_EJECT_MOTOR);
+    rightEjectMotor.setInverted(true);
+    leftEjectMotor = new TalonFX(Ports.LEFT_EJECT_MOTOR);
+
+    configStatusFramePeriodsAndBatteryComp(lowerIntakeMotor);
+    configStatusFramePeriodsAndBatteryComp(upperIntakeMotor);
+    configStatusFramePeriodsAndBatteryComp(rightEjectMotor);
+    configStatusFramePeriodsAndBatteryComp(leftEjectMotor);
   }
 
   /** the different modes the intake subsystem state machine can be in */
@@ -36,7 +52,10 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     IDLING,
     INTAKE,
     OUTTAKE,
-    EJECT
+    OUTTAKE_FAST,
+    EJECT_LEFT,
+    EJECT_RIGHT,
+    EJECT_ALL,
   }
 
   /** the current mode of the subsystem */
@@ -64,8 +83,11 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
         // after intake, we should run the idling motor to align balls for shooting and outtake
         setMode(Modes.IDLING);
         break;
-      case EJECT:
+      case EJECT_LEFT:
+      case EJECT_RIGHT:
+      case EJECT_ALL:
       case OUTTAKE:
+      case OUTTAKE_FAST:
         // after ejection and outtake, we should stop all motors, because there shouldn't still be
         // balls in the intake
         setMode(Modes.OFF);
@@ -88,38 +110,87 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /** periodic helper method to make intention more readable. Stops the intake motors */
-  private void stopIntake() {
-    stopMotor(lowerMotor);
+  private void stopIntakeRollers() {
+    stopMotor(upperIntakeMotor);
+    stopMotor(lowerIntakeMotor);
   }
 
   /** periodic helper method to make intention more readable. Stops the idler motor */
-  private void stopIdler() {
-    stopMotor(idlerMotor);
+  private void stopEjectRollers() {
+    stopMotor(leftEjectMotor);
+    stopMotor(rightEjectMotor);
+  }
+
+  private void runEjectRollers(double percent) {
+    runLeftEjectMotor(percent);
+    runRightEjectRoller(percent);
+  }
+
+  private void runLeftEjectMotor(double percent) {
+    leftEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
+  private void runRightEjectRoller(double percent) {
+    rightEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
+  private void runIntakeRollers(double percent) {
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, percent);
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
+  private void feedBallsViaIntakeForEject() {
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
   }
 
   private void offModePeriodic() {
-    stopIdler();
-    stopIntake();
+    stopEjectRollers();
+    stopIntakeRollers();
   }
 
   private void idlingModePeriodic() {
-    stopIntake();
-    idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
+    stopIntakeRollers();
+    runEjectRollers(EjectRollers.IDLE);
   }
 
   private void intakeModePeriodic() {
-    idlingModePeriodic();
-    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
+    runEjectRollers(EjectRollers.IDLE);
+    runIntakeRollers(IntakeRollers.INTAKE);
   }
 
   private void outtakeModePeriodic() {
-    idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.IDLER_PERCENT);
-    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
+    runEjectRollers(EjectRollers.IDLE);
+
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
   }
 
-  private void ejectModePeriodic() {
-    lowerMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
-    idlerMotor.set(TalonFXControlMode.PercentOutput, Intake.EJECT_PERCENT);
+  private void outtakeFastModePeriodic() {
+    runEjectRollers(EjectRollers.IDLE);
+
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_FAST);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_FAST);
+  }
+
+  private void ejectLeftModePeriodic() {
+    runLeftEjectMotor(EjectRollers.EJECT);
+    runRightEjectRoller(EjectRollers.IDLE);
+
+    feedBallsViaIntakeForEject();
+  }
+
+  private void ejectRightModePeriodic() {
+    runLeftEjectMotor(EjectRollers.IDLE);
+    runRightEjectRoller(EjectRollers.EJECT);
+
+    feedBallsViaIntakeForEject();
+  }
+
+  private void ejectAllModePeriodic() {
+    runEjectRollers(EjectRollers.EJECT);
+
+    feedBallsViaIntakeForEject();
   }
 
   @Override
@@ -138,17 +209,18 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
       case OUTTAKE:
         outtakeModePeriodic();
         break;
-      case EJECT:
-        ejectModePeriodic();
+      case OUTTAKE_FAST:
+        outtakeFastModePeriodic();
+        break;
+      case EJECT_LEFT:
+        ejectLeftModePeriodic();
+        break;
+      case EJECT_RIGHT:
+        ejectRightModePeriodic();
+        break;
+      case EJECT_ALL:
+        ejectAllModePeriodic();
         break;
     }
-  }
-
-  @Override
-  public void close() {
-    // these error codes are ignored. this may be undesirable in the future.
-    lowerMotor.DestroyObject();
-    upperMotor.DestroyObject();
-    idlerMotor.DestroyObject();
   }
 }
