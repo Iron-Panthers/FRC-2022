@@ -76,11 +76,10 @@ public class ReplaceFalconCode {
             code,
             Pattern.compile("(\\d*?\\.?\\d*)\\.feet", Pattern.MULTILINE),
             1,
-            (feet) -> {
-              return String.format(
-                  "%s /* meters (%s feet) */",
-                  round(Double.parseDouble(feet) / FEET_IN_METER), feet);
-            });
+            feet ->
+                String.format(
+                    "%s /* meters (%s feet) */",
+                    round(Double.parseDouble(feet) / FEET_IN_METER), feet));
     code = code.replace(".feet", "");
 
     code =
@@ -88,9 +87,7 @@ public class ReplaceFalconCode {
             code,
             Pattern.compile("(-?\\d*?\\.?\\d*)\\.degrees", Pattern.MULTILINE),
             1,
-            degrees -> {
-              return String.format("Rotation2d.fromDegrees(%s)", degrees);
-            });
+            degrees -> String.format("Rotation2d.fromDegrees(%s)", degrees));
     code = code.replace(".degrees", "");
 
     String[] points = code.split("\n");
