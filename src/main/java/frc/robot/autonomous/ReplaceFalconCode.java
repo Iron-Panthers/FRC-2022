@@ -64,8 +64,9 @@ public class ReplaceFalconCode {
     String code = clipboard();
     code = code.replace("wayPoints = listOf(", "");
     code = code.replace("\n),", "");
-    code = code.replace("),", ");");
+    code = code.replace("),", ")");
     code = code.replace("    ", "");
+    code = code.replace("Pose2d", "new Pose2d");
 
     code =
         replaceTextOfMatchGroup(
@@ -78,6 +79,16 @@ public class ReplaceFalconCode {
                   round(Double.parseDouble(feet) / FEET_IN_METER), feet);
             });
     code = code.replace(".feet", "");
+
+    code =
+        replaceTextOfMatchGroup(
+            code,
+            Pattern.compile("(-?\\d*?\\.?\\d*)\\.degrees", Pattern.MULTILINE),
+            1,
+            degrees -> {
+              return String.format("Rotation2d.fromDegrees(%s)", degrees);
+            });
+    code = code.replace(".degrees", "");
 
     println(code);
   }
