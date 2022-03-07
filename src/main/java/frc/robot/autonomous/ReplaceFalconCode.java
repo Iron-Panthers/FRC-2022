@@ -8,6 +8,16 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class converts the code output from FRC5190's FalconDashboard into a list of
+ * public-static-final Pose2d and Translation2d waypoints, which are the critical points for path
+ * generation.
+ *
+ * <p>The dashboard project can be found at: https://github.com/FRC5190/FalconDashboard
+ *
+ * <p>For more information on how this data is used to generate trajectories, see
+ * https://docs.wpilib.org/en/stable/docs/software/advanced-controls/trajectories/trajectory-generation.html#generating-the-trajectory
+ */
 public class ReplaceFalconCode {
   private static final double FEET_IN_METER = 3.2808;
   private static final int DIGITS_PRECISION = 3;
