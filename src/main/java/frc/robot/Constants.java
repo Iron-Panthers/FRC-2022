@@ -107,6 +107,10 @@ public final class Constants {
 
     /** Minimum height is 0 inches */
     public static final double minHeight = 0;
+    
+    public static final int TICKS = 2048;
+    public static final double GEAR_RATIO = 12.75;
+    public static final double GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
 
     public static final class Ports {
       public static final int LEFT_MOTOR = 6;

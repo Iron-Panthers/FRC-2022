@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Elevator;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** follower */
@@ -61,12 +62,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.clearStickyFaults();
 
     right_motor.configForwardSoftLimitThreshold(
-        -2048 * 3, 0); // this is the bottom limit, we stop three full rotation before bottoming out
+        -Elevator.TICKS * 3, 0); // this is the bottom limit, we stop three full rotation before bottoming out
     right_motor.configReverseSoftLimitThreshold(
-        -2048 * 62, 0); // this is the top limit, we stop before running out
+        -Elevator.TICKS * 66, 0); // this is the top limit, we stop before running out
 
     // // left_motor.configForwardSoftLimitThreshold(0, 0);
-    // // left_motor.configReverseSoftLimitThreshold(2048 * 2, 0);
+    // // left_motor.configReverseSoftLimitThreshold(Elevator.TICKS * 2, 0);
 
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
@@ -87,6 +88,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+  }
+
+  public static double heightToTicks(double height) {
+    return height * ((Elevator.GEAR_RATIO * Elevator.TICKS)/(Elevator.GEAR_CIRCUMFERENCE));
+  }
+
+  public static double ticksToHeight(double ticks) {
+    return (ticks * Elevator.GEAR_CIRCUMFERENCE) /(Elevator.TICKS * Elevator.GEAR_RATIO)
   }
 
   /**
@@ -110,20 +119,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public double getHeight() {
 
-    // if (bottomLimitSwitchPressed()) {
-    // this.totalMotorRotationTicks = 0;
-    // } else {
-
-      // we take the negative, because running it in reverse goes up
-    this.totalMotorRotationTicks = -right_motor.getSelectedSensorPosition();
-
-    this.motorRotations = this.totalMotorRotationTicks / 2048; // There are 2048 units per rotation
-
-    this.currentHeight =
-        ((motorRotations / 12.75) // 12.75:1 gear ratio
-            * (1.5 * Math.PI)); // Circumference of gear multiplied by rotations to get height
-
-    return currentHeight;
+    // we take the negative, because running it in reverse goes up
+    return ticksToHeight(-right_motor.getSelectedSensorPosition());
   }
 
   public double getTargetHeight() {
