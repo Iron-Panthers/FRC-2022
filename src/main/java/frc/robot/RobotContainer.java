@@ -76,7 +76,7 @@ public class RobotContainer {
     elevatorSubsystem.setDefaultCommand(
         new FunctionalCommand(
             () -> {},
-            () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(nick.getRightY(), .4)),
+            () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(nick.getLeftY(), .4)),
             (interrupted) -> {},
             () -> false,
             elevatorSubsystem));

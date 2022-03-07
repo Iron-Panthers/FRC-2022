@@ -70,6 +70,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
 
+    right_motor.configOpenloopRamp(.5);
+
     left_motor.setSelectedSensorPosition(0);
     right_motor.setSelectedSensorPosition(0);
 
