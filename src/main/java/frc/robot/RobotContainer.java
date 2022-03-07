@@ -71,6 +71,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Create and put autonomous selector to dashboard
+    setupAutonomousCommands();
   }
 
   /**
@@ -182,8 +185,10 @@ public class RobotContainer {
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
-  private void setupAutonomusCommands() {
-
+  /**
+   * Adds all autonomous routines to the autoSelector, and places the autoSelector on Shuffleboard.
+   */
+  private void setupAutonomousCommands() {
     autoSelector.setDefaultOption(
         "baseline auto",
         new BaselineAutoSequence(1, 0.5, drivebaseSubsystem.getKinematics(), drivebaseSubsystem));
