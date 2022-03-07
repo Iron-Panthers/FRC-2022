@@ -13,6 +13,8 @@ public class ReplaceFalconCode {
   private static final int DIGITS_PRECISION = 3;
   private static final int RESCAN_MS = 500;
 
+  private static final String[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
   private static void println(String v) {
     System.out.println(v);
   }
@@ -91,12 +93,28 @@ public class ReplaceFalconCode {
             });
     code = code.replace(".degrees", "");
 
-    println(code);
-
     String[] points = code.split("\n");
 
-    for (String point : points) {
-      println("lol '" + point + "'\n");
+    StringBuilder output = new StringBuilder();
+
+    for (int i = 0; i < points.length; i++) {
+
+      output.append("public static final ");
+
+      if (i == 0 || i == points.length - 1) {
+        output.append("Pose2d ");
+        output.append(i == 0 ? "FIRST " : "LAST ");
+        output.append("= ");
+        output.append(points[i]);
+      } else {
+        output.append("Translation2d ");
+        output.append(String.format("MIDDLE_%S", ALPHABET[i]));
+        output.append("= ");
+        output.append(points[i]);
+      }
+      output.append(";\n");
     }
+
+    println(output.toString());
   }
 }
