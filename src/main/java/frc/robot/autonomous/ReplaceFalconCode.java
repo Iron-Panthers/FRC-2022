@@ -9,6 +9,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReplaceFalconCode {
+  private static final double FEET_IN_METER = 3.2808;
+  private static final int DIGITS_PRECISION = 3;
+  private static final int RESCAN_MS = 500;
+
   private static void println(String v) {
     System.out.println(v);
   }
@@ -47,6 +51,10 @@ public class ReplaceFalconCode {
     return sb.toString();
   }
 
+  public static String round(double num) {
+    return String.format("%." + DIGITS_PRECISION + "f", num);
+  }
+
   public static void main(String[] args) {
     Scanner in = new Scanner(System.in);
 
@@ -54,8 +62,9 @@ public class ReplaceFalconCode {
     in.nextLine();
 
     String code = clipboard();
-    code = code.replace("wayPoints = listOf(\n", "");
+    code = code.replace("wayPoints = listOf(", "");
     code = code.replace("\n),", "");
+    code = code.replace("),", ");");
     code = code.replace("    ", "");
 
     code =
@@ -64,7 +73,9 @@ public class ReplaceFalconCode {
             Pattern.compile("(\\d*\\.\\d*)\\.feet", Pattern.MULTILINE),
             1,
             (feet) -> {
-              return String.format("%s /*meters, converted from %s feet*/", feet + 2, feet);
+              return String.format(
+                  "%s /* meters (%s feet) */",
+                  round(Double.parseDouble(feet) / FEET_IN_METER), feet);
             });
     code = code.replace(".feet", "");
 
