@@ -8,6 +8,8 @@ import static frc.robot.Constants.Drive;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -48,6 +50,9 @@ public class RobotContainer {
   private final XboxController nick = new XboxController(1);
   /** controller 0 */
   private final XboxController will = new XboxController(0);
+
+  /** the sendable chooser to select which auto to run. */
+  private final SendableChooser<Command> autoSelector = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -177,13 +182,22 @@ public class RobotContainer {
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
+  private void setupAutonomusCommands() {
+
+    autoSelector.setDefaultOption(
+        "baseline auto",
+        new BaselineAutoSequence(1, 0.5, drivebaseSubsystem.getKinematics(), drivebaseSubsystem));
+
+    Shuffleboard.getTab("DriverView").add(autoSelector);
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new BaselineAutoSequence(1, 0.5, drivebaseSubsystem.getKinematics(), drivebaseSubsystem);
+    return autoSelector.getSelected();
   }
 
   /**
