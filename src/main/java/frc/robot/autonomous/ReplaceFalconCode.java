@@ -74,7 +74,7 @@ public class ReplaceFalconCode {
     code =
         replaceTextOfMatchGroup(
             code,
-            Pattern.compile("(\\d*\\.\\d*)\\.feet", Pattern.MULTILINE),
+            Pattern.compile("(\\d*?\\.?\\d*)\\.feet", Pattern.MULTILINE),
             1,
             (feet) -> {
               return String.format(
