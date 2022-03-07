@@ -39,6 +39,17 @@ public class ReplaceFalconCode {
     }
   }
 
+  private static void clipboard(String write) {
+    try {
+      var data = new StringSelection(write);
+
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(data, data);
+
+    } catch (Exception e) {
+      // we do not care
+    }
+  }
+
   public static String replaceTextOfMatchGroup(
       String sourceString,
       Pattern pattern,
@@ -124,6 +135,8 @@ public class ReplaceFalconCode {
       }
       output.append(";\n");
     }
+
+    clipboard(output.toString());
 
     println(output.toString());
   }
