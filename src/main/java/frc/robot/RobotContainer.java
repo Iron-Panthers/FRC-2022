@@ -34,6 +34,7 @@ import frc.util.ControllerUtil;
 import frc.util.MacUtil;
 import frc.util.Util;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
@@ -136,12 +137,15 @@ public class RobotContainer {
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
+    BooleanSupplier armToHeightButton =
+        () -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .5;
+
     // Arm to high goal
-    new Button(jason::getLeftBumper)
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
 
     // Arm to intake position
-    new Button(jason::getRightBumper)
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() <= 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
     // hold arm up for sideways intake
