@@ -176,6 +176,10 @@ public class RobotContainer {
     new Button(nick::getRightBumper)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
+    // Arm to climb position
+    new Button(() -> nick.getPOV() == 0)
+        .whenPressed(armAngleCommand.apply(Arm.Setpoints.CLIMB_POSITION));
+
     // hold arm up for sideways intake
     new Button(nick::getStartButton)
         .whenHeld(
