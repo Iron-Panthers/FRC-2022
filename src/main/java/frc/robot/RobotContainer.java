@@ -134,7 +134,7 @@ public class RobotContainer {
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
     BooleanSupplier armToHeightButton =
-        () -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .5;
+        () -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8;
 
     // Arm to high goal
     new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
