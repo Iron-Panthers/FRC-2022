@@ -104,7 +104,7 @@ public final class Constants {
       public static final int ENCODER_PORT = 22;
     }
 
-    public static final double ANGULAR_OFFSET = 48;
+    public static final double ANGULAR_OFFSET = 44;
     public static final double GRAVITY_CONTROL_PERCENT = .085;
 
     public static final class PID {
