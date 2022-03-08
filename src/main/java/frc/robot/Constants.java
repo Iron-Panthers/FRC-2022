@@ -57,7 +57,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(329.4937 + 180.0) // comp bot offset
+                ? -Math.toRadians(329.5) // comp bot offset
                 : -Math.toRadians(39.1937); // practice bot offset
       }
 
@@ -68,7 +68,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(209.0836) // comp bot offset
+                ? -Math.toRadians(30) // comp bot offset
                 : -Math.toRadians(180 + 269.207); // practice bot offset
       }
 
@@ -79,7 +79,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(183.5815) // comp bot offset
+                ? -Math.toRadians(131.9) // comp bot offset
                 : -Math.toRadians(8.075); // practice bot offset
       }
 
@@ -90,7 +90,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(20.9152 + 180.0) // comp bot offset
+                ? -Math.toRadians(18.46) // comp bot offset
                 : -Math.toRadians(152.655); // practice bot offset
       }
     }
@@ -116,6 +116,7 @@ public final class Constants {
 
       public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 6.35;
       public static final double OUTTAKE_LOW_POSITION = MAX_HEIGHT - 24.35;
+      public static final double CLIMB_POSITION = MAX_HEIGHT - 21.5;
       public static final double INTAKE_POSITION = MAX_HEIGHT - 104.35;
       public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 94.35;
     }
