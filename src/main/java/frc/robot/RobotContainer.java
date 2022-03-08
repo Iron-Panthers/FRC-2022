@@ -162,25 +162,13 @@ public class RobotContainer {
     new Button(jason::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
 
     // eject left side
-    new Button(
-            () ->
-                jason.getBButton()
-                    && jason.getLeftTriggerAxis() > .5
-                    && jason.getRightTriggerAxis() <= .5)
+    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
     // eject right side
-    new Button(
-            () ->
-                jason.getBButton()
-                    && jason.getLeftTriggerAxis() <= .5
-                    && jason.getRightTriggerAxis() > .5)
+    new Button(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
     // eject everything
-    new Button(
-            () ->
-                jason.getBButton()
-                    && jason.getLeftTriggerAxis() > .5
-                    && jason.getRightTriggerAxis() > .5)
+    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
