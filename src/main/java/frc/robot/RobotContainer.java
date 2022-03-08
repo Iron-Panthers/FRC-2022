@@ -130,10 +130,6 @@ public class RobotContainer {
             new StartEndCommand(
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
-    // will controller intakes (temporary)
-    new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
@@ -164,6 +160,8 @@ public class RobotContainer {
     new Button(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
     // fast outtake
     new Button(jason::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    // stop everything
+    new Button(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
 
     // eject left side
     new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
