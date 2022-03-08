@@ -48,7 +48,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
     bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
 
-    this.totalMotorRotationTicks = 0.0;
     this.currentHeight = 0.0;
     this.targetHeight = 0.0;
 
