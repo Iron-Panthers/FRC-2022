@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,13 +22,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** leader */
   private TalonFX right_motor;
 
-  // private DigitalInput bottomLimitSwitch;
-  // private DigitalInput topLimitSwitch;
+  private DigitalInput bottomLimitSwitch;
+  private DigitalInput topLimitSwitch;
 
-  /** 2048 to a rotation */
-  private double totalMotorRotationTicks;
-  /** total rotations as a double */
-  private double motorRotations;
   /** Elevator's current height in inches */
   private double currentHeight;
 
@@ -48,8 +45,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
     right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
 
-    // topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
-    // bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
+    topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
+    bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
 
     this.totalMotorRotationTicks = 0.0;
     this.currentHeight = 0.0;
@@ -85,6 +82,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+
+    ElevatorTab.addBoolean("bottom limit switch", bottomLimitSwitch::get);
+    ElevatorTab.addBoolean("top limit switch", topLimitSwitch::get);
   }
 
   public static double heightToTicks(double height) {
@@ -122,18 +122,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public double getTargetHeight() {
     return targetHeight;
-  }
-
-  public boolean topLimitSwitchPressed() {
-
-    // return topLimitSwitch.get();
-    return false;
-  }
-
-  public boolean bottomLimitSwitchPressed() {
-
-    // return bottomLimitSwitch.get();
-    return false;
   }
 
   @Override
