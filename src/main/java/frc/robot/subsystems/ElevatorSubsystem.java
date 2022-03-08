@@ -25,6 +25,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput bottomLimitSwitch;
   private DigitalInput topLimitSwitch;
 
+  private boolean bottomLimitSwitchTriggered;
+  private boolean topLimitSwitchTriggered;
+
   /** Elevator's current height in inches */
   private double currentHeight;
 
@@ -48,8 +51,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
     bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
 
-    this.currentHeight = 0.0;
-    this.targetHeight = 0.0;
+    topLimitSwitchTriggered = false;
+    bottomLimitSwitchTriggered = false;
+
+    currentHeight = 0.0;
+    targetHeight = 0.0;
 
     right_motor.configFactoryDefault();
     left_motor.configFactoryDefault();
@@ -92,6 +98,22 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public static double ticksToHeight(double ticks) {
     return (ticks * Elevator.GEAR_CIRCUMFERENCE) / (Elevator.TICKS * Elevator.GEAR_RATIO);
+  }
+
+  /**
+   * 
+   * @return true if the limit switch is being triggered
+   */
+  public boolean topLimitSwitchTriggering() {
+    return !topLimitSwitch.get();
+  }
+
+  /**
+   * 
+   * @return true if the limit switch is being triggered
+   */ 
+  public boolean bottomLimitSwitchTriggering() {
+    return !bottomLimitSwitch.get();
   }
 
   /**
