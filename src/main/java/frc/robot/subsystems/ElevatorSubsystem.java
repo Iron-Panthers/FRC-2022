@@ -74,8 +74,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     right_motor.configOpenloopRamp(.5);
 
-    left_motor.setSelectedSensorPosition(0);
-    right_motor.setSelectedSensorPosition(0);
+    setSensorHeight(0);
 
     // make sure we hold our height when we get disabled
     right_motor.setNeutralMode(NeutralMode.Brake);
@@ -120,6 +119,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetHeight = targetHeight;
   }
 
+  private void setSensorHeight(double ticks) {
+    left_motor.setSelectedSensorPosition(ticks);
+    right_motor.setSelectedSensorPosition(ticks);
+  }
+
   public void setPercent(double percent) {
     right_motor.set(TalonFXControlMode.PercentOutput, percent);
   }
@@ -141,6 +145,24 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if (bottomLimitSwitchTriggering() && !bottomLimitSwitchTriggered) {
+      bottomLimitSwitchTriggered = true;
+      setSensorHeight(heightToTicks(Elevator.BOTTOM_LIMIT_SWITCH_TRIGGER_HEIGHT));
+    }
+
+    if (!bottomLimitSwitchTriggering()) {
+      bottomLimitSwitchTriggered = false;
+    }
+
+    if (topLimitSwitchTriggering() && !topLimitSwitchTriggered) {
+      topLimitSwitchTriggered = true;
+      setSensorHeight(heightToTicks(Elevator.TOP_LIMIT_SWITCH_TRIGGER_HEIGHT));
+    }
+
+    if (!topLimitSwitchTriggering()) {
+      topLimitSwitchTriggered = false;
+    }
 
     // currentHeight = getHeight();
     // double motorPower = heightController.calculate(getHeight(), targetHeight);
