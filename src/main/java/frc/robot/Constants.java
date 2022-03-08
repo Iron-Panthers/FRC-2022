@@ -112,11 +112,12 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double OUTTAKE_HIGH_POSITION = 63;
-      public static final double OUTTAKE_LOW_POSITION = 50;
-      public static final double INTAKE_POSITION = -38;
-      public static final double INTAKE_HIGHER_POSITION = -30;
-      public static final double MAX_HEIGHT = 65;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 86.2 : 56.4;
+
+      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 6.35;
+      public static final double OUTTAKE_LOW_POSITION = MAX_HEIGHT - 24.35;
+      public static final double INTAKE_POSITION = MAX_HEIGHT - 100;
+      public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 94.35;
     }
   }
 
