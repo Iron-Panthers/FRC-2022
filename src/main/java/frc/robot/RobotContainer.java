@@ -52,7 +52,7 @@ public class RobotContainer {
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
   /** controller 1 */
-  private final XboxController nick = new XboxController(1);
+  private final XboxController jason = new XboxController(1);
   /** controller 0 */
   private final XboxController will = new XboxController(0);
 
@@ -137,15 +137,15 @@ public class RobotContainer {
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
     // Arm to high goal
-    new Button(nick::getLeftBumper)
+    new Button(jason::getLeftBumper)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
 
     // Arm to intake position
-    new Button(nick::getRightBumper)
+    new Button(jason::getRightBumper)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
     // hold arm up for sideways intake
-    new Button(nick::getStartButton)
+    new Button(jason::getStartButton)
         .whenHeld(
             new FunctionalCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_HIGHER_POSITION),
@@ -155,32 +155,32 @@ public class RobotContainer {
                 armSubsystem));
 
     // intake balls
-    new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    new Button(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     // shoot balls
-    new Button(nick::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    new Button(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
     // fast outtake
-    new Button(nick::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    new Button(jason::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
 
     // eject left side
     new Button(
             () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() > .5
-                    && nick.getRightTriggerAxis() <= .5)
+                jason.getBButton()
+                    && jason.getLeftTriggerAxis() > .5
+                    && jason.getRightTriggerAxis() <= .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
     // eject right side
     new Button(
             () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() <= .5
-                    && nick.getRightTriggerAxis() > .5)
+                jason.getBButton()
+                    && jason.getLeftTriggerAxis() <= .5
+                    && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
     // eject everything
     new Button(
             () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() > .5
-                    && nick.getRightTriggerAxis() > .5)
+                jason.getBButton()
+                    && jason.getLeftTriggerAxis() > .5
+                    && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
