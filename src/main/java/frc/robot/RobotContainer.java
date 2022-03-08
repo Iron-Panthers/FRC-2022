@@ -156,9 +156,9 @@ public class RobotContainer {
 
     // intake balls
     new Button(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    // shoot balls
+    // fender shot
     new Button(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-    // fast outtake
+    // far shot
     new Button(jason::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
     // stop everything
     new Button(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
