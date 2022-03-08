@@ -100,18 +100,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     return (ticks * Elevator.GEAR_CIRCUMFERENCE) / (Elevator.TICKS * Elevator.GEAR_RATIO);
   }
 
-  /**
-   * 
-   * @return true if the limit switch is being triggered
-   */
+  /** @return true if the limit switch is being triggered */
   public boolean topLimitSwitchTriggering() {
     return !topLimitSwitch.get();
   }
 
-  /**
-   * 
-   * @return true if the limit switch is being triggered
-   */ 
+  /** @return true if the limit switch is being triggered */
   public boolean bottomLimitSwitchTriggering() {
     return !bottomLimitSwitch.get();
   }
