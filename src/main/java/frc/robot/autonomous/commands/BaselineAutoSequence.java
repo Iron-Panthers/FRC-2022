@@ -29,10 +29,7 @@ public class BaselineAutoSequence extends SequentialCommandGroup {
     // Generate the baseline trajectory
     Trajectory baselineTrajectory =
         TrajectoryGenerator.generateTrajectory(
-            Baseline.START_METERS,
-            List.of(Baseline.LINEARIZE_POINT_ONE),
-            Baseline.END_METERS,
-            trajectoryConfig);
+            Baseline.FIRST, List.of(Baseline.MIDDLE_B), Baseline.LAST, trajectoryConfig);
 
     // Create command to follow the baseline trajectory
     Command followBaselineTrajectory =

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.BaselineAutoSequence;
+import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
@@ -191,7 +192,17 @@ public class RobotContainer {
   private void setupAutonomousCommands() {
     autoSelector.setDefaultOption(
         "baseline auto",
-        new BaselineAutoSequence(1, 0.5, drivebaseSubsystem.getKinematics(), drivebaseSubsystem));
+        new BaselineAutoSequence(4, 2, drivebaseSubsystem.getKinematics(), drivebaseSubsystem));
+
+    autoSelector.addOption(
+        "offside two cargo",
+        new OffsideTwoCargoAutoSequence(
+            4,
+            2,
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
 
     Shuffleboard.getTab("DriverView").add(autoSelector);
   }
