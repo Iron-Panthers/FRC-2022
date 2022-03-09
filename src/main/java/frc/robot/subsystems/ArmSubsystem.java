@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
+import frc.robot.Constants.Arm.Setpoints;
 
 /*
 For Engineering:
@@ -87,6 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("current angle", currentAngle);
     SmartDashboard.putNumber("desired angle", desiredAngle);
+    SmartDashboard.putNumber("constant setpoint MaxHeight - ", currentAngle - Setpoints.MAX_HEIGHT);
 
     // double output = controller.calculate(measurement (what is actually there), desired value
     // (where we want it to be))
