@@ -34,6 +34,7 @@ import frc.util.ControllerUtil;
 import frc.util.MacUtil;
 import frc.util.Util;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
@@ -52,7 +53,7 @@ public class RobotContainer {
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
   /** controller 1 */
-  private final XboxController nick = new XboxController(1);
+  private final XboxController jason = new XboxController(1);
   /** controller 0 */
   private final XboxController will = new XboxController(0);
 
@@ -139,23 +140,22 @@ public class RobotContainer {
             new StartEndCommand(
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
-    // will controller intakes (temporary)
-    new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
+    BooleanSupplier armToHeightButton =
+        () -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8;
+
     // Arm to high goal
-    new Button(nick::getLeftBumper)
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() <= 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
 
     // Arm to intake position
-    new Button(nick::getRightBumper)
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
     // hold arm up for sideways intake
-    new Button(nick::getStartButton)
+    new Button(jason::getLeftStickButton)
         .whenHeld(
             new FunctionalCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_HIGHER_POSITION),
@@ -165,32 +165,22 @@ public class RobotContainer {
                 armSubsystem));
 
     // intake balls
-    new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    // shoot balls
-    new Button(nick::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-    // fast outtake
-    new Button(nick::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    new Button(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    // fender shot
+    new Button(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    // far shot
+    new Button(jason::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    // stop everything
+    new Button(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
 
     // eject left side
-    new Button(
-            () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() > .5
-                    && nick.getRightTriggerAxis() <= .5)
+    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
     // eject right side
-    new Button(
-            () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() <= .5
-                    && nick.getRightTriggerAxis() > .5)
+    new Button(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
     // eject everything
-    new Button(
-            () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() > .5
-                    && nick.getRightTriggerAxis() > .5)
+    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
