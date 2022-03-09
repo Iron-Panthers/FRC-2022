@@ -63,7 +63,8 @@ public class OnsideTwoCargoAutoSequence extends SequentialCommandGroup {
         deadline(
             new WaitCommand(0.75),
             new InstantCommand(
-                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION), armSubsystem)),
+                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION - 10),
+                armSubsystem)),
         // Score the 2 cargo
         deadline(
             new WaitCommand(0.5 /* sec */),
