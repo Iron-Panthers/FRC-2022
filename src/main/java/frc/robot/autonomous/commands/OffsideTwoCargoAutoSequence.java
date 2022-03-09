@@ -53,12 +53,12 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
         new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope(), drivebaseSubsystem),
         // If arm not properly up, try to jog it. Should be addressed physically soon.
         deadline(
-            new WaitCommand(0.5),
+            new WaitCommand(0.75),
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION), armSubsystem)),
         // Score pre-load
         deadline(
-            new WaitCommand(0.5 /* secs */),
+            new WaitCommand(0.75 /* secs */),
             new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)),
         // Lower arm to bottom (TODO: delayed lower)
         new InstantCommand(
@@ -74,12 +74,12 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
                     new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem)))),
         // Once we're back at the start pose, raise the arm to the scoring position
         deadline(
-            new WaitCommand(0.75),
+            new WaitCommand(2),
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION), armSubsystem)),
         // Score the 1 cargo
         deadline(
-            new WaitCommand(0.5 /* sec */),
+            new WaitCommand(1 /* sec */),
             new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)));
   }
 }
