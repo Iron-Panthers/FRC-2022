@@ -155,7 +155,7 @@ public class RobotContainer {
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
     // hold arm up for sideways intake
-    new Button(jason::getStartButton)
+    new Button(jason::getLeftStickButton)
         .whenHeld(
             new FunctionalCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_HIGHER_POSITION),
