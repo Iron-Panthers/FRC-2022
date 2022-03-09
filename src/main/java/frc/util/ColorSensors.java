@@ -21,15 +21,14 @@ public class ColorSensors {
   private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
 
   ShuffleboardTab tab = Shuffleboard.getTab("ColorSensors");
-
-  public ColorSensors(I2C.Port port, ColorSensorV3 colorsensor3, ShuffleboardTab tab)
-      throws Exception {
+  // I2C.Port port, ColorSensorV3 colorsensor3, ShuffleboardTab tab
+  public ColorSensors(ColorSensorV3 colorsensor3, I2C.Port port) {
     this.port = port;
     this.colorsensor3 = colorsensor3;
     colorMatcher.addColorMatch(kBlueTarget);
     colorMatcher.addColorMatch(kRedTarget);
-    this.tab = tab;
-    throw new Exception("Code");
+    // this.tab = tab;
+    // throw new RuntimeException("Code");
   }
 
   enum Colors {
@@ -44,6 +43,7 @@ public class ColorSensors {
       Color detectedColor = colorsensor3.getColor();
 
       SmartDashboard.putString("color", detectedColor.toString());
+      SmartDashboard.putNumber("color", 5);
 
       ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
 

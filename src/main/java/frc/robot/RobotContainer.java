@@ -6,6 +6,7 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
+import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -13,6 +14,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +32,7 @@ import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.util.ColorSensors;
 import frc.util.ControllerUtil;
 import frc.util.MacUtil;
 import frc.util.Util;
@@ -52,6 +55,10 @@ public class RobotContainer {
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
+  private final I2C.Port port1 = I2C.Port.kOnboard;
+  private ColorSensorV3 color = new ColorSensorV3(port1);
+  private ColorSensors colors = new ColorSensors(color, port1);
+
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
   /** controller 0 */
@@ -64,6 +71,8 @@ public class RobotContainer {
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
+
+    colors.getValue();
     drivebaseSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
             drivebaseSubsystem,
