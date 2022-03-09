@@ -6,6 +6,7 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -73,6 +74,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    // setup the cameras
+    setupCameras();
   }
 
   /**
@@ -207,6 +210,10 @@ public class RobotContainer {
             config);
 
     return new FollowTrajectoryCommand(exampleTrajectory, drivebaseSubsystem);
+  }
+  /** Set up the cameras on the robot */
+  private void setupCameras() {
+    CameraServer.startAutomaticCapture();
   }
 
   /**
