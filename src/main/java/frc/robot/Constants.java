@@ -104,7 +104,7 @@ public final class Constants {
       public static final int ENCODER_PORT = 22;
     }
 
-    public static final double ANGULAR_OFFSET = 44;
+    public static final double ANGULAR_OFFSET = IS_COMP_BOT ? -70 : 44;
     public static final double GRAVITY_CONTROL_PERCENT = .085;
 
     public static final class PID {
@@ -112,7 +112,7 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 86.2 : 56.4;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 76.7 : 56.4;
 
       public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 6.35;
       public static final double OUTTAKE_LOW_POSITION = MAX_HEIGHT - 24.35;
