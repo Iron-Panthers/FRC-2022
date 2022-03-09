@@ -147,11 +147,11 @@ public class RobotContainer {
         () -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8;
 
     // Arm to high goal
-    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() <= 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
 
     // Arm to intake position
-    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() <= 0)
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
     // hold arm up for sideways intake
