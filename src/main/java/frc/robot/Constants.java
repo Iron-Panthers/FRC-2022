@@ -117,7 +117,7 @@ public final class Constants {
       public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 10.78;
       public static final double INTAKE_POSITION = MAX_HEIGHT - 107;
       public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 100;
-      // -33.9 for climb
+      public static final double CLIMB_POSITION = MAX_HEIGHT - 33.9;
     }
   }
 
