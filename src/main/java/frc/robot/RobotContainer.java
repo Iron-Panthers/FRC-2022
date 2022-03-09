@@ -68,6 +68,16 @@ public class RobotContainer {
             () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
             () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND)));
 
+    // armSubsystem.setDefaultCommand(
+    //     new FunctionalCommand(
+    //         () -> {},
+    //         () -> {
+    //           armSubsystem.setPercentOutput(ControllerUtil.deadband(nick.getLeftY(), .2));
+    //         },
+    //         (interupted) -> {},
+    //         () -> false,
+    //         armSubsystem));
+
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
     // Configure the button bindings
