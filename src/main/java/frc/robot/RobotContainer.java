@@ -87,14 +87,6 @@ public class RobotContainer {
     //         () -> false,
     //         armSubsystem));
 
-    elevatorSubsystem.setDefaultCommand(
-        new FunctionalCommand(
-            () -> {},
-            () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(jason.getLeftY(), .4)),
-            (interrupted) -> {},
-            () -> false,
-            elevatorSubsystem));
-
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
     // Configure the button bindings
@@ -178,6 +170,16 @@ public class RobotContainer {
         .whenHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
+
+    jasonLayer
+        .on(() -> Math.abs(jason.getLeftY()) >= .4)
+        .whenHeld(
+            new FunctionalCommand(
+                () -> {},
+                () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(jason.getLeftY(), .4)),
+                (interrupted) -> {},
+                () -> false,
+                elevatorSubsystem));
 
     // will controller intakes (temporary)
     new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
