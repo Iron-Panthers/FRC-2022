@@ -170,7 +170,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    rotController = new PIDController(0.04, 0.001, 0.003);
+    rotController = new PIDController(0.03, 0.001, 0.003);
     rotController.setSetpoint(0);
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
     // tune pid with:

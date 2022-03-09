@@ -60,18 +60,19 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
         deadline(
             new WaitCommand(0.75 /* secs */),
             new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)),
-        // Lower arm to bottom (TODO: delayed lower)
-        new InstantCommand(
-            () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION), armSubsystem),
         // Follow trajectory and intake when we are near our target cargo
-        // TODO: refine timings
-        deadline(
-            followTrajectory,
+        parallel(
             sequence(
                 new WaitCommand(0.5),
-                deadline(
-                    new WaitCommand(2),
-                    new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem)))),
+                new InstantCommand(
+                    () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION), armSubsystem)),
+            deadline(
+                followTrajectory,
+                sequence(
+                    new WaitCommand(0.5),
+                    deadline(
+                        new WaitCommand(2),
+                        new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem))))),
         // Once we're back at the start pose, raise the arm to the scoring position
         deadline(
             new WaitCommand(2),
