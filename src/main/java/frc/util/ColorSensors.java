@@ -4,6 +4,8 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -18,11 +20,16 @@ public class ColorSensors {
 
   private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
 
-  public ColorSensors(I2C.Port port, ColorSensorV3 colorsensor3) {
+  ShuffleboardTab tab = Shuffleboard.getTab("ColorSensors");
+
+  public ColorSensors(I2C.Port port, ColorSensorV3 colorsensor3, ShuffleboardTab tab)
+      throws Exception {
     this.port = port;
     this.colorsensor3 = colorsensor3;
     colorMatcher.addColorMatch(kBlueTarget);
     colorMatcher.addColorMatch(kRedTarget);
+    this.tab = tab;
+    throw new Exception("Code");
   }
 
   enum Colors {

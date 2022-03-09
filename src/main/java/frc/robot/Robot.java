@@ -4,13 +4,7 @@
 
 package frc.robot;
 
-import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorSensorV3;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -25,16 +19,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer robotContainer;
 
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(Port.kOnboard);
-
-  private final ColorMatch m_colorMatcher = new ColorMatch();
-
-  private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
-
-  private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
-
-  /**222
-   * This function is run when the robot is first started up and should be used for any
+  /**
+   * 222 This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
@@ -42,9 +28,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-
-    m_colorMatcher.addColorMatch(kBlueTarget);
-    m_colorMatcher.addColorMatch(kRedTarget);
   }
 
   /**
@@ -61,25 +44,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-    Color detectedColor = m_colorSensor.getColor();
-
-    String colorString;
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
-
-    if (match.color == kBlueTarget) {
-      colorString = "Blue";
-    } 
-    else if (match.color == kRedTarget) {
-      colorString = "Red";
-    } 
-    else {
-      colorString = "Not a color";
-    }
-
-    SmartDashboard.putNumber("Red", detectedColor.red);
-
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
