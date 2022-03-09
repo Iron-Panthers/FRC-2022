@@ -1,5 +1,6 @@
 package frc.util;
 
+import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.function.BooleanSupplier;
@@ -31,6 +32,18 @@ public class Layer {
    */
   public Layer(Trigger layerSwitch) {
     this.layerSwitch = layerSwitch;
+  }
+
+  public void whenChanged(BooleanConsumer method) {
+    Button layerButton = new Button(this.layerSwitch);
+    layerButton.whenPressed(
+        () -> {
+          method.accept(true);
+        });
+    layerButton.whenReleased(
+        () -> {
+          method.accept(false);
+        });
   }
 
   /**
