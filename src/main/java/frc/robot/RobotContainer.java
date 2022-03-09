@@ -78,7 +78,7 @@ public class RobotContainer {
     //     new FunctionalCommand(
     //         () -> {},
     //         () -> {
-    //           armSubsystem.setPercentOutput(ControllerUtil.deadband(nick.getLeftY(), .2));
+    //           armSubsystem.setPercentOutput(ControllerUtil.deadband(jason.getLeftY(), .2));
     //         },
     //         (interupted) -> {},
     //         () -> false,
@@ -87,7 +87,7 @@ public class RobotContainer {
     elevatorSubsystem.setDefaultCommand(
         new FunctionalCommand(
             () -> {},
-            () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(nick.getLeftY(), .4)),
+            () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(jason.getLeftY(), .4)),
             (interrupted) -> {},
             () -> false,
             elevatorSubsystem));
@@ -153,21 +153,21 @@ public class RobotContainer {
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
     // Elevator preset position buttons
-    new Button(nick::getBButton)
+    new Button(jason::getBButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.maxHeight)); // Elevator goes to top
-    new Button(nick::getXButton)
+    new Button(jason::getXButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
 
     // Elevator Manual controls
-    new Button(nick::getYButton)
+    new Button(jason::getYButton)
         .whenHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
-    new Button(nick::getAButton)
+    new Button(jason::getAButton)
         .whenHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
@@ -191,7 +191,7 @@ public class RobotContainer {
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
     // Arm to climb position
-    new Button(() -> nick.getPOV() == 0)
+    new Button(() -> jason.getPOV() == 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.CLIMB_POSITION));
 
     // hold arm up for sideways intake
