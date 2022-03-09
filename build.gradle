@@ -2,7 +2,7 @@ import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2022.3.1"
+    id "edu.wpi.first.GradleRIO" version "2022.4.1"
     id "com.diffplug.spotless" version "6.2.0"
 }
 
@@ -70,7 +70,10 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.8.1"
 
+    testImplementation "org.mockito:mockito-core:3.+"
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -94,6 +97,7 @@ test {
 
     testLogging {
         showStandardStreams = true;
+        exceptionFormat = 'full' // show expected and actual for failed tests
     }
 }
 

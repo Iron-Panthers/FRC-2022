@@ -21,7 +21,7 @@ public final class Constants {
   public static final class Drive {
     // max voltage delivered to drivebase
     // supposedly useful to limit speed for testing
-    public static final double MAX_VOLTAGE = 8.0;
+    public static final double MAX_VOLTAGE = 12.0;
     // maximum velocity
     // FIXME measure this value experimentally
     public static final double MAX_VELOCITY_METERS_PER_SECOND =
@@ -34,7 +34,13 @@ public final class Constants {
     // FIXME measure and validate experimentally
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND =
         MAX_VELOCITY_METERS_PER_SECOND
-            / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0);
+            / Math.hypot(Dims.TRACKWIDTH_METERS / 2.0, Dims.WHEELBASE_METERS / 2.0)
+            * .5;
+
+    /** the maximum amount of angular error pid loops will tolerate for rotation */
+    public static final double ANGULAR_ERROR = 1.0;
+    /** the minimum magnitude of the right stick for it to be used as a new rotation angle */
+    public static final double ROTATE_VECTOR_MAGNITUDE = .7;
 
     public static final class Dims {
       // FIXME validate with hardware
@@ -52,7 +58,7 @@ public final class Constants {
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(329.4937 + 180.0) // comp bot offset
-                : -Math.toRadians(40.333 + 180.0); // practice bot offset
+                : -Math.toRadians(39.1937); // practice bot offset
       }
 
       public static final class FrontLeft { // Module 2
@@ -63,7 +69,7 @@ public final class Constants {
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(209.0836) // comp bot offset
-                : -Math.toRadians(43.9453); // practice bot offset
+                : -Math.toRadians(180 + 269.207); // practice bot offset
       }
 
       public static final class BackLeft { // Module 3
@@ -74,7 +80,7 @@ public final class Constants {
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(183.5815) // comp bot offset
-                : -Math.toRadians(188.6133); // practice bot offset
+                : -Math.toRadians(8.075); // practice bot offset
       }
 
       public static final class BackRight { // Module 4
@@ -85,8 +91,70 @@ public final class Constants {
         public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(20.9152 + 180.0) // comp bot offset
-                : -Math.toRadians(329.6777); // practice bot offset
+                : -Math.toRadians(152.655); // practice bot offset
       }
+    }
+  }
+
+  public static final class Arm {
+    // Throw any Arm constants in this file
+    public static final class Ports {
+      public static final int RIGHT_MOTOR_PORT = 14;
+      public static final int LEFT_MOTOR_PORT = 5;
+      public static final int ENCODER_PORT = 22;
+    }
+
+    public static final double ANGULAR_OFFSET = 44;
+    public static final double GRAVITY_CONTROL_PERCENT = .085;
+
+    public static final class PID {
+      public static final double ANGULAR_TOLERANCE = 1.0;
+    }
+
+    public static final class Setpoints {
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 86.2 : 56.4;
+
+      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 6.35;
+      public static final double OUTTAKE_LOW_POSITION = MAX_HEIGHT - 24.35;
+      public static final double INTAKE_POSITION = MAX_HEIGHT - 100;
+      public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 90.35;
+    }
+  }
+
+  public static final class Intake {
+    /** percent to run motors at for given states */
+    public static final class EjectRollers {
+      /** the percent to run the eject motor at in the idling state */
+      public static final double IDLE = 1;
+      /** the percent to run the eject motor at in the ejection state */
+      public static final double EJECT = -.9;
+    }
+
+    /** percent to run motors at for given states */
+    public static final class IntakeRollers {
+      /** the percent to run the intake motors during the intake state */
+      public static final double INTAKE = .55;
+      /** the percent to run the upper outtake during the outtake state */
+      public static final double OUTTAKE_UPPER = -0.3;
+      /** the percent to run the lower outtake during the outtake state */
+      public static final double OUTTAKE_LOWER = -0.225;
+      /**
+       * the percent to run the upper outtake during the outtake fast state (~1 robot's distance
+       * from the goal)
+       */
+      public static final double OUTTAKE_UPPER_FAST = -0.565;
+      /**
+       * the percent to run the lower outtake during the outtake fast state (~1 robot's distance
+       * from the goal)
+       */
+      public static final double OUTTAKE_LOWER_FAST = -0.275;
+    }
+
+    public static final class Ports {
+      public static final int LOWER_MOTOR = 15;
+      public static final int UPPER_MOTOR = 8;
+      public static final int RIGHT_EJECT_MOTOR = 16;
+      public static final int LEFT_EJECT_MOTOR = 9; // fixme
     }
   }
 }

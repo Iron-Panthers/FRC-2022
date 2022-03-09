@@ -6,15 +6,38 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.Constants.Arm;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.FollowTrajectoryCommand;
+import frc.robot.commands.HaltDriveCommandsCommand;
+import frc.robot.commands.RotateVectorDriveCommand;
+import frc.robot.commands.RotateVelocityDriveCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.util.ControllerUtil;
 import frc.util.MacUtil;
 import frc.util.Util;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleFunction;
+import java.util.function.DoubleSupplier;
+import java.util.function.Function;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,9 +49,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
-  private final XboxController nick = new XboxController(0);
-  private final XboxController will = new XboxController(1);
+  /** controller 1 */
+  private final XboxController jason = new XboxController(1);
+  /** controller 0 */
+  private final XboxController will = new XboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -40,9 +67,18 @@ public class RobotContainer {
     drivebaseSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
             drivebaseSubsystem,
-            () -> (-modifyAxis(nick.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(nick.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(nick.getRightX()) * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+            () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND)));
+
+    // armSubsystem.setDefaultCommand(
+    //     new FunctionalCommand(
+    //         () -> {},
+    //         () -> {
+    //           armSubsystem.setPercentOutput(ControllerUtil.deadband(nick.getLeftY(), .2));
+    //         },
+    //         (interupted) -> {},
+    //         () -> false,
+    //         armSubsystem));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
@@ -58,8 +94,94 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Button(nick::getAButton).whenPressed(drivebaseSubsystem::zeroGyroscope);
-    new Button(nick::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
+    new Button(will::getStartButton)
+        .whenPressed(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
+    new Button(will::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
+
+    new Button(will::getLeftStickButton)
+        .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
+    DoubleSupplier rotation =
+        () ->
+            ControllerUtil.deadband((will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1);
+    DoubleSupplier rotationVelocity =
+        () ->
+            rotation.getAsDouble()
+                * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+                * .5 /* half speed trigger rotation per will */;
+
+    new Button(() -> Math.abs(rotation.getAsDouble()) > 0)
+        .whenHeld(
+            new RotateVelocityDriveCommand(
+                drivebaseSubsystem,
+                /* drive joystick "y" is passed to x because controller is inverted */
+                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                rotationVelocity));
+
+    new Button(
+            () ->
+                Util.vectorMagnitude(will.getRightY(), will.getRightX())
+                    > Drive.ROTATE_VECTOR_MAGNITUDE)
+        .whenPressed(
+            new RotateVectorDriveCommand(
+                drivebaseSubsystem,
+                () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+                will::getRightY,
+                will::getRightX));
+
+    /**
+     * this curried start end command calls setMode with the passed mode, then calls next mode when
+     * the command is stopped
+     */
+    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
+        mode ->
+            new StartEndCommand(
+                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
+
+    DoubleFunction<InstantCommand> armAngleCommand =
+        angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
+
+    BooleanSupplier armToHeightButton =
+        () -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8;
+
+    // Arm to high goal
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() <= 0)
+        .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
+
+    // Arm to intake position
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
+        .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
+
+    // hold arm up for sideways intake
+    new Button(jason::getLeftStickButton)
+        .whenHeld(
+            new FunctionalCommand(
+                () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_HIGHER_POSITION),
+                () -> {},
+                (interrupted) -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION),
+                () -> false,
+                armSubsystem));
+
+    // intake balls
+    new Button(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    // fender shot
+    new Button(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    // far shot
+    new Button(jason::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    // stop everything
+    new Button(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
+
+    // eject left side
+    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
+    // eject right side
+    new Button(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
+    // eject everything
+    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
   /**
@@ -68,8 +190,23 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return null;
+    TrajectoryConfig config =
+        new TrajectoryConfig(1, 0.5)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(drivebaseSubsystem.getKinematics());
+
+    // An example trajectory to follow.  All units in meters.
+    Trajectory exampleTrajectory =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            // Pass through these two interior waypoints, making an 's' curve path
+            List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(3, 0, new Rotation2d(0)),
+            config);
+
+    return new FollowTrajectoryCommand(exampleTrajectory, drivebaseSubsystem);
   }
 
   /**
@@ -80,7 +217,7 @@ public class RobotContainer {
    */
   private static double modifyAxis(double value) {
     // Deadband
-    value = Util.deadband(value, 0.2);
+    value = ControllerUtil.deadband(value, 0.07);
 
     // Square the axis
     value = Math.copySign(value * value, value);
