@@ -36,9 +36,9 @@ public class ColorSensors {
     if (colorsensor3.getProximity() <= 240) {
       Color detectedColor = colorsensor3.getColor();
 
+      SmartDashboard.putString("color", detectedColor.toString());
+
       ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
-      SmartDashboard.putNumber("Red", detectedColor.red);
-      SmartDashboard.putNumber("Blue", detectedColor.blue);
 
       /*
       If the ball matches the target color we set before, it will return the enum for the color.
