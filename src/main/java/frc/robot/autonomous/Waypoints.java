@@ -30,7 +30,7 @@ public final class Waypoints {
         new Pose2d(
             7.772 /* meters (25.5 feet) */,
             2.896 /* meters (9.5 feet) */,
-            Rotation2d.fromDegrees(251));
+            Rotation2d.fromDegrees(251 + 180.0));
     public static final Translation2d MIDDLE_B =
         new Translation2d(7.524 /* meters (24.685 feet) */, 0.653 /* meters (2.142 feet) */);
     public static final Pose2d LAST =
@@ -45,7 +45,7 @@ public final class Waypoints {
         new Pose2d(
             7.772 /* meters (25.5 feet) */,
             2.896 /* meters (9.5 feet) */,
-            Rotation2d.fromDegrees(251));
+            Rotation2d.fromDegrees(251 + 180.0));
     public static final Translation2d MIDDLE_B =
         new Translation2d(5.182 /* meters (17 feet) */, 1.890 /* meters (6.2 feet) */);
     public static final Pose2d LAST =
