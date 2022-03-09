@@ -57,7 +57,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(329.4937 + 180.0) // comp bot offset
+                ? -Math.toRadians(329.4937) // comp bot offset
                 : -Math.toRadians(39.1937); // practice bot offset
       }
 
@@ -68,7 +68,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(209.0836) // comp bot offset
+                ? -Math.toRadians(209.0836 - 180) // comp bot offset
                 : -Math.toRadians(180 + 269.207); // practice bot offset
       }
 
@@ -79,7 +79,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(183.5815) // comp bot offset
+                ? -Math.toRadians(132.45) // comp bot offset
                 : -Math.toRadians(8.075); // practice bot offset
       }
 
@@ -90,7 +90,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(20.9152 + 180.0) // comp bot offset
+                ? -Math.toRadians(20.9152) // comp bot offset
                 : -Math.toRadians(152.655); // practice bot offset
       }
     }
@@ -104,7 +104,7 @@ public final class Constants {
       public static final int ENCODER_PORT = 22;
     }
 
-    public static final double ANGULAR_OFFSET = 44;
+    public static final double ANGULAR_OFFSET = IS_COMP_BOT ? -70 : 44;
     public static final double GRAVITY_CONTROL_PERCENT = .085;
 
     public static final class PID {
@@ -112,12 +112,12 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 86.2 : 56.4;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 76.7 : 56.4;
 
-      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 6.35;
-      public static final double OUTTAKE_LOW_POSITION = MAX_HEIGHT - 24.35;
-      public static final double INTAKE_POSITION = MAX_HEIGHT - 100;
-      public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 90.35;
+      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 10.78;
+      public static final double INTAKE_POSITION = MAX_HEIGHT - 107;
+      public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 100;
+      // -33.9 for climb
     }
   }
 

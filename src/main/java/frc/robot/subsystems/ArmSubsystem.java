@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
+import frc.robot.Constants.Arm.Setpoints;
 
 /*
 For Engineering:
@@ -46,7 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
     armLeftMotor.follow(armRightMotor);
     armLeftMotor.setInverted(InvertType.OpposeMaster);
 
-    armRightMotor.configOpenloopRamp(1);
+    armRightMotor.configOpenloopRamp(.5);
 
     armRightMotor.setStatusFramePeriod(1, 100);
     armRightMotor.setStatusFramePeriod(2, 100);
@@ -54,7 +55,7 @@ public class ArmSubsystem extends SubsystemBase {
     armLeftMotor.setStatusFramePeriod(1, 500);
     armLeftMotor.setStatusFramePeriod(2, 500);
 
-    pidController = new PIDController(0.02, 0, 0.007);
+    pidController = new PIDController(0.015, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
     Shuffleboard.getTab("arm").add(pidController);
 
@@ -87,6 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("current angle", currentAngle);
     SmartDashboard.putNumber("desired angle", desiredAngle);
+    SmartDashboard.putNumber("constant setpoint MaxHeight - ", currentAngle - Setpoints.MAX_HEIGHT);
 
     // double output = controller.calculate(measurement (what is actually there), desired value
     // (where we want it to be))
