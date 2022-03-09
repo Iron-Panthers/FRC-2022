@@ -187,7 +187,7 @@ public class RobotContainer {
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
     BooleanSupplier armToHeightButton =
-        () -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8;
+        jasonLayer.off(() -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8);
 
     // Arm to high goal
     new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() <= 0)
@@ -198,7 +198,8 @@ public class RobotContainer {
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
     // Arm to climb position
-    new Button(() -> jason.getPOV() == 0)
+    jasonLayer
+        .off(jason::getLeftBumper)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.CLIMB_POSITION));
 
     // hold arm up for sideways intake
@@ -212,22 +213,27 @@ public class RobotContainer {
                 armSubsystem));
 
     // intake balls
-    new Button(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     // fender shot
-    new Button(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    jasonLayer.off(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
     // far shot
-    new Button(jason::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    jasonLayer
+        .off(jason::getXButton)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
     // stop everything
-    new Button(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
+    jasonLayer.off(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
 
     // eject left side
-    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
     // eject right side
-    new Button(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
     // eject everything
-    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
