@@ -112,7 +112,7 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 76.7 : 56.4;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 74.97 : 56.4;
 
       public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 10.78;
       public static final double INTAKE_POSITION = MAX_HEIGHT - 107;
@@ -180,9 +180,10 @@ public final class Constants {
 
     public static final class Ports {
       public static final int LOWER_MOTOR = 15;
-      public static final int UPPER_MOTOR = 8;
+      public static final int UPPER_MOTOR = 9;
       public static final int RIGHT_EJECT_MOTOR = 16;
-      public static final int LEFT_EJECT_MOTOR = 9;
+      public static final int LEFT_EJECT_MOTOR = 8;
+      // UPPER MOTOR AND LEFT EJECT MOTOR SWAPPED ON PBOT
     }
   }
 }

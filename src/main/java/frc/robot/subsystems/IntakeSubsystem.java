@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
 import frc.robot.Constants.Intake.Ports;
+import frc.util.MacUtil;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -34,6 +35,9 @@ public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     lowerIntakeMotor = new TalonFX(Ports.LOWER_MOTOR);
+    if (MacUtil.IS_COMP_BOT) {
+      lowerIntakeMotor.setInverted(false); // sin
+    }
     upperIntakeMotor = new TalonFX(Ports.UPPER_MOTOR);
 
     rightEjectMotor = new TalonFX(Ports.RIGHT_EJECT_MOTOR);
