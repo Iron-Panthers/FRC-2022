@@ -130,12 +130,12 @@ public final class Constants {
     /** Max height is 21.75 inches (adjusted for overshoot) */
     public static final double maxHeight = 20;
 
-    public static final double TOP_LIMIT_SWITCH_TRIGGER_HEIGHT = 19.5;
+    public static final double TOP_LIMIT_SWITCH_TRIGGER_HEIGHT = -19.5;
 
     /** Minimum height is 0 inches */
     public static final double minHeight = 0;
 
-    public static final double BOTTOM_LIMIT_SWITCH_TRIGGER_HEIGHT = .5;
+    public static final double BOTTOM_LIMIT_SWITCH_TRIGGER_HEIGHT = -.5;
 
     public static final int TICKS = 2048;
     public static final double GEAR_RATIO = 12.75;

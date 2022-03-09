@@ -146,24 +146,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if (bottomLimitSwitchTriggering() && !bottomLimitSwitchTriggered) {
-      bottomLimitSwitchTriggered = true;
-      setSensorHeight(heightToTicks(Elevator.BOTTOM_LIMIT_SWITCH_TRIGGER_HEIGHT));
-    }
-
-    if (!bottomLimitSwitchTriggering()) {
-      bottomLimitSwitchTriggered = false;
-    }
-
-    if (topLimitSwitchTriggering() && !topLimitSwitchTriggered) {
-      topLimitSwitchTriggered = true;
-      setSensorHeight(heightToTicks(Elevator.TOP_LIMIT_SWITCH_TRIGGER_HEIGHT));
-    }
-
-    if (!topLimitSwitchTriggering()) {
-      topLimitSwitchTriggered = false;
-    }
-
     // currentHeight = getHeight();
     // double motorPower = heightController.calculate(getHeight(), targetHeight);
     // right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
