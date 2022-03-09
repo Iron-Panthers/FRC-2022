@@ -34,6 +34,7 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
+import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
 import java.util.List;
@@ -58,6 +59,8 @@ public class RobotContainer {
 
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
+  /** controller 1 climb layer */
+  private final Layer jasonLayer = new Layer(jason::getRightBumper);
   /** controller 0 */
   private final XboxController will = new XboxController(0);
 
@@ -153,21 +156,25 @@ public class RobotContainer {
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
     // Elevator preset position buttons
-    new Button(jason::getBButton)
+    jasonLayer
+        .on(jason::getBButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.maxHeight)); // Elevator goes to top
-    new Button(jason::getXButton)
+    jasonLayer
+        .on(jason::getXButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
 
     // Elevator Manual controls
-    new Button(jason::getYButton)
+    jasonLayer
+        .on(jason::getYButton)
         .whenHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
-    new Button(jason::getAButton)
+    jasonLayer
+        .on(jason::getAButton)
         .whenHeld(
             new ElevatorManualCommand(
                 elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
