@@ -22,8 +22,8 @@ public class BinTrajectoryParameterRuntimeTest {
             // Back right
             new Translation2d(-Dims.TRACKWIDTH_METERS / 2.0, -Dims.WHEELBASE_METERS / 2.0));
 
-    final double maxVelocityMetersPerSecond = 4;
-    final double maxAccelerationMetersPerSecondSq = 2;
+    final double maxVelocityMetersPerSecond = 3;
+    final double maxAccelerationMetersPerSecondSq = 1.5;
 
     TrajectoryConfig trajectoryConfig =
         new TrajectoryConfig(maxVelocityMetersPerSecond, maxAccelerationMetersPerSecondSq)

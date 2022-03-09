@@ -11,7 +11,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.Waypoints.OffsideStartToCenterCargoAndBack;
@@ -49,28 +48,38 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
     Command followTrajectory =
         new FollowTrajectoryCommand(offsideStartToCenterCargoAndBack, true, drivebaseSubsystem);
 
+    // Sequence is explained by comments
     addCommands(
         new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope(), drivebaseSubsystem),
+        // If arm not properly up, try to jog it. Should be addressed physically soon.
         deadline(
             new WaitCommand(0.5),
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION), armSubsystem)),
+        // Score pre-load
         deadline(
-            new WaitCommand(1.0 /* secs */),
-            new StartEndCommand(
-                () -> intakeSubsystem.setMode(IntakeSubsystem.Modes.OUTTAKE),
-                intakeSubsystem::nextMode,
-                intakeSubsystem)),
+            new WaitCommand(0.5 /* secs */),
+            new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)),
+        // Lower arm to bottom (TODO: delayed lower)
         new InstantCommand(
             () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION), armSubsystem),
+        // Follow trajectory and intake when we are near our target cargo
+        // TODO: refine timings
         deadline(
-            followTrajectory, new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem)),
+            followTrajectory,
+            sequence(
+                new WaitCommand(0.5),
+                deadline(
+                    new WaitCommand(2),
+                    new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem)))),
+        // Once we're back at the start pose, raise the arm to the scoring position
         deadline(
-            new WaitCommand(1.5),
+            new WaitCommand(0.75),
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_LOW_POSITION), armSubsystem)),
-        race(
-            new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem),
-            new WaitCommand(2.0 /* secs */)));
+        // Score the 1 cargo
+        deadline(
+            new WaitCommand(0.5 /* sec */),
+            new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)));
   }
 }

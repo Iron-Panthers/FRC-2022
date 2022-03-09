@@ -207,8 +207,8 @@ public class RobotContainer {
     autoSelector.addOption(
         "offside two cargo",
         new OffsideTwoCargoAutoSequence(
-            4,
-            2,
+            3, // Optimal values per 2022-03-08 test (ih)
+            1.5,
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,
