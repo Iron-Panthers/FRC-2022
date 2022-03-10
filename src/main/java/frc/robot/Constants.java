@@ -148,8 +148,8 @@ public final class Constants {
     public static final double GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
 
     public static final class Ports {
-      public static final int LEFT_MOTOR = 6;
-      public static final int RIGHT_MOTOR = 7;
+      public static final int LEFT_MOTOR = 7;
+      public static final int RIGHT_MOTOR = 6;
       public static final int BOTTOM_SWITCH = 9;
       public static final int TOP_SWITCH = 0;
     }
