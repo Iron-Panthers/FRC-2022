@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,9 +21,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX left_motor;
   /** leader */
   private TalonFX right_motor;
-
-  private DigitalInput bottomLimitSwitch;
-  private DigitalInput topLimitSwitch;
 
   /** Elevator's current height in inches */
   private double currentHeight;
@@ -89,16 +85,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public static double ticksToHeight(double ticks) {
     return (ticks * Elevator.GEAR_CIRCUMFERENCE) / (Elevator.TICKS * Elevator.GEAR_RATIO);
-  }
-
-  /** @return true if the limit switch is being triggered */
-  public boolean topLimitSwitchTriggering() {
-    return !topLimitSwitch.get();
-  }
-
-  /** @return true if the limit switch is being triggered */
-  public boolean bottomLimitSwitchTriggering() {
-    return !bottomLimitSwitch.get();
   }
 
   /**
