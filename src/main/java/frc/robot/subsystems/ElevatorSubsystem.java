@@ -49,12 +49,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
     right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
 
-    topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
-    bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
-
-    topLimitSwitchTriggered = false;
-    bottomLimitSwitchTriggered = false;
-
     currentHeight = 0.0;
     targetHeight = 0.0;
 
