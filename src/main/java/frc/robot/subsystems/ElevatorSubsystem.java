@@ -26,9 +26,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput bottomLimitSwitch;
   private DigitalInput topLimitSwitch;
 
-  private boolean bottomLimitSwitchTriggered;
-  private boolean topLimitSwitchTriggered;
-
   /** Elevator's current height in inches */
   private double currentHeight;
 
