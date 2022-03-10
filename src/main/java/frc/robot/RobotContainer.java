@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,17 +25,22 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.ElevatorManualCommand;
+import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
+import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
@@ -51,9 +57,12 @@ public class RobotContainer {
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
   /** controller 1 */
-  private final XboxController nick = new XboxController(1);
+  private final XboxController jason = new XboxController(1);
+  /** controller 1 climb layer */
+  private final Layer jasonLayer = new Layer(jason::getRightBumper);
   /** controller 0 */
   private final XboxController will = new XboxController(0);
 
@@ -70,6 +79,16 @@ public class RobotContainer {
             () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
             () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND)));
 
+    // armSubsystem.setDefaultCommand(
+    //     new FunctionalCommand(
+    //         () -> {},
+    //         () -> {
+    //           armSubsystem.setPercentOutput(ControllerUtil.deadband(jason.getLeftY(), .2));
+    //         },
+    //         (interupted) -> {},
+    //         () -> false,
+    //         armSubsystem));
+
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
     // Configure the button bindings
@@ -85,6 +104,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    // vibrate jason controller when in layer
+    jasonLayer.whenChanged(
+        (enabled) -> {
+          final double power = enabled ? .1 : 0;
+          jason.setRumble(RumbleType.kLeftRumble, power);
+          jason.setRumble(RumbleType.kRightRumble, power);
+        });
 
     new Button(will::getStartButton)
         .whenPressed(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
@@ -132,6 +159,42 @@ public class RobotContainer {
             new StartEndCommand(
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
+    // Elevator preset position buttons
+    jasonLayer
+        .on(jason::getBButton)
+        .whenPressed(
+            new ElevatorPositionCommand(
+                elevatorSubsystem, Constants.Elevator.maxHeight)); // Elevator goes to top
+    jasonLayer
+        .on(jason::getXButton)
+        .whenPressed(
+            new ElevatorPositionCommand(
+                elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
+
+    // Elevator Manual controls
+    jasonLayer
+        .on(jason::getYButton)
+        .whenHeld(
+            new ElevatorManualCommand(
+                elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
+    jasonLayer
+        .on(jason::getAButton)
+        .whenHeld(
+            new ElevatorManualCommand(
+                elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
+
+    jasonLayer
+        .on(() -> Math.abs(jason.getLeftY()) >= .4)
+        .whenHeld(
+            new FunctionalCommand(
+                () -> {},
+                () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(jason.getLeftY(), .4)),
+                (interrupted) -> {
+                  elevatorSubsystem.setPercent(0);
+                },
+                () -> false,
+                elevatorSubsystem));
+
     // will controller intakes (temporary)
     new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
@@ -139,16 +202,24 @@ public class RobotContainer {
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
+    BooleanSupplier armToHeightButton =
+        jasonLayer.off(() -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8);
+
     // Arm to high goal
-    new Button(nick::getLeftBumper)
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() <= 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION));
 
     // Arm to intake position
-    new Button(nick::getRightBumper)
+    new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
+    // Arm to climb position
+    jasonLayer
+        .off(jason::getLeftBumper)
+        .whenPressed(armAngleCommand.apply(Arm.Setpoints.CLIMB_POSITION));
+
     // hold arm up for sideways intake
-    new Button(nick::getStartButton)
+    new Button(jason::getLeftStickButton)
         .whenHeld(
             new FunctionalCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_HIGHER_POSITION),
@@ -158,32 +229,27 @@ public class RobotContainer {
                 armSubsystem));
 
     // intake balls
-    new Button(nick::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    // shoot balls
-    new Button(nick::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-    // fast outtake
-    new Button(nick::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    // fender shot
+    jasonLayer.off(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    // far shot
+    jasonLayer
+        .off(jason::getXButton)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    // stop everything
+    jasonLayer.off(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
 
     // eject left side
-    new Button(
-            () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() > .5
-                    && nick.getRightTriggerAxis() <= .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
     // eject right side
-    new Button(
-            () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() <= .5
-                    && nick.getRightTriggerAxis() > .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
     // eject everything
-    new Button(
-            () ->
-                nick.getBButton()
-                    && nick.getLeftTriggerAxis() > .5
-                    && nick.getRightTriggerAxis() > .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
