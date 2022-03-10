@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
+import frc.robot.Constants.Elevator.SlowZone;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** follower */
@@ -109,6 +110,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     return !bottomLimitSwitch.get();
   }
 
+  private boolean inSlowZone() {
+    final double height = getHeight();
+    return height >= SlowZone.UPPER_THRESHHOLD || height <= SlowZone.LOWER_THRESHHOLD;
+  }
+
   /**
    * Stores the target height for the elevator, to be reached with motor adjustment
    *
@@ -125,7 +131,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setPercent(double percent) {
-    right_motor.set(TalonFXControlMode.PercentOutput, percent);
+    right_motor.set(
+        TalonFXControlMode.PercentOutput,
+        percent * (inSlowZone() ? SlowZone.SLOWZONE_MODIFIER : 1));
   }
 
   /**
