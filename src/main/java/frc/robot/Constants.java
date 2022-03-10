@@ -112,12 +112,40 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 76.7 : 56.4;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 74.97 : 56.4;
 
       public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 10.78;
       public static final double INTAKE_POSITION = MAX_HEIGHT - 107;
       public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 100;
-      // -33.9 for climb
+      public static final double CLIMB_POSITION = MAX_HEIGHT - 33.9;
+    }
+  }
+
+  public static final class Elevator {
+
+    public static final double POSITION = 1.0;
+    public static final double RATE = 0.025;
+
+    // Heights
+    /** Max height is 21.75 inches (adjusted for overshoot) */
+    public static final double maxHeight = 20;
+
+    public static final double TOP_LIMIT_SWITCH_TRIGGER_HEIGHT = -19.5;
+
+    /** Minimum height is 0 inches */
+    public static final double minHeight = 0;
+
+    public static final double BOTTOM_LIMIT_SWITCH_TRIGGER_HEIGHT = -.5;
+
+    public static final int TICKS = 2048;
+    public static final double GEAR_RATIO = 12.75;
+    public static final double GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
+
+    public static final class Ports {
+      public static final int LEFT_MOTOR = 6;
+      public static final int RIGHT_MOTOR = 7;
+      public static final int BOTTOM_SWITCH = 9;
+      public static final int TOP_SWITCH = 0;
     }
   }
 
@@ -152,9 +180,10 @@ public final class Constants {
 
     public static final class Ports {
       public static final int LOWER_MOTOR = 15;
-      public static final int UPPER_MOTOR = 8;
+      public static final int UPPER_MOTOR = 9;
       public static final int RIGHT_EJECT_MOTOR = 16;
-      public static final int LEFT_EJECT_MOTOR = 9; // fixme
+      public static final int LEFT_EJECT_MOTOR = 8;
+      // UPPER MOTOR AND LEFT EJECT MOTOR SWAPPED ON PBOT
     }
   }
 }

@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,14 +24,18 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.ElevatorManualCommand;
+import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
+import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
 import java.util.List;
@@ -51,9 +56,12 @@ public class RobotContainer {
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
+  /** controller 1 climb layer */
+  private final Layer jasonLayer = new Layer(jason::getRightBumper);
   /** controller 0 */
   private final XboxController will = new XboxController(0);
 
@@ -74,7 +82,7 @@ public class RobotContainer {
     //     new FunctionalCommand(
     //         () -> {},
     //         () -> {
-    //           armSubsystem.setPercentOutput(ControllerUtil.deadband(nick.getLeftY(), .2));
+    //           armSubsystem.setPercentOutput(ControllerUtil.deadband(jason.getLeftY(), .2));
     //         },
     //         (interupted) -> {},
     //         () -> false,
@@ -93,6 +101,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    // vibrate jason controller when in layer
+    jasonLayer.whenChanged(
+        (enabled) -> {
+          final double power = enabled ? .1 : 0;
+          jason.setRumble(RumbleType.kLeftRumble, power);
+          jason.setRumble(RumbleType.kRightRumble, power);
+        });
 
     new Button(will::getStartButton)
         .whenPressed(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
@@ -140,11 +156,51 @@ public class RobotContainer {
             new StartEndCommand(
                 () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
+    // Elevator preset position buttons
+    jasonLayer
+        .on(jason::getBButton)
+        .whenPressed(
+            new ElevatorPositionCommand(
+                elevatorSubsystem, Constants.Elevator.maxHeight)); // Elevator goes to top
+    jasonLayer
+        .on(jason::getXButton)
+        .whenPressed(
+            new ElevatorPositionCommand(
+                elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
+
+    // Elevator Manual controls
+    jasonLayer
+        .on(jason::getYButton)
+        .whenHeld(
+            new ElevatorManualCommand(
+                elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
+    jasonLayer
+        .on(jason::getAButton)
+        .whenHeld(
+            new ElevatorManualCommand(
+                elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
+
+    jasonLayer
+        .on(() -> Math.abs(jason.getLeftY()) >= .4)
+        .whenHeld(
+            new FunctionalCommand(
+                () -> {},
+                () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(jason.getLeftY(), .4)),
+                (interrupted) -> {
+                  elevatorSubsystem.setPercent(0);
+                },
+                () -> false,
+                elevatorSubsystem));
+
+    // will controller intakes (temporary)
+    new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
     BooleanSupplier armToHeightButton =
-        () -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8;
+        jasonLayer.off(() -> Util.vectorMagnitude(jason.getLeftY(), jason.getLeftX()) > .8);
 
     // Arm to high goal
     new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() <= 0)
@@ -153,6 +209,11 @@ public class RobotContainer {
     // Arm to intake position
     new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
+
+    // Arm to climb position
+    jasonLayer
+        .off(jason::getLeftBumper)
+        .whenPressed(armAngleCommand.apply(Arm.Setpoints.CLIMB_POSITION));
 
     // hold arm up for sideways intake
     new Button(jason::getLeftStickButton)
@@ -165,22 +226,27 @@ public class RobotContainer {
                 armSubsystem));
 
     // intake balls
-    new Button(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
+    jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
     // fender shot
-    new Button(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
+    jasonLayer.off(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
     // far shot
-    new Button(jason::getXButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    jasonLayer
+        .off(jason::getXButton)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
     // stop everything
-    new Button(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
+    jasonLayer.off(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
 
     // eject left side
-    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
     // eject right side
-    new Button(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
     // eject everything
-    new Button(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
+    jasonLayer
+        .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
   }
 
