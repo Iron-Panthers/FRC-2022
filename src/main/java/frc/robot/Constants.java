@@ -159,15 +159,15 @@ public final class Constants {
     /** percent to run motors at for given states */
     public static final class EjectRollers {
       /** the percent to run the eject motor at in the idling state */
-      public static final double IDLE = 1;
+      public static final double IDLE = .7;
       /** the percent to run the eject motor at in the ejection state */
-      public static final double EJECT = -.9;
+      public static final double EJECT = -.7;
     }
 
     /** percent to run motors at for given states */
     public static final class IntakeRollers {
       /** the percent to run the intake motors during the intake state */
-      public static final double INTAKE = .55;
+      public static final double INTAKE = .385;
       /** the percent to run the upper outtake during the outtake state */
       public static final double OUTTAKE_UPPER = -0.3;
       /** the percent to run the lower outtake during the outtake state */
