@@ -185,7 +185,9 @@ public class RobotContainer {
         .whenHeld(
             new FunctionalCommand(
                 () -> {},
-                () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(jason.getLeftY(), .4)),
+                () ->
+                    elevatorSubsystem.setPercent(
+                        modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))),
                 (interrupted) -> {
                   elevatorSubsystem.setPercent(0);
                 },
