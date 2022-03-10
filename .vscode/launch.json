@@ -5,6 +5,20 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "Launch BinTrajectoryParameterRuntimeTest",
+      "request": "launch",
+      "mainClass": "frc.robot.autonomous.BinTrajectoryParameterRuntimeTest",
+      "projectName": "FRC-2022"
+    },
+    {
+      "type": "java",
+      "name": "Launch ReplaceFalconCode",
+      "request": "launch",
+      "mainClass": "frc.robot.autonomous.ReplaceFalconCode",
+      "projectName": "FRC-2022"
+    },
+    {
       "type": "wpilib",
       "name": "WPILib Desktop Debug",
       "request": "launch",
