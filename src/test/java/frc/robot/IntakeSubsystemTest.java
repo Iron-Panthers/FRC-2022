@@ -117,8 +117,8 @@ public class IntakeSubsystemTest {
         Arguments.of(Modes.EJECT_RIGHT, Modes.OFF),
         Arguments.of(Modes.OUTTAKE, Modes.OFF),
         Arguments.of(Modes.OUTTAKE_FAST, Modes.OFF),
-        // after intake, mode should be idle to keep aligning balls
-        Arguments.of(Modes.INTAKE, Modes.IDLING));
+        // after intake, mode should be idle to keep aligning balls (NOT TRUE ANYMORE)
+        Arguments.of(Modes.INTAKE, Modes.OFF));
   }
 
   // these two annotations tell junit to call the test repeatedly with the stream of arguments from

@@ -85,8 +85,8 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case INTAKE:
         // after intake, we should run the idling motor to align balls for shooting and outtake
-        setMode(Modes.IDLING);
-        break;
+        // setMode(Modes.IDLING);
+        // break;
       case EJECT_LEFT:
       case EJECT_RIGHT:
       case EJECT_ALL:
