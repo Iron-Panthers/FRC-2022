@@ -294,7 +294,7 @@ public class RobotContainer {
             drivebaseSubsystem,
             intakeSubsystem));
 
-    Shuffleboard.getTab("DriverView").add(autoSelector);
+    Shuffleboard.getTab("DriverView").add("auto selector", autoSelector);
   }
 
   /**
