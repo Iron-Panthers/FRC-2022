@@ -74,9 +74,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
-
-    ElevatorTab.addBoolean("bottom limit switch", bottomLimitSwitch::get);
-    ElevatorTab.addBoolean("top limit switch", topLimitSwitch::get);
   }
 
   public static double heightToTicks(double height) {
