@@ -110,9 +110,31 @@ public class ElevatorSubsystem extends SubsystemBase {
     return !bottomLimitSwitch.get();
   }
 
-  private boolean inSlowZone() {
+  /**
+   * If the elevator is inside the slow mode, and the percent would move the elevator in, this code
+   * returns a scaled down version of the percent it was passed. otherwise it returns the full
+   * amount.
+   *
+   * @param percent the percent to apply slow mode to
+   * @return the new percent, possibly scaled down to accommodate slow mode
+   */
+  private double applySlowZoneToPercent(double percent) {
     final double height = getHeight();
-    return height >= SlowZone.UPPER_THRESHHOLD || height <= SlowZone.LOWER_THRESHHOLD;
+    if (
+    // going down block
+    (percent >= 0 /* going down */
+            && height <= SlowZone.LOWER_THRESHHOLD /* inside the lower slow zone */)
+        ||
+        // going up block
+        (percent <= 0 /* going up */
+            && height >= SlowZone.UPPER_THRESHHOLD /* inside the upper slow zone */)) {
+
+      // modify the output by the slowzone modifier
+
+      return percent * SlowZone.SLOWZONE_MODIFIER;
+    }
+    // not in slow zone conditions, proceed as normal
+    return percent;
   }
 
   /**
@@ -131,9 +153,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setPercent(double percent) {
-    right_motor.set(
-        TalonFXControlMode.PercentOutput,
-        percent * (inSlowZone() ? SlowZone.SLOWZONE_MODIFIER : 1));
+    right_motor.set(TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent));
   }
 
   /**
