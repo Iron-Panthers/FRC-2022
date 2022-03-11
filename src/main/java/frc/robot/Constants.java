@@ -142,7 +142,7 @@ public final class Constants {
     public static final class SlowZone {
       public static final double SLOWZONE_MODIFIER = .25;
       public static final double UPPER_THRESHHOLD = 16;
-      public static final double LOWER_THRESHHOLD = 8.5;
+      public static final double LOWER_THRESHHOLD = 7.5;
     }
 
     public static final double TOP_LIMIT_SWITCH_TRIGGER_HEIGHT = -19.5;
