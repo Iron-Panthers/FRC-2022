@@ -135,6 +135,9 @@ public final class Constants {
     /** Minimum height is 0 inches */
     public static final double minHeight = 0;
 
+    /** the minimum height the arm will stay out of the way for, inches */
+    public static final double ENGAGED_HEIGHT = 1.2;
+
     /** run the motors at lower power when height is higher then upper or lower then lower. */
     public static final class SlowZone {
       public static final double SLOWZONE_MODIFIER = .25;
