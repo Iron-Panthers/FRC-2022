@@ -230,10 +230,16 @@ public class RobotContainer {
     new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
-    // Arm to climb position
-    jasonLayer
-        .off(jason::getLeftBumper)
+    BooleanSupplier armToHeightButtonForClimb =
+        jasonLayer.on(() -> Util.vectorMagnitude(jason.getRightY(), jason.getRightX()) > .8);
+
+    // Arm to high goal
+    new Button(() -> armToHeightButtonForClimb.getAsBoolean() && jason.getRightY() <= 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.CLIMB_POSITION));
+
+    // Arm to intake position
+    new Button(() -> armToHeightButtonForClimb.getAsBoolean() && jason.getRightY() > 0)
+        .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
     // hold arm up for sideways intake
     new Button(jason::getLeftStickButton)
