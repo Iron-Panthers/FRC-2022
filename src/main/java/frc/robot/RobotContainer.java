@@ -102,7 +102,7 @@ public class RobotContainer {
 
   public void containerTeleopInit() {
     // runs when teleop happens
-    CommandScheduler.getInstance().schedule(new VibrateControllerCommand(jason, 5000, .5));
+    CommandScheduler.getInstance().schedule(new VibrateControllerCommand(jason, 5, .5));
   }
 
   /**

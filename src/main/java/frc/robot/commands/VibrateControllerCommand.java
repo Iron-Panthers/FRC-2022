@@ -19,7 +19,7 @@ public class VibrateControllerCommand extends CommandBase {
    * makes a command to vibrate a controller
    *
    * @param controller the controller to call the rumble methods on
-   * @param duration the time (ms) to vibrate for
+   * @param duration the time (seconds) to vibrate for
    * @param strength the strength [0, 1] double of the vibration
    */
   public VibrateControllerCommand(XboxController controller, double duration, double strength) {
