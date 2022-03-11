@@ -15,7 +15,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
 
@@ -105,23 +104,23 @@ public class ArmSubsystem extends SubsystemBase {
 
     final double pidOutput = pidController.calculate(currentAngle, desiredAngle);
 
-    SmartDashboard.putNumber("output", pidOutput);
+    // SmartDashboard.putNumber("output", pidOutput);
 
     final double clampedOutput =
         MathUtil.clamp(
             pidOutput, -1 + Arm.GRAVITY_CONTROL_PERCENT, 1 - Arm.GRAVITY_CONTROL_PERCENT);
 
-    SmartDashboard.putNumber("clamped output", clampedOutput);
+    // SmartDashboard.putNumber("clamped output", clampedOutput);
 
     // Add the gravity offset as a function of cosine
     final double gravityOffset =
         Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
 
-    SmartDashboard.putNumber("gravityOffset", gravityOffset);
+    // SmartDashboard.putNumber("gravityOffset", gravityOffset);
 
     final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
 
-    SmartDashboard.putNumber("motor percent", motorPercent);
+    // SmartDashboard.putNumber("motor percent", motorPercent);
 
     setPercentOutput(motorPercent);
   }

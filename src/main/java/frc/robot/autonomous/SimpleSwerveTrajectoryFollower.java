@@ -9,7 +9,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.util.Util;
 
 /**
@@ -59,14 +58,14 @@ public class SimpleSwerveTrajectoryFollower extends TrajectoryFollower<ChassisSp
     // scope current and target angles
     double angularDifferenceDeg = Util.relativeAngularDifference(currentDegrees, targetDegrees);
 
-    SmartDashboard.putNumber("current pose rotation", currentDegrees);
-    SmartDashboard.putNumber("pose ref rotation", targetDegrees);
-    SmartDashboard.putNumber("sstf/angular_difference (deg)", angularDifferenceDeg);
+    // SmartDashboard.putNumber("current pose rotation", currentDegrees);
+    // SmartDashboard.putNumber("pose ref rotation", targetDegrees);
+    // SmartDashboard.putNumber("sstf/angular_difference (deg)", angularDifferenceDeg);
 
     // use pid controller using scoped angles to get shortest-distance correction
     double angleFF = angleController.calculate(angularDifferenceDeg, 0);
 
-    SmartDashboard.putNumber("angleff", angleFF);
+    // SmartDashboard.putNumber("angleff", angleFF);
 
     double xControllerEffort = xController.calculate(currentPose.getX(), poseRef.getX());
     double yControllerEffort = yController.calculate(currentPose.getY(), poseRef.getY());
