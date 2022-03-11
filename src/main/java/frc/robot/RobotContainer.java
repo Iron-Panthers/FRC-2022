@@ -230,16 +230,19 @@ public class RobotContainer {
     new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
-    BooleanSupplier armToHeightButtonForClimb =
-        jasonLayer.on(() -> Util.vectorMagnitude(jason.getRightY(), jason.getRightX()) > .8);
-
-    // Arm to high goal
-    new Button(() -> armToHeightButtonForClimb.getAsBoolean() && jason.getRightY() <= 0)
-        .whenPressed(armAngleCommand.apply(Arm.Setpoints.CLIMB_POSITION));
-
-    // Arm to intake position
-    new Button(() -> armToHeightButtonForClimb.getAsBoolean() && jason.getRightY() > 0)
-        .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
+    // when in climb mode, precise angle adjustment stick
+    new Button(jasonLayer.getLayerSwitch())
+        .whenPressed(
+            new FunctionalCommand(
+                () -> {},
+                () -> {
+                  armSubsystem.setAngle(
+                      armSubsystem.getAngle()
+                          + (.1 * ControllerUtil.deadband(jason.getRightY(), .2)));
+                },
+                interrupted -> {},
+                () -> false,
+                armSubsystem));
 
     // hold arm up for sideways intake
     new Button(jason::getLeftStickButton)
