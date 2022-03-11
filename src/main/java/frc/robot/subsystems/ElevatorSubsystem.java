@@ -77,6 +77,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     ShuffleboardTab DriverTab = Shuffleboard.getTab("DriverView");
     DriverTab.addNumber("elevator % height", () -> getHeight() / -heightToTicks(24));
+    DriverTab.addNumber("elevator height inches", this::getHeight);
   }
 
   public static double heightToTicks(double height) {
