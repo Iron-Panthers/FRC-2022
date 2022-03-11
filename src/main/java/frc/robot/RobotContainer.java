@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -29,6 +30,7 @@ import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
+import frc.robot.commands.VibrateControllerCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -96,6 +98,11 @@ public class RobotContainer {
 
     // Create and put autonomous selector to dashboard
     setupAutonomousCommands();
+  }
+
+  public void teleopInit() {
+    // runs when teleop happens
+    CommandScheduler.getInstance().schedule(new VibrateControllerCommand(jason, 5000, .5));
   }
 
   /**
