@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -53,6 +54,16 @@ public class ArmSubsystem extends SubsystemBase {
 
     armLeftMotor.setStatusFramePeriod(1, 500);
     armLeftMotor.setStatusFramePeriod(2, 500);
+
+    var config =
+        new StatorCurrentLimitConfiguration(
+            true /*enable*/,
+            50 /* current limit */,
+            5 /* threshold */,
+            .1 /*time in seconds to trip*/);
+
+    armRightMotor.configStatorCurrentLimit(config);
+    armLeftMotor.configStatorCurrentLimit(config);
 
     pidController = new PIDController(0.015, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
