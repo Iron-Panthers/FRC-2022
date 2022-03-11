@@ -7,6 +7,7 @@ package frc.robot;
 import static frc.robot.Constants.Drive;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -279,7 +280,7 @@ public class RobotContainer {
   }
   /** Set up the cameras on the robot */
   private void setupCameras() {
-    CameraServer.startAutomaticCapture();
+    UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake cam", 0);
   }
 
   /**
