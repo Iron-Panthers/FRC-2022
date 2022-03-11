@@ -15,7 +15,13 @@ public class VibrateControllerCommand extends CommandBase {
   private double startTime;
   private double strength;
 
-  /** Creates a new VibrateControllerCommand. */
+  /**
+   * makes a command to vibrate a controller
+   *
+   * @param controller the controller to call the rumble methods on
+   * @param duration the time (ms) to vibrate for
+   * @param strength the strength [0, 1] double of the vibration
+   */
   public VibrateControllerCommand(XboxController controller, double duration, double strength) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.controller = controller;
