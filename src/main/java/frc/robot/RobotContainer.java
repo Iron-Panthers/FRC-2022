@@ -28,7 +28,6 @@ import frc.robot.autonomous.commands.OnsideThreeCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideTwoCargoAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
-import frc.robot.commands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
@@ -188,16 +187,16 @@ public class RobotContainer {
                 elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
 
     // Elevator Manual controls
-    jasonLayer
-        .on(jason::getYButton)
-        .whenHeld(
-            new ElevatorManualCommand(
-                elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
-    jasonLayer
-        .on(jason::getAButton)
-        .whenHeld(
-            new ElevatorManualCommand(
-                elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
+    // jasonLayer
+    //     .on(jason::getYButton)
+    //     .whenHeld(
+    //         new ElevatorManualCommand(
+    //             elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
+    // jasonLayer
+    //     .on(jason::getAButton)
+    //     .whenHeld(
+    //         new ElevatorManualCommand(
+    //             elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
 
     jasonLayer
         .on(() -> Math.abs(jason.getLeftY()) >= .4)
