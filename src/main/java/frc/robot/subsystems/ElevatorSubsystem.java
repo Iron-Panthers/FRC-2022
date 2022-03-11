@@ -129,7 +129,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setPercent(double percent) {
-    right_motor.set(TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent));
+    right_motor.set(
+        TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent * Elevator.MAX_PERCENT));
   }
 
   /**

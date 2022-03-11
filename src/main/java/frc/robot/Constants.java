@@ -126,6 +126,8 @@ public final class Constants {
     public static final double POSITION = 1.0;
     public static final double RATE = 0.025;
 
+    public static final double MAX_PERCENT = .7;
+
     // Heights
     /** Max height is 21.75 inches (adjusted for overshoot) */
     public static final double maxHeight = 20;
@@ -136,8 +138,8 @@ public final class Constants {
     /** run the motors at lower power when height is higher then upper or lower then lower. */
     public static final class SlowZone {
       public static final double SLOWZONE_MODIFIER = .25;
-      public static final double UPPER_THRESHHOLD = 18;
-      public static final double LOWER_THRESHHOLD = 5;
+      public static final double UPPER_THRESHHOLD = 16;
+      public static final double LOWER_THRESHHOLD = 7;
     }
 
     public static final double TOP_LIMIT_SWITCH_TRIGGER_HEIGHT = -19.5;
