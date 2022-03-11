@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
 import frc.util.Util;
@@ -277,7 +276,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
    */
   private void odometryPeriodic(SwerveModuleState[] moduleStatesWritten) {
     this.robotPose = swerveOdometry.update(getGyroscopeRotation(), moduleStatesWritten);
-    SmartDashboard.putString("robot_pose", robotPose.toString());
+    // SmartDashboard.putString("robot_pose", robotPose.toString());
   }
 
   private void drivePeriodic() {

@@ -14,10 +14,9 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
-import frc.robot.Constants.Arm.Setpoints;
 
 /*
 For Engineering:
@@ -57,7 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     pidController = new PIDController(0.015, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
-    Shuffleboard.getTab("arm").add(pidController);
+    // Shuffleboard.getTab("arm").add(pidController);
 
     armEncoder =
         new CANCoder(Arm.Ports.ENCODER_PORT); // FIX ME: we will need to figure out the real value
@@ -66,10 +65,18 @@ public class ArmSubsystem extends SubsystemBase {
         SensorInitializationStrategy.BootToAbsolutePosition);
     armEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
     armEncoder.configMagnetOffset(Arm.ANGULAR_OFFSET);
+
+    ShuffleboardTab tab = Shuffleboard.getTab("DriverView");
+    tab.addNumber("target arm angle", this::getTargetAngle);
+    tab.addNumber("actual arm angle", this::getAngle);
   }
 
   public double getAngle() {
     return armEncoder.getAbsolutePosition();
+  }
+
+  public double getTargetAngle() {
+    return desiredAngle;
   }
 
   private void setPercentOutput(double power) {
@@ -86,9 +93,10 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     final double currentAngle = getAngle();
 
-    SmartDashboard.putNumber("current angle", currentAngle);
-    SmartDashboard.putNumber("desired angle", desiredAngle);
-    SmartDashboard.putNumber("constant setpoint MaxHeight - ", currentAngle - Setpoints.MAX_HEIGHT);
+    // SmartDashboard.putNumber("current angle", currentAngle);
+    // SmartDashboard.putNumber("desired angle", desiredAngle);
+    // SmartDashboard.putNumber("constant setpoint MaxHeight - ", currentAngle -
+    // Setpoints.MAX_HEIGHT);
 
     // double output = controller.calculate(measurement (what is actually there), desired value
     // (where we want it to be))
@@ -96,23 +104,23 @@ public class ArmSubsystem extends SubsystemBase {
 
     final double pidOutput = pidController.calculate(currentAngle, desiredAngle);
 
-    SmartDashboard.putNumber("output", pidOutput);
+    // SmartDashboard.putNumber("output", pidOutput);
 
     final double clampedOutput =
         MathUtil.clamp(
             pidOutput, -1 + Arm.GRAVITY_CONTROL_PERCENT, 1 - Arm.GRAVITY_CONTROL_PERCENT);
 
-    SmartDashboard.putNumber("clamped output", clampedOutput);
+    // SmartDashboard.putNumber("clamped output", clampedOutput);
 
     // Add the gravity offset as a function of cosine
     final double gravityOffset =
         Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
 
-    SmartDashboard.putNumber("gravityOffset", gravityOffset);
+    // SmartDashboard.putNumber("gravityOffset", gravityOffset);
 
     final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
 
-    SmartDashboard.putNumber("motor percent", motorPercent);
+    // SmartDashboard.putNumber("motor percent", motorPercent);
 
     setPercentOutput(motorPercent);
   }

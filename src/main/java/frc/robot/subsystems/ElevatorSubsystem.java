@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
@@ -70,10 +69,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     left_motor.follow(right_motor);
 
-    ElevatorTab.add(heightController);
-    ElevatorTab.addNumber("height", () -> this.currentHeight);
-    ElevatorTab.addNumber("target height", () -> this.targetHeight);
-    ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+    // ElevatorTab.add(heightController);
+    // ElevatorTab.addNumber("height", () -> this.currentHeight);
+    // ElevatorTab.addNumber("target height", () -> this.targetHeight);
+    // ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+
+    ShuffleboardTab DriverTab = Shuffleboard.getTab("DriverView");
+    DriverTab.addNumber("elevator % height", () -> getHeight() / -heightToTicks(24));
+    DriverTab.addNumber("elevator height inches", this::getHeight);
   }
 
   public static double heightToTicks(double height) {
@@ -117,7 +120,6 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param targetHeight Uses Inches
    */
   public void setTargetHeight(double targetHeight) {
-    SmartDashboard.putNumber("set target height", targetHeight);
     this.targetHeight = targetHeight;
   }
 
