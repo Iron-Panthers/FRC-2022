@@ -30,6 +30,7 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
+import frc.robot.commands.PreciseArmCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.VibrateControllerCommand;
@@ -233,16 +234,8 @@ public class RobotContainer {
     // when in climb mode, precise angle adjustment stick
     new Button(jasonLayer.getLayerSwitch())
         .whenPressed(
-            new FunctionalCommand(
-                () -> {},
-                () -> {
-                  armSubsystem.setAngle(
-                      armSubsystem.getAngle()
-                          + (.1 * ControllerUtil.deadband(jason.getRightY(), .2)));
-                },
-                interrupted -> {},
-                () -> false,
-                armSubsystem));
+            new PreciseArmCommand(
+                armSubsystem, () -> ControllerUtil.deadband(jason.getRightY(), .2)));
 
     // hold arm up for sideways intake
     new Button(jason::getLeftStickButton)
