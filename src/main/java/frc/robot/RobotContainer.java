@@ -8,6 +8,7 @@ import static frc.robot.Constants.Drive;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -311,6 +312,8 @@ public class RobotContainer {
 
   private void setupCameras() {
     UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
+    var work = intakeCamera.setVideoMode(PixelFormat.kMJPEG, 176, 144, 15);
+    SmartDashboard.putBoolean("camera set workded", work);
   }
 
   /**
