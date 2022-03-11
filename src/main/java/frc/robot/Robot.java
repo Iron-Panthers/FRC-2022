@@ -85,7 +85,7 @@ public class Robot extends TimedRobot {
     }
 
     // do stuff like vibration of controllers at match start
-    robotContainer.teleopInit();
+    robotContainer.containerTeleopInit();
   }
 
   /** This function is called periodically during operator control. */

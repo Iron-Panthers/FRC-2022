@@ -100,7 +100,7 @@ public class RobotContainer {
     setupAutonomousCommands();
   }
 
-  public void teleopInit() {
+  public void containerTeleopInit() {
     // runs when teleop happens
     CommandScheduler.getInstance().schedule(new VibrateControllerCommand(jason, 5000, .5));
   }
