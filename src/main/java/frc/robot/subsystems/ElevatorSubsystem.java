@@ -70,10 +70,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     left_motor.follow(right_motor);
 
-    ElevatorTab.add(heightController);
-    ElevatorTab.addNumber("height", () -> this.currentHeight);
-    ElevatorTab.addNumber("target height", () -> this.targetHeight);
-    ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+    // ElevatorTab.add(heightController);
+    // ElevatorTab.addNumber("height", () -> this.currentHeight);
+    // ElevatorTab.addNumber("target height", () -> this.targetHeight);
+    // ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+
+    ShuffleboardTab DriverTab = Shuffleboard.getTab("DriverView");
+    DriverTab.addNumber("elevator % height", () -> getHeight() / -heightToTicks(24));
   }
 
   public static double heightToTicks(double height) {
