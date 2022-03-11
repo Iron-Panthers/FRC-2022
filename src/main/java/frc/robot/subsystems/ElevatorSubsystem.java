@@ -51,10 +51,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.clearStickyFaults();
 
     right_motor.configForwardSoftLimitThreshold(
-        -Elevator.TICKS,
-        0); // this is the bottom limit, we stop three full rotation before bottoming out
+        0, 0); // this is the bottom limit, we stop AT the bottom
     right_motor.configReverseSoftLimitThreshold(
-        -heightToTicks(24), 0); // this is the top limit, we stop before running out (1 inch leeway)
+        -heightToTicks(24), 0); // this is the top limit, we stop at the very top
 
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
