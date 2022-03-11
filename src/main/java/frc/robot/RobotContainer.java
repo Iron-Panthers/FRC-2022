@@ -235,7 +235,10 @@ public class RobotContainer {
     new Button(jasonLayer.getLayerSwitch())
         .whenPressed(
             new PreciseArmCommand(
-                armSubsystem, () -> ControllerUtil.deadband(jason.getRightY(), .2)));
+                armSubsystem,
+                () ->
+                    /** negative so it maps to arm motion */
+                    -ControllerUtil.deadband(jason.getRightY(), .2)));
 
     // hold arm up for sideways intake
     new Button(jason::getLeftStickButton)
