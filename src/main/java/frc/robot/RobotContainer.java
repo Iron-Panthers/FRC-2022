@@ -6,6 +6,8 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -98,6 +100,9 @@ public class RobotContainer {
 
     // Create and put autonomous selector to dashboard
     setupAutonomousCommands();
+
+    // start the camera server and configure the cameras
+    setupCameras();
   }
 
   public void containerTeleopInit() {
@@ -302,6 +307,10 @@ public class RobotContainer {
             intakeSubsystem));
 
     Shuffleboard.getTab("DriverView").add("auto selector", autoSelector);
+  }
+
+  private void setupCameras() {
+    UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
   }
 
   /**
