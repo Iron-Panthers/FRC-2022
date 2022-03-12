@@ -166,15 +166,6 @@ public class RobotContainer {
                 will::getRightY,
                 will::getRightX));
 
-    /**
-     * this curried start end command calls setMode with the passed mode, then calls next mode when
-     * the command is stopped
-     */
-    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
-        mode ->
-            new StartEndCommand(
-                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
-
     // Elevator preset position buttons
     jasonLayer
         .on(jason::getBButton)
@@ -213,10 +204,6 @@ public class RobotContainer {
                 () -> false,
                 elevatorSubsystem));
 
-    // will controller intakes (temporary)
-    new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
@@ -249,6 +236,15 @@ public class RobotContainer {
                 (interrupted) -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION),
                 () -> false,
                 armSubsystem));
+
+    /**
+     * this curried start end command calls setMode with the passed mode, then calls next mode when
+     * the command is stopped
+     */
+    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
+        mode ->
+            new StartEndCommand(
+                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
     // intake balls
     jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
