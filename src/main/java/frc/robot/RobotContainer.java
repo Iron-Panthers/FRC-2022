@@ -254,6 +254,11 @@ public class RobotContainer {
     jasonLayer
         .off(jason::getXButton)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    // bumper
+    jasonLayer
+        .off(jason::getRightBumper)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_HIGH));
+
     // stop everything
     jasonLayer.off(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
 
