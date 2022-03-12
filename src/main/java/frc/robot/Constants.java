@@ -187,6 +187,12 @@ public final class Constants {
        * from the goal)
        */
       public static final double OUTTAKE_LOWER_FAST = -0.275;
+
+      // speeds for the high shoot
+
+      public static final double OUTTAKE_UPPER_HIGH = -1;
+
+      public static final double OUTTAKE_LOWER_HIGH = -.6;
     }
 
     public static final class Ports {
