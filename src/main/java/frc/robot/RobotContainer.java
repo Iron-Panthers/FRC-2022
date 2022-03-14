@@ -319,8 +319,8 @@ public class RobotContainer {
 
   private void setupCameras() {
     UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
-    var work = intakeCamera.setVideoMode(PixelFormat.kMJPEG, 176, 144, 15);
-    SmartDashboard.putBoolean("camera set workded", work);
+    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 176, 144, 15);
+    Shuffleboard.getTab("DriverView").add(intakeCamera);
   }
 
   /**
