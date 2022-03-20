@@ -190,9 +190,9 @@ public final class Constants {
 
       // speeds for the high shoot
 
-      public static final double OUTTAKE_UPPER_HIGH = -1;
+      public static final double OUTTAKE_UPPER_HIGH = -1.0;
 
-      public static final double OUTTAKE_LOWER_HIGH = -.6;
+      public static final double OUTTAKE_LOWER_HIGH = -1.0;
     }
 
     public static final class Ports {
@@ -200,7 +200,6 @@ public final class Constants {
       public static final int UPPER_MOTOR = 9;
       public static final int RIGHT_EJECT_MOTOR = 16;
       public static final int LEFT_EJECT_MOTOR = 8;
-      // UPPER MOTOR AND LEFT EJECT MOTOR SWAPPED ON PBOT
     }
   }
 }
