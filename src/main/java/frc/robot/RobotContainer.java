@@ -248,15 +248,15 @@ public class RobotContainer {
 
     // intake balls
     jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    // fender shot
+    // score into low from fender
     jasonLayer.off(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-    // far shot
+    // score into low from far
     jasonLayer
         .off(jason::getXButton)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
-    // bumper
+    // score into high from fender
     jasonLayer
-        .off(jason::getRightBumper)
+        .off(jason::getLeftBumper)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_HIGH));
 
     // stop everything
