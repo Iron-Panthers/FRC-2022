@@ -34,6 +34,15 @@ public class Layer {
     this.layerSwitch = layerSwitch;
   }
 
+  /**
+   * gets the button that controls the layering
+   *
+   * @return
+   */
+  public Trigger getLayerSwitch() {
+    return layerSwitch;
+  }
+
   public void whenChanged(BooleanConsumer method) {
     Button layerButton = new Button(this.layerSwitch);
     layerButton.whenPressed(

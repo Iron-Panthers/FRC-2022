@@ -6,30 +6,34 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
+import frc.robot.autonomous.commands.BaselineAutoSequence;
+import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
+import frc.robot.autonomous.commands.OnsideThreeCargoAutoSequence;
+import frc.robot.autonomous.commands.OnsideTwoCargoAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
-import frc.robot.commands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorPositionCommand;
-import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
+import frc.robot.commands.PreciseArmCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
+import frc.robot.commands.VibrateControllerCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -38,7 +42,6 @@ import frc.util.ControllerUtil;
 import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
@@ -55,8 +58,10 @@ public class RobotContainer {
 
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  private final ArmSubsystem armSubsystem = new ArmSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private final ArmSubsystem armSubsystem =
+      new ArmSubsystem(
+          elevatorSubsystem /* the arm subsystem reacts to the state of the elevator subsystem */);
 
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
@@ -64,6 +69,9 @@ public class RobotContainer {
   private final Layer jasonLayer = new Layer(jason::getRightBumper);
   /** controller 0 */
   private final XboxController will = new XboxController(0);
+
+  /** the sendable chooser to select which auto to run. */
+  private final SendableChooser<Command> autoSelector = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -92,6 +100,17 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Create and put autonomous selector to dashboard
+    setupAutonomousCommands();
+
+    // start the camera server and configure the cameras
+    setupCameras();
+  }
+
+  public void containerTeleopInit() {
+    // runs when teleop happens
+    CommandScheduler.getInstance().schedule(new VibrateControllerCommand(jason, 5, .5));
   }
 
   /**
@@ -147,15 +166,6 @@ public class RobotContainer {
                 will::getRightY,
                 will::getRightX));
 
-    /**
-     * this curried start end command calls setMode with the passed mode, then calls next mode when
-     * the command is stopped
-     */
-    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
-        mode ->
-            new StartEndCommand(
-                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
-
     // Elevator preset position buttons
     jasonLayer
         .on(jason::getBButton)
@@ -169,32 +179,30 @@ public class RobotContainer {
                 elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
 
     // Elevator Manual controls
-    jasonLayer
-        .on(jason::getYButton)
-        .whenHeld(
-            new ElevatorManualCommand(
-                elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
-    jasonLayer
-        .on(jason::getAButton)
-        .whenHeld(
-            new ElevatorManualCommand(
-                elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
+    // jasonLayer
+    //     .on(jason::getYButton)
+    //     .whenHeld(
+    //         new ElevatorManualCommand(
+    //             elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
+    // jasonLayer
+    //     .on(jason::getAButton)
+    //     .whenHeld(
+    //         new ElevatorManualCommand(
+    //             elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
 
     jasonLayer
         .on(() -> Math.abs(jason.getLeftY()) >= .4)
         .whenHeld(
             new FunctionalCommand(
                 () -> {},
-                () -> elevatorSubsystem.setPercent(ControllerUtil.deadband(jason.getLeftY(), .4)),
+                () ->
+                    elevatorSubsystem.setPercent(
+                        modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))),
                 (interrupted) -> {
                   elevatorSubsystem.setPercent(0);
                 },
                 () -> false,
                 elevatorSubsystem));
-
-    // will controller intakes (temporary)
-    new Button(will::getRightBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    new Button(will::getLeftBumper).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
 
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
@@ -210,10 +218,14 @@ public class RobotContainer {
     new Button(() -> armToHeightButton.getAsBoolean() && jason.getLeftY() > 0)
         .whenPressed(armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION));
 
-    // Arm to climb position
-    jasonLayer
-        .off(jason::getLeftBumper)
-        .whenPressed(armAngleCommand.apply(Arm.Setpoints.CLIMB_POSITION));
+    // when in climb mode, precise angle adjustment stick
+    new Button(jasonLayer.getLayerSwitch())
+        .whenPressed(
+            new PreciseArmCommand(
+                armSubsystem,
+                () ->
+                    /** negative so it maps to arm motion */
+                    -ControllerUtil.deadband(jason.getRightY(), .2)));
 
     // hold arm up for sideways intake
     new Button(jason::getLeftStickButton)
@@ -225,14 +237,28 @@ public class RobotContainer {
                 () -> false,
                 armSubsystem));
 
+    /**
+     * this curried start end command calls setMode with the passed mode, then calls next mode when
+     * the command is stopped
+     */
+    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
+        mode ->
+            new StartEndCommand(
+                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
+
     // intake balls
     jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    // fender shot
+    // score into low from fender
     jasonLayer.off(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-    // far shot
+    // score into low from far
     jasonLayer
         .off(jason::getXButton)
         .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+    // score into high from fender
+    jasonLayer
+        .off(jason::getLeftBumper)
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_HIGH));
+
     // stop everything
     jasonLayer.off(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
 
@@ -251,28 +277,59 @@ public class RobotContainer {
   }
 
   /**
+   * Adds all autonomous routines to the autoSelector, and places the autoSelector on Shuffleboard.
+   */
+  private void setupAutonomousCommands() {
+    autoSelector.setDefaultOption(
+        "baseline auto",
+        new BaselineAutoSequence(4, 2, drivebaseSubsystem.getKinematics(), drivebaseSubsystem));
+
+    autoSelector.addOption(
+        "offside two cargo",
+        new OffsideTwoCargoAutoSequence(
+            3, // Optimal values per 2022-03-08 test (ih)
+            1.5,
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
+        "onside two cargo",
+        new OnsideTwoCargoAutoSequence(
+            3,
+            1.5,
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
+        "onside three cargo",
+        new OnsideThreeCargoAutoSequence(
+            3,
+            1.5,
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    Shuffleboard.getTab("DriverView").add("auto selector", autoSelector);
+  }
+
+  private void setupCameras() {
+    UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
+    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 176, 144, 15);
+    Shuffleboard.getTab("DriverView").add(intakeCamera);
+  }
+
+  /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    TrajectoryConfig config =
-        new TrajectoryConfig(1, 0.5)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(drivebaseSubsystem.getKinematics());
-
-    // An example trajectory to follow.  All units in meters.
-    Trajectory exampleTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(0)),
-            config);
-
-    return new FollowTrajectoryCommand(exampleTrajectory, drivebaseSubsystem);
+    return autoSelector.getSelected();
   }
 
   /**

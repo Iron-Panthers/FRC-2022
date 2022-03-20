@@ -5,29 +5,35 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
+import java.util.function.DoubleSupplier;
 
-public class ElevatorManualCommand extends CommandBase {
-  private ElevatorSubsystem elevatorSubsystem;
-  private final Double rate;
-  /** Creates a new ElevatorCommand. */
-  public ElevatorManualCommand(ElevatorSubsystem subsystem, Double rate) {
-    this.rate = rate;
-    this.elevatorSubsystem = subsystem;
-    addRequirements(elevatorSubsystem);
+public class PreciseArmCommand extends CommandBase {
+  private ArmSubsystem armSubsystem;
 
+  private double target;
+
+  private DoubleSupplier stick;
+
+  /** Creates a new PreciseArmCommand. */
+  public PreciseArmCommand(ArmSubsystem armSubsystem, DoubleSupplier stick) {
+    this.armSubsystem = armSubsystem;
+    this.stick = stick;
+    addRequirements(armSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    target = armSubsystem.getAngle();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // SmartDashboard.putNumber("rate", rate);
-    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getTargetHeight() + rate);
+    target += +(.15 * stick.getAsDouble());
+    armSubsystem.setAngle(target);
   }
 
   // Called once the command ends or is interrupted.

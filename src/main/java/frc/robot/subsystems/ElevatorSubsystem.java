@@ -8,25 +8,18 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
+import frc.robot.Constants.Elevator.SlowZone;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** follower */
   private TalonFX left_motor;
   /** leader */
   private TalonFX right_motor;
-
-  private DigitalInput bottomLimitSwitch;
-  private DigitalInput topLimitSwitch;
-
-  private boolean bottomLimitSwitchTriggered;
-  private boolean topLimitSwitchTriggered;
 
   /** Elevator's current height in inches */
   private double currentHeight;
@@ -48,12 +41,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
     right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
 
-    topLimitSwitch = new DigitalInput(Constants.Elevator.Ports.TOP_SWITCH);
-    bottomLimitSwitch = new DigitalInput(Constants.Elevator.Ports.BOTTOM_SWITCH);
-
-    topLimitSwitchTriggered = false;
-    bottomLimitSwitchTriggered = false;
-
     currentHeight = 0.0;
     targetHeight = 0.0;
 
@@ -64,10 +51,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.clearStickyFaults();
 
     right_motor.configForwardSoftLimitThreshold(
-        -Elevator.TICKS,
-        0); // this is the bottom limit, we stop three full rotation before bottoming out
+        0, 0); // this is the bottom limit, we stop AT the bottom
     right_motor.configReverseSoftLimitThreshold(
-        -heightToTicks(24), 0); // this is the top limit, we stop before running out (1 inch leeway)
+        -heightToTicks(24), 0); // this is the top limit, we stop at the very top
 
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
@@ -82,13 +68,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     left_motor.follow(right_motor);
 
-    ElevatorTab.add(heightController);
-    ElevatorTab.addNumber("height", () -> this.currentHeight);
-    ElevatorTab.addNumber("target height", () -> this.targetHeight);
-    ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+    // ElevatorTab.add(heightController);
+    // ElevatorTab.addNumber("height", () -> this.currentHeight);
+    // ElevatorTab.addNumber("target height", () -> this.targetHeight);
+    // ElevatorTab.addNumber("right motor sensor value", this::getHeight);
 
-    ElevatorTab.addBoolean("bottom limit switch", bottomLimitSwitch::get);
-    ElevatorTab.addBoolean("top limit switch", topLimitSwitch::get);
+    ShuffleboardTab DriverTab = Shuffleboard.getTab("DriverView");
+    DriverTab.addNumber("elevator % height", () -> getHeight() / -heightToTicks(24));
+    DriverTab.addNumber("elevator height inches", this::getHeight);
   }
 
   public static double heightToTicks(double height) {
@@ -99,14 +86,31 @@ public class ElevatorSubsystem extends SubsystemBase {
     return (ticks * Elevator.GEAR_CIRCUMFERENCE) / (Elevator.TICKS * Elevator.GEAR_RATIO);
   }
 
-  /** @return true if the limit switch is being triggered */
-  public boolean topLimitSwitchTriggering() {
-    return !topLimitSwitch.get();
-  }
+  /**
+   * If the elevator is inside the slow mode, and the percent would move the elevator in, this code
+   * returns a scaled down version of the percent it was passed. otherwise it returns the full
+   * amount.
+   *
+   * @param percent the percent to apply slow mode to
+   * @return the new percent, possibly scaled down to accommodate slow mode
+   */
+  private double applySlowZoneToPercent(double percent) {
+    final double height = getHeight();
+    if (
+    // going down block
+    (percent >= 0 /* going down */
+            && height <= SlowZone.LOWER_THRESHHOLD /* inside the lower slow zone */)
+        ||
+        // going up block
+        (percent <= 0 /* going up */
+            && height >= SlowZone.UPPER_THRESHHOLD /* inside the upper slow zone */)) {
 
-  /** @return true if the limit switch is being triggered */
-  public boolean bottomLimitSwitchTriggering() {
-    return !bottomLimitSwitch.get();
+      // modify the output by the slowzone modifier
+
+      return percent * SlowZone.SLOWZONE_MODIFIER;
+    }
+    // not in slow zone conditions, proceed as normal
+    return percent;
   }
 
   /**
@@ -115,7 +119,6 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param targetHeight Uses Inches
    */
   public void setTargetHeight(double targetHeight) {
-    SmartDashboard.putNumber("set target height", targetHeight);
     this.targetHeight = targetHeight;
   }
 
@@ -125,7 +128,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setPercent(double percent) {
-    right_motor.set(TalonFXControlMode.PercentOutput, percent);
+    right_motor.set(
+        TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent * Elevator.MAX_PERCENT));
   }
 
   /**
@@ -139,6 +143,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     return ticksToHeight(-right_motor.getSelectedSensorPosition());
   }
 
+  /** does nothing rn */
   public double getTargetHeight() {
     return targetHeight;
   }

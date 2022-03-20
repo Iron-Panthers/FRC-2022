@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import frc.util.Util;
 
 /**
  * Implements a simple swerve trajectory follower, with a fixed robot heading.
@@ -30,7 +31,6 @@ public class SimpleSwerveTrajectoryFollower extends TrajectoryFollower<ChassisSp
     this.xController = xController;
     this.yController = yController;
     this.angleController = angleController;
-    angleController.enableContinuousInput(0, 2 * Math.PI); // This works so far. Considering -pi..pi
   }
 
   @Override
@@ -51,9 +51,21 @@ public class SimpleSwerveTrajectoryFollower extends TrajectoryFollower<ChassisSp
     double linearVelocityRefMeters = lastState.velocityMetersPerSecond;
     double xFF = linearVelocityRefMeters * poseRef.getRotation().getCos();
     double yFF = linearVelocityRefMeters * poseRef.getRotation().getSin();
-    // This sets the fixed angle goal to be 0. This would ideally be changed in a more advanced
-    // follower.
-    double angleFF = angleController.calculate(currentPose.getRotation().getRadians(), 0);
+
+    double currentDegrees = (360 - currentPose.getRotation().getDegrees()) % 360;
+    double targetDegrees = (360 - poseRef.getRotation().getDegrees()) % 360;
+
+    // scope current and target angles
+    double angularDifferenceDeg = Util.relativeAngularDifference(currentDegrees, targetDegrees);
+
+    // SmartDashboard.putNumber("current pose rotation", currentDegrees);
+    // SmartDashboard.putNumber("pose ref rotation", targetDegrees);
+    // SmartDashboard.putNumber("sstf/angular_difference (deg)", angularDifferenceDeg);
+
+    // use pid controller using scoped angles to get shortest-distance correction
+    double angleFF = angleController.calculate(angularDifferenceDeg, 0);
+
+    // SmartDashboard.putNumber("angleff", angleFF);
 
     double xControllerEffort = xController.calculate(currentPose.getX(), poseRef.getX());
     double yControllerEffort = yController.calculate(currentPose.getY(), poseRef.getY());

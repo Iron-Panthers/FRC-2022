@@ -112,11 +112,11 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 74.97 : 56.4;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 67 : 56.4;
 
       public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 10.78;
-      public static final double INTAKE_POSITION = MAX_HEIGHT - 107;
-      public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 100;
+      public static final double INTAKE_POSITION = MAX_HEIGHT - 97;
+      public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 90;
       public static final double CLIMB_POSITION = MAX_HEIGHT - 33.9;
     }
   }
@@ -126,15 +126,26 @@ public final class Constants {
     public static final double POSITION = 1.0;
     public static final double RATE = 0.025;
 
+    public static final double MAX_PERCENT = .7;
+
     // Heights
     /** Max height is 21.75 inches (adjusted for overshoot) */
     public static final double maxHeight = 20;
 
-    public static final double TOP_LIMIT_SWITCH_TRIGGER_HEIGHT = -19.5;
-
     /** Minimum height is 0 inches */
     public static final double minHeight = 0;
 
+    /** the minimum height the arm will stay out of the way for, inches */
+    public static final double ENGAGED_HEIGHT = 1.2;
+
+    /** run the motors at lower power when height is higher then upper or lower then lower. */
+    public static final class SlowZone {
+      public static final double SLOWZONE_MODIFIER = .25;
+      public static final double UPPER_THRESHHOLD = 16;
+      public static final double LOWER_THRESHHOLD = 7.5;
+    }
+
+    public static final double TOP_LIMIT_SWITCH_TRIGGER_HEIGHT = -19.5;
     public static final double BOTTOM_LIMIT_SWITCH_TRIGGER_HEIGHT = -.5;
 
     public static final int TICKS = 2048;
@@ -142,8 +153,8 @@ public final class Constants {
     public static final double GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
 
     public static final class Ports {
-      public static final int LEFT_MOTOR = 6;
-      public static final int RIGHT_MOTOR = 7;
+      public static final int LEFT_MOTOR = 7;
+      public static final int RIGHT_MOTOR = 6;
       public static final int BOTTOM_SWITCH = 9;
       public static final int TOP_SWITCH = 0;
     }
@@ -153,15 +164,15 @@ public final class Constants {
     /** percent to run motors at for given states */
     public static final class EjectRollers {
       /** the percent to run the eject motor at in the idling state */
-      public static final double IDLE = 1;
+      public static final double IDLE = .7;
       /** the percent to run the eject motor at in the ejection state */
-      public static final double EJECT = -.9;
+      public static final double EJECT = -.7;
     }
 
     /** percent to run motors at for given states */
     public static final class IntakeRollers {
       /** the percent to run the intake motors during the intake state */
-      public static final double INTAKE = .55;
+      public static final double INTAKE = .385;
       /** the percent to run the upper outtake during the outtake state */
       public static final double OUTTAKE_UPPER = -0.3;
       /** the percent to run the lower outtake during the outtake state */
@@ -176,6 +187,12 @@ public final class Constants {
        * from the goal)
        */
       public static final double OUTTAKE_LOWER_FAST = -0.275;
+
+      // speeds for the high shoot
+
+      public static final double OUTTAKE_UPPER_HIGH = -1;
+
+      public static final double OUTTAKE_LOWER_HIGH = -.6;
     }
 
     public static final class Ports {

@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
 import frc.util.Util;
@@ -38,7 +37,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
           new PIDController(0.4, 0.0, 0.025),
           new PIDController(0.4, 0.0, 0.025),
           new ProfiledPIDController(
-              1,
+              .147,
               0,
               0,
               new TrapezoidProfile.Constraints(
@@ -170,7 +169,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
     swerveModules = // modules are always initialized and passed in this order
         new SwerveModule[] {frontRightModule, frontLeftModule, backLeftModule, backRightModule};
 
-    rotController = new PIDController(0.04, 0.001, 0.003);
+    rotController = new PIDController(0.03, 0.001, 0.003);
     rotController.setSetpoint(0);
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
     // tune pid with:
@@ -192,6 +191,16 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** Sets the gyro angle to zero, resetting the forward direction */
   public void zeroGyroscope() {
     navx.zeroYaw();
+  }
+
+  /**
+   * Resets the odometry estimate to a specific pose. Angle is substituted with the angle read from
+   * the gyroscope.
+   *
+   * @param pose The pose to reset to.
+   */
+  public void resetOdometryToPose(Pose2d pose) {
+    swerveOdometry.resetPosition(pose, getGyroscopeRotation());
   }
 
   public Rotation2d getGyroscopeRotation() {
@@ -267,7 +276,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
    */
   private void odometryPeriodic(SwerveModuleState[] moduleStatesWritten) {
     this.robotPose = swerveOdometry.update(getGyroscopeRotation(), moduleStatesWritten);
-    SmartDashboard.putString("robot_pose", robotPose.toString());
+    // SmartDashboard.putString("robot_pose", robotPose.toString());
   }
 
   private void drivePeriodic() {

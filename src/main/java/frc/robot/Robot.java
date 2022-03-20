@@ -83,6 +83,9 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    // do stuff like vibration of controllers at match start
+    robotContainer.containerTeleopInit();
   }
 
   /** This function is called periodically during operator control. */

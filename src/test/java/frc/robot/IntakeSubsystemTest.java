@@ -117,8 +117,9 @@ public class IntakeSubsystemTest {
         Arguments.of(Modes.EJECT_RIGHT, Modes.OFF),
         Arguments.of(Modes.OUTTAKE, Modes.OFF),
         Arguments.of(Modes.OUTTAKE_FAST, Modes.OFF),
-        // after intake, mode should be idle to keep aligning balls
-        Arguments.of(Modes.INTAKE, Modes.IDLING));
+        Arguments.of(Modes.OUTTAKE_HIGH, Modes.OFF),
+        // after intake, mode should be idle to keep aligning balls (NOT TRUE ANYMORE)
+        Arguments.of(Modes.INTAKE, Modes.OFF));
   }
 
   // these two annotations tell junit to call the test repeatedly with the stream of arguments from
@@ -196,6 +197,14 @@ public class IntakeSubsystemTest {
             Modes.OUTTAKE_FAST,
             IntakeRollers.OUTTAKE_LOWER_FAST /*lower intake*/,
             IntakeRollers.OUTTAKE_UPPER_FAST /*upper intake*/,
+            EjectRollers.IDLE /*right eject*/,
+            EjectRollers.IDLE /*left eject*/),
+
+        // outtake for high shot, run the eject to feed the balls in and run the intake in reverse
+        targetMotorPercents(
+            Modes.OUTTAKE_HIGH,
+            IntakeRollers.OUTTAKE_LOWER_HIGH /*lower intake*/,
+            IntakeRollers.OUTTAKE_UPPER_HIGH /*upper intake*/,
             EjectRollers.IDLE /*right eject*/,
             EjectRollers.IDLE /*left eject*/),
 
