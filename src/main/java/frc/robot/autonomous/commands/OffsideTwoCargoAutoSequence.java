@@ -15,7 +15,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.Waypoints.OffsideStartToCenterCargo;
 import frc.robot.commands.FollowTrajectoryCommand;
-import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ForceIntakeModeCommand;
+import frc.robot.commands.SetIntakeModeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -66,7 +67,7 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
                 new FollowTrajectoryCommand(offsideStartToCenterCargo, true, drivebaseSubsystem),
                 sequence(
                     new WaitCommand(0.25),
-                    new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem)))),
+                    new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)))),
         deadline(
             new FollowTrajectoryCommand(centerCargoToOffsideStart, false, drivebaseSubsystem),
             new PrintCommand("going back")),
@@ -78,10 +79,7 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
         // Score the 2 cargo
         deadline(
             new WaitCommand(0.75 /* secs */),
-            deadline(
-                    new WaitCommand(0.075),
-                    new IntakeCommand(IntakeSubsystem.Modes.ALIGN_INTERNAL, intakeSubsystem))
-                .andThen(new WaitCommand(0.1))
-                .andThen(new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE_HIGH, intakeSubsystem))));
+            new SetIntakeModeCommand(
+                intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF)));
   }
 }

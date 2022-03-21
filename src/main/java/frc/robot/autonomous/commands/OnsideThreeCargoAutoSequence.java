@@ -16,7 +16,7 @@ import frc.robot.Constants.Arm;
 import frc.robot.autonomous.Waypoints.OnsideStartToInnerCargoAndBack;
 import frc.robot.autonomous.Waypoints.OnsideStartToOuterCargoAndBack;
 import frc.robot.commands.FollowTrajectoryCommand;
-import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -89,7 +89,7 @@ public class OnsideThreeCargoAutoSequence extends SequentialCommandGroup {
                 new WaitCommand(0.5),
                 deadline(
                     new WaitCommand(2),
-                    new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem)))),
+                    new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)))),
         // Once we're back at the start pose, raise the arm to the scoring position
         deadline(
             new WaitCommand(0.75),
@@ -99,11 +99,11 @@ public class OnsideThreeCargoAutoSequence extends SequentialCommandGroup {
         // Score the 2 cargo
         deadline(
             new WaitCommand(0.5 /* sec */),
-            new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)),
+            new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE)),
         // Follow the second trajectory which takes us back to start
         deadline(
             followOnsideToInnerTrajectory,
-            new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem)),
+            new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)),
         // Once we're back at the start pose, raise the arm to the scoring position
         deadline(
             new WaitCommand(0.75),
@@ -113,6 +113,6 @@ public class OnsideThreeCargoAutoSequence extends SequentialCommandGroup {
         // Score the 1 cargo
         deadline(
             new WaitCommand(0.5 /* sec */),
-            new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)));
+            new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE)));
   }
 }
