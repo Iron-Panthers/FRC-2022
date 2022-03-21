@@ -19,9 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.BaselineAutoSequence;
@@ -259,12 +257,7 @@ public class RobotContainer {
     // score into high from fender
     jasonLayer
         .off(jason::getLeftBumper)
-        .whenHeld(
-            new ParallelDeadlineGroup(
-                    new WaitCommand(0.075),
-                    intakeCommand.apply(IntakeSubsystem.Modes.ALIGN_INTERNAL))
-                .andThen(new WaitCommand(0.05))
-                .andThen(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_HIGH)));
+        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.ALIGN_HIGH));
 
     // stop everything
     jasonLayer.off(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
