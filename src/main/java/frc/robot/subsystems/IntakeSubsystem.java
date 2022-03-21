@@ -58,7 +58,6 @@ public class IntakeSubsystem extends SubsystemBase {
     IDLING,
     INTAKE,
     OUTTAKE,
-    OUTTAKE_FAST,
     ALIGN_HIGH,
     OUTTAKE_HIGH_LEFT,
     OUTTAKE_HIGH_ALL,
@@ -153,7 +152,6 @@ public class IntakeSubsystem extends SubsystemBase {
       case EJECT_RIGHT:
       case EJECT_ALL:
       case OUTTAKE:
-      case OUTTAKE_FAST:
         // after ejection and outtake, we should stop all motors, because there shouldn't still be
         // balls in the intake
         setMode(Modes.OFF);
@@ -245,13 +243,6 @@ public class IntakeSubsystem extends SubsystemBase {
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
   }
 
-  private void outtakeFastModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
-
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_FAST);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_FAST);
-  }
-
   private void alignHighPeriodic() {
     runEjectRollers(EjectRollers.ALIGN_INTERNAL);
     stopMotor(lowerIntakeMotor);
@@ -310,9 +301,6 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case OUTTAKE:
         outtakeModePeriodic();
-        break;
-      case OUTTAKE_FAST:
-        outtakeFastModePeriodic();
         break;
       case ALIGN_HIGH:
         alignHighPeriodic();
