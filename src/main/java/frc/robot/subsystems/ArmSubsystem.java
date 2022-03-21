@@ -54,7 +54,7 @@ public class ArmSubsystem extends SubsystemBase {
     armLeftMotor.follow(armRightMotor);
     armLeftMotor.setInverted(InvertType.OpposeMaster);
 
-    armRightMotor.configOpenloopRamp(.5);
+    armRightMotor.configOpenloopRamp(0.2);
 
     armRightMotor.setStatusFramePeriod(1, 100);
     armRightMotor.setStatusFramePeriod(2, 100);
@@ -72,7 +72,7 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.configStatorCurrentLimit(config);
     armLeftMotor.configStatorCurrentLimit(config);
 
-    pidController = new PIDController(0.005, 0, 0.0002);
+    pidController = new PIDController(0.007, 0, 0.00015);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
 
     Shuffleboard.getTab("arm").add(pidController);

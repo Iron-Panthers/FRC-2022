@@ -105,14 +105,14 @@ public final class Constants {
     }
 
     public static final double ANGULAR_OFFSET = IS_COMP_BOT ? -70 : 60;
-    public static final double GRAVITY_CONTROL_PERCENT = .075;
+    public static final double GRAVITY_CONTROL_PERCENT = .06;
 
     public static final class PID {
       public static final double ANGULAR_TOLERANCE = 1.0;
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 67 : 143.7;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 67 : 143.1;
 
       public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT;
       public static final double INTAKE_POSITION = MAX_HEIGHT - 153;
