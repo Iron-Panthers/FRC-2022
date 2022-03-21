@@ -70,7 +70,7 @@ public class IntakeSubsystem extends SubsystemBase {
   /** the current mode of the subsystem */
   private Modes mode = Modes.OFF;
 
-  private double timeOfModeTransition = 0;
+  private double timeOfModeTransition = Timer.getFPGATimestamp();
 
   /** Get the current state machine mode. */
   public Modes getMode() {
