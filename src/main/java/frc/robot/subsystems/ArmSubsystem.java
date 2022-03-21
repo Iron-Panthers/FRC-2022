@@ -19,8 +19,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
-import frc.robot.Constants.Arm.Setpoints;
-import frc.robot.Constants.Elevator;
 
 /*
 For Engineering:
@@ -37,13 +35,10 @@ public class ArmSubsystem extends SubsystemBase {
   private final PIDController pidController;
   private final CANCoder armEncoder;
 
-  private final ElevatorSubsystem elevatorSubsystem;
-
   private double desiredAngle = Arm.Setpoints.OUTTAKE_HIGH_POSITION;
 
   /** Creates a new ArmSubsystem. */
-  public ArmSubsystem(ElevatorSubsystem elevatorSubsystem) {
-    this.elevatorSubsystem = elevatorSubsystem;
+  public ArmSubsystem() {
 
     armRightMotor = new TalonFX(Arm.Ports.RIGHT_MOTOR_PORT);
     armLeftMotor = new TalonFX(Arm.Ports.LEFT_MOTOR_PORT);
@@ -113,12 +108,6 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     final double currentAngle = getAngle();
-
-    // here we test for if the desired angle would interfere with the elevator
-    if (elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT) {
-      // reduce our target so it cannot collide
-      desiredAngle = Math.min(desiredAngle, Setpoints.CLIMB_POSITION);
-    }
 
     // SmartDashboard.putNumber("current angle", currentAngle);
     // SmartDashboard.putNumber("desired angle", desiredAngle);
