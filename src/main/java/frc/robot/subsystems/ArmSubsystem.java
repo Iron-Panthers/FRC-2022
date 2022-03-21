@@ -72,7 +72,7 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.configStatorCurrentLimit(config);
     armLeftMotor.configStatorCurrentLimit(config);
 
-    pidController = new PIDController(0.005, 0, 0);
+    pidController = new PIDController(0.005, 0, 0.0002);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
 
     Shuffleboard.getTab("arm").add(pidController);
@@ -144,6 +144,7 @@ public class ArmSubsystem extends SubsystemBase {
         Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
 
     SmartDashboard.putNumber("gravityOffset", gravityOffset);
+    SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
 
     final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
 
