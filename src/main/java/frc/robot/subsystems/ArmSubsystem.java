@@ -16,6 +16,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Arm.Setpoints;
@@ -73,6 +74,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     pidController = new PIDController(0.005, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
+
+    Shuffleboard.getTab("arm").add(pidController);
 
     armEncoder =
         new CANCoder(Arm.Ports.ENCODER_PORT); // FIX ME: we will need to figure out the real value
@@ -140,7 +143,7 @@ public class ArmSubsystem extends SubsystemBase {
     final double gravityOffset =
         Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
 
-    // SmartDashboard.putNumber("gravityOffset", gravityOffset);
+    SmartDashboard.putNumber("gravityOffset", gravityOffset);
 
     final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
 
