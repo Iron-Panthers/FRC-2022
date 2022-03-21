@@ -125,14 +125,14 @@ public class IntakeSubsystemTest {
 
   // these two annotations tell junit to call the test repeatedly with the stream of arguments from
   // the above function, each as its own unit test
-  @RobotParamTest
-  @MethodSource("nextModeProgressionProvider")
-  public void nextModeSwitchesProperly(Modes fromMode, Modes targetMode) {
-    intakeSubsystem.setMode(fromMode);
-    intakeSubsystem.nextMode();
-    assertSame(targetMode, intakeSubsystem.getMode());
-    assertSame(targetMode, intakeSubsystem.getMode());
-  }
+  // @RobotParamTest
+  // @MethodSource("nextModeProgressionProvider")
+  // public void nextModeSwitchesProperly(Modes fromMode, Modes targetMode) {
+  //   intakeSubsystem.setMode(fromMode);
+  //   intakeSubsystem.nextMode();
+  //   assertSame(targetMode, intakeSubsystem.getMode());
+  //   assertSame(targetMode, intakeSubsystem.getMode());
+  // }
 
   // here be dragons...
 
