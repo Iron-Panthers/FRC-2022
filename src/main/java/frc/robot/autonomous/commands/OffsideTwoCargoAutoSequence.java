@@ -9,7 +9,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Arm;
@@ -56,7 +55,7 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
 
     // Sequence is explained by comments
     addCommands(
-        new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem),
+        new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope(), drivebaseSubsystem),
         // Follow trajectory and intake when we are near our target cargo
         parallel(
             sequence(
@@ -68,12 +67,10 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
                 sequence(
                     new WaitCommand(0.25),
                     new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)))),
-        deadline(
-            new FollowTrajectoryCommand(centerCargoToOffsideStart, false, drivebaseSubsystem),
-            new PrintCommand("going back")),
+        new FollowTrajectoryCommand(centerCargoToOffsideStart, false, drivebaseSubsystem),
         // Once we're back at the start pose, raise the arm to the scoring position
         deadline(
-            new WaitCommand(0.25),
+            new WaitCommand(0.5),
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION), armSubsystem)),
         // Score the 2 cargo
