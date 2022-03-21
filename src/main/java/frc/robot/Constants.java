@@ -104,7 +104,7 @@ public final class Constants {
       public static final int ENCODER_PORT = 22;
     }
 
-    public static final double ANGULAR_OFFSET = IS_COMP_BOT ? -70 : 44;
+    public static final double ANGULAR_OFFSET = IS_COMP_BOT ? -70 : 84.99;
     public static final double GRAVITY_CONTROL_PERCENT = .085;
 
     public static final class PID {
@@ -112,10 +112,10 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 67 : 56.4;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 67 : 118;
 
-      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 10.78;
-      public static final double INTAKE_POSITION = MAX_HEIGHT - 97;
+      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT;
+      public static final double INTAKE_POSITION = MAX_HEIGHT - 153;
       public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 90;
       public static final double CLIMB_POSITION = MAX_HEIGHT - 33.9;
     }
@@ -167,6 +167,8 @@ public final class Constants {
       public static final double IDLE = .7;
       /** the percent to run the eject motor at in the ejection state */
       public static final double EJECT = -.7;
+
+      public static final double ALIGN_INTERNAL = -0.1;
     }
 
     /** percent to run motors at for given states */
@@ -177,6 +179,9 @@ public final class Constants {
       public static final double OUTTAKE_UPPER = -0.3;
       /** the percent to run the lower outtake during the outtake state */
       public static final double OUTTAKE_LOWER = -0.225;
+
+      public static final double ALIGN_INTERNAL = 0.1103;
+
       /**
        * the percent to run the upper outtake during the outtake fast state (~1 robot's distance
        * from the goal)

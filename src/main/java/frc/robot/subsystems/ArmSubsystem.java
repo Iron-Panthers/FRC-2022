@@ -38,7 +38,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final ElevatorSubsystem elevatorSubsystem;
 
-  private double desiredAngle = Arm.Setpoints.MAX_HEIGHT;
+  private double desiredAngle = Arm.Setpoints.OUTTAKE_HIGH_POSITION;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem(ElevatorSubsystem elevatorSubsystem) {
@@ -71,9 +71,8 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.configStatorCurrentLimit(config);
     armLeftMotor.configStatorCurrentLimit(config);
 
-    pidController = new PIDController(0.015, 0, 0);
+    pidController = new PIDController(0.005, 0, 0);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
-    // Shuffleboard.getTab("arm").add(pidController);
 
     armEncoder =
         new CANCoder(Arm.Ports.ENCODER_PORT); // FIX ME: we will need to figure out the real value
@@ -82,6 +81,8 @@ public class ArmSubsystem extends SubsystemBase {
         SensorInitializationStrategy.BootToAbsolutePosition);
     armEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
     armEncoder.configMagnetOffset(Arm.ANGULAR_OFFSET);
+    armEncoder.configSensorDirection(true);
+    armEncoder.setPositionToAbsolute(10); // ms
 
     ShuffleboardTab tab = Shuffleboard.getTab("DriverView");
     tab.addNumber("target arm angle", this::getTargetAngle);

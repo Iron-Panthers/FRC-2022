@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
@@ -61,6 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
     EJECT_LEFT,
     EJECT_RIGHT,
     EJECT_ALL,
+    ALIGN_INTERNAL,
   }
 
   /** the current mode of the subsystem */
@@ -70,6 +72,8 @@ public class IntakeSubsystem extends SubsystemBase {
   public Modes getMode() {
     return mode;
   }
+
+  private long ejectionDebounceBaseTime = RobotController.getFPGATime();
 
   /**
    * This command should only be called once, after a given mode is finished, or prematurely stopped
@@ -91,6 +95,7 @@ public class IntakeSubsystem extends SubsystemBase {
       case EJECT_LEFT:
       case EJECT_RIGHT:
       case EJECT_ALL:
+      case ALIGN_INTERNAL:
       case OUTTAKE:
       case OUTTAKE_FAST:
       case OUTTAKE_HIGH:
@@ -107,6 +112,9 @@ public class IntakeSubsystem extends SubsystemBase {
    * <p>fixme: this should have checks, but currently doesn't
    */
   public void setMode(Modes mode) {
+    if (mode == Modes.OUTTAKE_HIGH) {
+      ejectionDebounceBaseTime = RobotController.getFPGATime();
+    }
     this.mode = mode;
   }
 
@@ -180,7 +188,15 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private void outtakeHighModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
+    long curTime = RobotController.getFPGATime();
+    // 250,000 nanoseconds = 0.25s
+    if (curTime - ejectionDebounceBaseTime >= 250_000) {
+      runLeftEjectMotor(EjectRollers.IDLE);
+    }
+    // 500,000 nanoseconds= 0.5s
+    if (curTime - ejectionDebounceBaseTime >= 500_000) {
+      runRightEjectRoller(EjectRollers.IDLE);
+    }
 
     lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_HIGH);
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_HIGH);
@@ -204,6 +220,12 @@ public class IntakeSubsystem extends SubsystemBase {
     runEjectRollers(EjectRollers.EJECT);
 
     feedBallsViaIntakeForEject();
+  }
+
+  private void alignInternalPeriodic() {
+    runEjectRollers(EjectRollers.ALIGN_INTERNAL);
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.ALIGN_INTERNAL);
   }
 
   @Override
@@ -236,6 +258,9 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case EJECT_ALL:
         ejectAllModePeriodic();
+        break;
+      case ALIGN_INTERNAL:
+        alignInternalPeriodic();
         break;
     }
   }
