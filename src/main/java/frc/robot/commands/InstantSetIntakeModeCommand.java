@@ -15,7 +15,7 @@ public class InstantSetIntakeModeCommand extends InstantCommand {
   IntakeSubsystem.Modes mode;
   IntakeSubsystem intakeSubsystem;
 
-  public InstantSetIntakeModeCommand(IntakeSubsystem.Modes mode, IntakeSubsystem intakeSubsystem) {
+  public InstantSetIntakeModeCommand(IntakeSubsystem intakeSubsystem, IntakeSubsystem.Modes mode) {
     addRequirements(intakeSubsystem);
     this.intakeSubsystem = intakeSubsystem;
     this.mode = mode;

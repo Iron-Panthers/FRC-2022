@@ -14,9 +14,9 @@ public class SetIntakeModeCommand extends CommandBase {
 
   /** Creates a new SetIntakeModeCommand. */
   public SetIntakeModeCommand(
+      IntakeSubsystem intakeSubsystem,
       IntakeSubsystem.Modes startMode,
-      IntakeSubsystem.Modes endMode,
-      IntakeSubsystem intakeSubsystem) {
+      IntakeSubsystem.Modes endMode) {
     this.intakeSubsystem = intakeSubsystem;
     addRequirements(intakeSubsystem);
 

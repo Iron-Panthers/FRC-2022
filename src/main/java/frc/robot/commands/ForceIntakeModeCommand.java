@@ -12,7 +12,7 @@ public class ForceIntakeModeCommand extends CommandBase {
   IntakeSubsystem intakeSubsystem;
 
   /** Creates a new ForceIntakeModeCommand. */
-  public ForceIntakeModeCommand(IntakeSubsystem.Modes mode, IntakeSubsystem intakeSubsystem) {
+  public ForceIntakeModeCommand(IntakeSubsystem intakeSubsystem, IntakeSubsystem.Modes mode) {
     this.mode = mode;
 
     this.intakeSubsystem = intakeSubsystem;
