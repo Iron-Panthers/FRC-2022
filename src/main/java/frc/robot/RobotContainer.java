@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.BaselineAutoSequence;
@@ -45,7 +44,6 @@ import frc.util.Util;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -236,15 +234,6 @@ public class RobotContainer {
                 (interrupted) -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION),
                 () -> false,
                 armSubsystem));
-
-    /**
-     * this curried start end command calls setMode with the passed mode, then calls next mode when
-     * the command is stopped
-     */
-    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
-        mode ->
-            new StartEndCommand(
-                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
 
     // intake balls
     jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));

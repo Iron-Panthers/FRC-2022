@@ -169,6 +169,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void setMode(Modes mode) {
     timeOfModeTransition = Timer.getFPGATimestamp();
     this.mode = mode;
+    modeLocked = false;
   }
 
   /** sets mode, and locks it to prevent state transitions */
