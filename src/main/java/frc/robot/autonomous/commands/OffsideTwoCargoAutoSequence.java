@@ -8,12 +8,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Arm;
-import frc.robot.autonomous.Waypoints.OffsideStartToCenterCargoAndBack;
+import frc.robot.autonomous.Waypoints.OffsideStartToCenterCargo;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -35,32 +35,27 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
         new TrajectoryConfig(maxVelocityMetersPerSecond, maxAccelerationMetersPerSecondSq)
             .setKinematics(kinematics);
 
-    Trajectory offsideStartToCenterCargoAndBack =
+    trajectoryConfig.setReversed(false);
+
+    Trajectory offsideStartToCenterCargo =
         TrajectoryGenerator.generateTrajectory(
-            OffsideStartToCenterCargoAndBack.FIRST,
-            List.of(OffsideStartToCenterCargoAndBack.MIDDLE_B),
-            OffsideStartToCenterCargoAndBack.LAST,
+            OffsideStartToCenterCargo.FIRST,
+            List.of(),
+            OffsideStartToCenterCargo.LAST,
             trajectoryConfig);
 
-    // Create command to follow the trajectory
-    // Note: this command will localize the odometry to the starting position (offside center
-    // tarmac)
-    Command followTrajectory =
-        new FollowTrajectoryCommand(offsideStartToCenterCargoAndBack, true, drivebaseSubsystem);
+    trajectoryConfig.setReversed(true);
+
+    Trajectory centerCargoToOffsideStart =
+        TrajectoryGenerator.generateTrajectory(
+            OffsideStartToCenterCargo.LAST,
+            List.of(),
+            OffsideStartToCenterCargo.FIRST,
+            trajectoryConfig);
 
     // Sequence is explained by comments
     addCommands(
-        new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope(), drivebaseSubsystem),
-        // If arm not properly up, try to jog it. Should be addressed physically soon.
-        deadline(
-            new WaitCommand(0.75),
-            new InstantCommand(
-                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION - 10),
-                armSubsystem)),
-        // Score pre-load
-        deadline(
-            new WaitCommand(0.75 /* secs */),
-            new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)),
+        new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem),
         // Follow trajectory and intake when we are near our target cargo
         parallel(
             sequence(
@@ -68,21 +63,25 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
                 new InstantCommand(
                     () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION), armSubsystem)),
             deadline(
-                followTrajectory,
+                new FollowTrajectoryCommand(offsideStartToCenterCargo, true, drivebaseSubsystem),
                 sequence(
-                    new WaitCommand(0.5),
-                    deadline(
-                        new WaitCommand(2),
-                        new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem))))),
+                    new WaitCommand(0.25),
+                    new IntakeCommand(IntakeSubsystem.Modes.INTAKE, intakeSubsystem)))),
+        deadline(
+            new FollowTrajectoryCommand(centerCargoToOffsideStart, false, drivebaseSubsystem),
+            new PrintCommand("going back")),
         // Once we're back at the start pose, raise the arm to the scoring position
         deadline(
-            new WaitCommand(2),
+            new WaitCommand(0.25),
             new InstantCommand(
-                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION - 10),
-                armSubsystem)),
-        // Score the 1 cargo
+                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION), armSubsystem)),
+        // Score the 2 cargo
         deadline(
-            new WaitCommand(1 /* sec */),
-            new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE, intakeSubsystem)));
+            new WaitCommand(0.75 /* secs */),
+            deadline(
+                    new WaitCommand(0.075),
+                    new IntakeCommand(IntakeSubsystem.Modes.ALIGN_INTERNAL, intakeSubsystem))
+                .andThen(new WaitCommand(0.1))
+                .andThen(new IntakeCommand(IntakeSubsystem.Modes.OUTTAKE_HIGH, intakeSubsystem))));
   }
 }

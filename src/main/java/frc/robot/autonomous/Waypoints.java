@@ -17,12 +17,10 @@ public final class Waypoints {
     public static final Pose2d LAST = new Pose2d(4.926, 4.572, Rotation2d.fromDegrees(170));
   }
 
-  public static final class OffsideStartToCenterCargoAndBack {
+  public static final class OffsideStartToCenterCargo {
 
-    public static final Pose2d FIRST =
-        new Pose2d(7.010, 4.572, Rotation2d.fromDegrees(160.0 + 180));
-    public static final Translation2d MIDDLE_B = new Translation2d(4.9987, 6.096);
-    public static final Pose2d LAST = new Pose2d(7.010, 4.572, Rotation2d.fromDegrees(-20.457));
+    public static final Pose2d FIRST = new Pose2d(7.010, 4.572, Rotation2d.fromDegrees(160.0));
+    public static final Pose2d LAST = new Pose2d(4.9987, 6.096, Rotation2d.fromDegrees(150));
   }
 
   public static final class OnsideStartToOuterCargoAndBack {
