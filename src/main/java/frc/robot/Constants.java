@@ -166,8 +166,8 @@ public final class Constants {
     public static final class ModeWaits {
       public static final class High {
         public static final double ALIGN_TO_LEFT = .5;
-        public static final double LEFT_TO_ALL = .5;
-        public static final double ALL_TO_OFF = .8;
+        public static final double LEFT_TO_ALL = .8;
+        public static final double ALL_TO_OFF = .4;
       }
 
       /** this is out taking backwards, ie over the elevator */
@@ -202,22 +202,10 @@ public final class Constants {
 
       public static final double ALIGN_INTERNAL = 0.1103;
 
-      /**
-       * the percent to run the upper outtake during the outtake fast state (~1 robot's distance
-       * from the goal)
-       */
-      public static final double OUTTAKE_UPPER_FAST = -0.565;
-      /**
-       * the percent to run the lower outtake during the outtake fast state (~1 robot's distance
-       * from the goal)
-       */
-      public static final double OUTTAKE_LOWER_FAST = -0.275;
-
       // speeds for the high shoot
+      public static final double OUTTAKE_UPPER_HIGH = -.75;
 
-      public static final double OUTTAKE_UPPER_HIGH = -1.0;
-
-      public static final double OUTTAKE_LOWER_HIGH = -1.0;
+      public static final double OUTTAKE_LOWER_HIGH = -.9;
     }
 
     public static final class Ports {
