@@ -6,10 +6,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
+import frc.robot.Constants.Intake.ModeWaits;
 import frc.robot.Constants.Intake.Ports;
 import frc.util.MacUtil;
 
@@ -58,22 +59,33 @@ public class IntakeSubsystem extends SubsystemBase {
     INTAKE,
     OUTTAKE,
     OUTTAKE_FAST,
-    OUTTAKE_HIGH,
+    ALIGN_HIGH,
+    OUTTAKE_HIGH_LEFT,
+    OUTTAKE_HIGH_ALL,
     EJECT_LEFT,
     EJECT_RIGHT,
     EJECT_ALL,
-    ALIGN_INTERNAL,
   }
 
   /** the current mode of the subsystem */
   private Modes mode = Modes.OFF;
+
+  private double timeOfModeTransition = 0;
 
   /** Get the current state machine mode. */
   public Modes getMode() {
     return mode;
   }
 
-  private long ejectionDebounceBaseTime = RobotController.getFPGATime();
+  /**
+   * Time in seconds since mode has changed, good for modes that only run for a certain amount of
+   * time.
+   *
+   * @return time in seconds since mode change
+   */
+  public double timeSinceModeTransition() {
+    return Timer.getFPGATimestamp() - timeOfModeTransition;
+  }
 
   /**
    * This command should only be called once, after a given mode is finished, or prematurely stopped
@@ -84,21 +96,49 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void nextMode() {
     switch (mode) {
-      case IDLING:
       case OFF:
         // these modes are resting points, and do not have a next mode until user input is provided
         break;
+
+        // high shot block
+      case ALIGN_HIGH:
+        // when our time is up, we transition to high left, otherwise we wait at this mode
+        if (timeSinceModeTransition() >= ModeWaits.High.ALIGN_TO_LEFT) {
+          setMode(Modes.OUTTAKE_HIGH_LEFT);
+        }
+        break;
+      case OUTTAKE_HIGH_LEFT:
+        if (timeSinceModeTransition() >= ModeWaits.High.LEFT_TO_ALL) {
+          setMode(Modes.OUTTAKE_HIGH_ALL);
+        }
+        break;
+      case OUTTAKE_HIGH_ALL:
+        if (timeSinceModeTransition() >= ModeWaits.High.ALL_TO_OFF) {
+          setMode(Modes.OFF);
+        }
+        break;
+        // end high shot block
+
+        // intake block
       case INTAKE:
-        // after intake, we should run the idling motor to align balls for shooting and outtake
-        // setMode(Modes.IDLING);
-        // break;
+        // after intake, we should run the idling motor for a time to align balls for shooting and
+        // outtake
+        setMode(Modes.IDLING);
+        break;
+      case IDLING:
+        if (timeSinceModeTransition() >= ModeWaits.IntakeWaits.IDLE_TO_OFF) {
+          setMode(Modes.OFF);
+        }
+        break;
+
+        // end intake block
+
+        // this set of modes should go to off
       case EJECT_LEFT:
       case EJECT_RIGHT:
       case EJECT_ALL:
-      case ALIGN_INTERNAL:
       case OUTTAKE:
       case OUTTAKE_FAST:
-      case OUTTAKE_HIGH:
         // after ejection and outtake, we should stop all motors, because there shouldn't still be
         // balls in the intake
         setMode(Modes.OFF);
@@ -112,9 +152,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * <p>fixme: this should have checks, but currently doesn't
    */
   public void setMode(Modes mode) {
-    if (mode == Modes.OUTTAKE_HIGH) {
-      ejectionDebounceBaseTime = RobotController.getFPGATime();
-    }
+    timeOfModeTransition = Timer.getFPGATimestamp();
     this.mode = mode;
   }
 
@@ -187,16 +225,22 @@ public class IntakeSubsystem extends SubsystemBase {
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_FAST);
   }
 
-  private void outtakeHighModePeriodic() {
-    long curTime = RobotController.getFPGATime();
-    // 250,000 nanoseconds = 0.25s
-    if (curTime - ejectionDebounceBaseTime >= 250_000) {
-      runLeftEjectMotor(EjectRollers.IDLE);
-    }
-    // 500,000 nanoseconds= 0.5s
-    if (curTime - ejectionDebounceBaseTime >= 500_000) {
-      runRightEjectRoller(EjectRollers.IDLE);
-    }
+  private void alignHighPeriodic() {
+    runEjectRollers(EjectRollers.ALIGN_INTERNAL);
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.ALIGN_INTERNAL);
+  }
+
+  private void outtakeHighLeftModePeriodic() {
+    runLeftEjectMotor(EjectRollers.IDLE);
+    stopMotor(rightEjectMotor);
+
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_HIGH);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_HIGH);
+  }
+
+  private void outtakeHighAllModePeriodic() {
+    runEjectRollers(EjectRollers.IDLE);
 
     lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_HIGH);
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_HIGH);
@@ -222,12 +266,6 @@ public class IntakeSubsystem extends SubsystemBase {
     feedBallsViaIntakeForEject();
   }
 
-  private void alignInternalPeriodic() {
-    runEjectRollers(EjectRollers.ALIGN_INTERNAL);
-    stopMotor(lowerIntakeMotor);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.ALIGN_INTERNAL);
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -247,8 +285,14 @@ public class IntakeSubsystem extends SubsystemBase {
       case OUTTAKE_FAST:
         outtakeFastModePeriodic();
         break;
-      case OUTTAKE_HIGH:
-        outtakeHighModePeriodic();
+      case ALIGN_HIGH:
+        alignHighPeriodic();
+        break;
+      case OUTTAKE_HIGH_LEFT:
+        outtakeHighLeftModePeriodic();
+        break;
+      case OUTTAKE_HIGH_ALL:
+        outtakeHighAllModePeriodic();
         break;
       case EJECT_LEFT:
         ejectLeftModePeriodic();
@@ -258,9 +302,6 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case EJECT_ALL:
         ejectAllModePeriodic();
-        break;
-      case ALIGN_INTERNAL:
-        alignInternalPeriodic();
         break;
     }
   }

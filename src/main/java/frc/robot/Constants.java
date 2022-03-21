@@ -161,6 +161,21 @@ public final class Constants {
   }
 
   public static final class Intake {
+
+    /** time in seconds to wait between certain modes */
+    public static final class ModeWaits {
+      public static final class High {
+        public static final double ALIGN_TO_LEFT = .5;
+        public static final double LEFT_TO_ALL = .5;
+        public static final double ALL_TO_OFF = .8;
+      }
+
+      // nasty name because we cannot nest
+      public static final class IntakeWaits {
+        public static final double IDLE_TO_OFF = 5;
+      }
+    }
+
     /** percent to run motors at for given states */
     public static final class EjectRollers {
       /** the percent to run the eject motor at in the idling state */
