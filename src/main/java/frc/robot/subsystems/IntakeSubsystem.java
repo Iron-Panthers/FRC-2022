@@ -70,11 +70,23 @@ public class IntakeSubsystem extends SubsystemBase {
   /** the current mode of the subsystem */
   private Modes mode = Modes.OFF;
 
+  /** timestamp in fpga seconds of mode transition */
   private double timeOfModeTransition = Timer.getFPGATimestamp();
+
+  /**
+   * this variable represents if automatic mode transitions are locked. this is used to hold in a
+   * mode. this value should never explicitly be set
+   */
+  private boolean modeLocked = false;
 
   /** Get the current state machine mode. */
   public Modes getMode() {
     return mode;
+  }
+
+  /** Gets the boolean that determines if the mode is locked, preventing transition */
+  public boolean getModeLocked() {
+    return modeLocked;
   }
 
   /**
@@ -88,13 +100,16 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
-   * This command should only be called once, after a given mode is finished, or prematurely stopped
+   * This function is called in periodic to increment the state machine
    *
    * <p>Puts the subsystem state machine into the next mode. Some modes, like idling, are resting
    * points, from which there are not "next" modes. For other modes, like intake, idling is the
    * logical progression, and "next" mode
    */
-  public void nextMode() {
+  private void nextModePeriodic() {
+    // if our mode is locked, we should not increment the mode
+    if (modeLocked) return;
+
     switch (mode) {
       case OFF:
         // these modes are resting points, and do not have a next mode until user input is provided
@@ -154,6 +169,17 @@ public class IntakeSubsystem extends SubsystemBase {
   public void setMode(Modes mode) {
     timeOfModeTransition = Timer.getFPGATimestamp();
     this.mode = mode;
+  }
+
+  /** sets mode, and locks it to prevent state transitions */
+  public void setLockMode(Modes mode) {
+    setMode(mode);
+    modeLocked = true;
+  }
+
+  /** unlocks mode transitions, so that they can occur */
+  public void unlockMode() {
+    modeLocked = false;
   }
 
   /** periodic helper method, easy way to turn a motor off, by setting to 0 percent output */
@@ -269,6 +295,8 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    nextModePeriodic();
+
     switch (mode) {
       case OFF:
         offModePeriodic();
