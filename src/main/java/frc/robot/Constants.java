@@ -165,8 +165,8 @@ public final class Constants {
     /** time in seconds to wait between certain modes */
     public static final class ModeWaits {
       public static final class High {
-        public static final double ALIGN_TO_LEFT = .25;
-        public static final double LEFT_TO_ALL = .2;
+        public static final double ALIGN_TO_LEFT = .24;
+        public static final double LEFT_TO_ALL = .24;
         public static final double ALL_TO_OFF = .2;
       }
 
