@@ -246,11 +246,6 @@ public class RobotContainer {
         .off(jason::getYButton)
         .whenPressed(
             new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE));
-    // score into low from far
-    jasonLayer
-        .off(jason::getXButton)
-        .whenPressed(
-            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE_FAST));
     // score into high from fender
     jasonLayer
         .off(jason::getLeftBumper)
