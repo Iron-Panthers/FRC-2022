@@ -165,9 +165,9 @@ public final class Constants {
     /** time in seconds to wait between certain modes */
     public static final class ModeWaits {
       public static final class High {
-        public static final double ALIGN_TO_LEFT = .5;
-        public static final double LEFT_TO_ALL = .8;
-        public static final double ALL_TO_OFF = .4;
+        public static final double ALIGN_TO_LEFT = .25;
+        public static final double LEFT_TO_ALL = .2;
+        public static final double ALL_TO_OFF = .2;
       }
 
       /** this is out taking backwards, ie over the elevator */
