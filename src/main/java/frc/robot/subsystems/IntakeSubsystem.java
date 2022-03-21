@@ -147,11 +147,18 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // end intake block
 
+        // outtake block
+      case OUTTAKE:
+        if (timeSinceModeTransition() >= ModeWaits.Outtake.OUTTAKE_TO_OFF) {
+          setMode(Modes.OFF);
+        }
+        break;
+        // end outtake block
+
         // this set of modes should go to off
       case EJECT_LEFT:
       case EJECT_RIGHT:
       case EJECT_ALL:
-      case OUTTAKE:
         // after ejection and outtake, we should stop all motors, because there shouldn't still be
         // balls in the intake
         setMode(Modes.OFF);

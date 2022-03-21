@@ -170,6 +170,11 @@ public final class Constants {
         public static final double ALL_TO_OFF = .8;
       }
 
+      /** this is out taking backwards, ie over the elevator */
+      public static final class Outtake {
+        public static final double OUTTAKE_TO_OFF = .4;
+      }
+
       // nasty name because we cannot nest
       public static final class IntakeWaits {
         public static final double IDLE_TO_OFF = 5;
