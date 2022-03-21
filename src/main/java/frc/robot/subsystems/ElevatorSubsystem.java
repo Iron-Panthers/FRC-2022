@@ -4,11 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Elevator.SlowZone;
 
@@ -35,40 +38,40 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorSubsystem() {
     heightController = new PIDController(0.000075, 0, 0);
 
-    // left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
-    // right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
+    left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
+    right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
 
-    // currentHeight = 0.0;
-    // targetHeight = 0.0;
+    currentHeight = 0.0;
+    targetHeight = 0.0;
 
-    // right_motor.configFactoryDefault();
-    // left_motor.configFactoryDefault();
+    right_motor.configFactoryDefault();
+    left_motor.configFactoryDefault();
 
-    // right_motor.clearStickyFaults();
-    // left_motor.clearStickyFaults();
+    right_motor.clearStickyFaults();
+    left_motor.clearStickyFaults();
 
-    // right_motor.configForwardSoftLimitThreshold(
-    //     0, 0); // this is the bottom limit, we stop AT the bottom
-    // right_motor.configReverseSoftLimitThreshold(
-    //     -heightToTicks(24), 0); // this is the top limit, we stop at the very top
+    right_motor.configForwardSoftLimitThreshold(
+        0, 0); // this is the bottom limit, we stop AT the bottom
+    right_motor.configReverseSoftLimitThreshold(
+        -heightToTicks(24), 0); // this is the top limit, we stop at the very top
 
-    // right_motor.configForwardSoftLimitEnable(true, 0);
-    // right_motor.configReverseSoftLimitEnable(true, 0);
+    right_motor.configForwardSoftLimitEnable(true, 0);
+    right_motor.configReverseSoftLimitEnable(true, 0);
 
-    // right_motor.configOpenloopRamp(.5);
+    right_motor.configOpenloopRamp(.5);
 
-    // setSensorHeight(0);
+    setSensorHeight(0);
 
-    // // make sure we hold our height when we get disabled
-    // right_motor.setNeutralMode(NeutralMode.Brake);
-    // left_motor.setNeutralMode(NeutralMode.Brake);
+    // make sure we hold our height when we get disabled
+    right_motor.setNeutralMode(NeutralMode.Brake);
+    left_motor.setNeutralMode(NeutralMode.Brake);
 
-    // left_motor.follow(right_motor);
+    left_motor.follow(right_motor);
 
-    // ElevatorTab.add(heightController);
-    // ElevatorTab.addNumber("height", () -> this.currentHeight);
-    // ElevatorTab.addNumber("target height", () -> this.targetHeight);
-    // ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+    ElevatorTab.add(heightController);
+    ElevatorTab.addNumber("height", () -> this.currentHeight);
+    ElevatorTab.addNumber("target height", () -> this.targetHeight);
+    ElevatorTab.addNumber("right motor sensor value", this::getHeight);
 
     ShuffleboardTab DriverTab = Shuffleboard.getTab("DriverView");
     DriverTab.addNumber("elevator % height", () -> getHeight() / -heightToTicks(24));
@@ -120,14 +123,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private void setSensorHeight(double ticks) {
-    // left_motor.setSelectedSensorPosition(ticks);
-    // right_motor.setSelectedSensorPosition(ticks);
+    left_motor.setSelectedSensorPosition(ticks);
+    right_motor.setSelectedSensorPosition(ticks);
   }
 
   public void setPercent(double percent) {
-    // right_motor.set(
-    //     TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent *
-    // Elevator.MAX_PERCENT));
+    right_motor.set(
+        TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent * Elevator.MAX_PERCENT));
   }
 
   /**
@@ -136,9 +138,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return current Height in inches
    */
   public double getHeight() {
-    return 0;
     // // we take the negative, because running it in reverse goes up
-    // return ticksToHeight(-right_motor.getSelectedSensorPosition());
+    return ticksToHeight(-right_motor.getSelectedSensorPosition());
   }
 
   /** does nothing rn */

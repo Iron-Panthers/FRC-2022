@@ -19,9 +19,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.BaselineAutoSequence;
@@ -31,7 +28,9 @@ import frc.robot.autonomous.commands.OnsideTwoCargoAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorPositionCommand;
+import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
+import frc.robot.commands.InstantSetIntakeModeCommand;
 import frc.robot.commands.PreciseArmCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
@@ -47,7 +46,6 @@ import frc.util.Util;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -61,9 +59,7 @@ public class RobotContainer {
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  private final ArmSubsystem armSubsystem =
-      new ArmSubsystem(
-          elevatorSubsystem /* the arm subsystem reacts to the state of the elevator subsystem */);
+  private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
@@ -239,48 +235,38 @@ public class RobotContainer {
                 () -> false,
                 armSubsystem));
 
-    /**
-     * this curried start end command calls setMode with the passed mode, then calls next mode when
-     * the command is stopped
-     */
-    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
-        mode ->
-            new StartEndCommand(
-                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
-
     // intake balls
-    jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    // score into low from fender
-    jasonLayer.off(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-    // score into low from far
     jasonLayer
-        .off(jason::getXButton)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+        .off(jason::getAButton)
+        .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE));
+    // score into low from fender
+    jasonLayer
+        .off(jason::getYButton)
+        .whenPressed(
+            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE));
     // score into high from fender
     jasonLayer
         .off(jason::getLeftBumper)
-        .whenHeld(
-            new ParallelDeadlineGroup(
-                    new WaitCommand(0.075),
-                    intakeCommand.apply(IntakeSubsystem.Modes.ALIGN_INTERNAL))
-                .andThen(new WaitCommand(0.05))
-                .andThen(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_HIGH)));
+        .whenPressed(
+            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH));
 
     // stop everything
-    jasonLayer.off(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
+    jasonLayer
+        .off(jason::getBButton)
+        .whenPressed(new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OFF));
 
     // eject left side
     jasonLayer
         .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
+        .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.EJECT_LEFT));
     // eject right side
     jasonLayer
         .off(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
+        .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.EJECT_RIGHT));
     // eject everything
     jasonLayer
         .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
+        .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.EJECT_ALL));
   }
 
   /**

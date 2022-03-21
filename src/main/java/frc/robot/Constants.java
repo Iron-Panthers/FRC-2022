@@ -161,6 +161,26 @@ public final class Constants {
   }
 
   public static final class Intake {
+
+    /** time in seconds to wait between certain modes */
+    public static final class ModeWaits {
+      public static final class High {
+        public static final double ALIGN_TO_LEFT = .24;
+        public static final double LEFT_TO_ALL = .24;
+        public static final double ALL_TO_OFF = .2;
+      }
+
+      /** this is out taking backwards, ie over the elevator */
+      public static final class Outtake {
+        public static final double OUTTAKE_TO_OFF = .4;
+      }
+
+      // nasty name because we cannot nest
+      public static final class IntakeWaits {
+        public static final double IDLE_TO_OFF = 1;
+      }
+    }
+
     /** percent to run motors at for given states */
     public static final class EjectRollers {
       /** the percent to run the eject motor at in the idling state */
@@ -182,22 +202,10 @@ public final class Constants {
 
       public static final double ALIGN_INTERNAL = 0.1103;
 
-      /**
-       * the percent to run the upper outtake during the outtake fast state (~1 robot's distance
-       * from the goal)
-       */
-      public static final double OUTTAKE_UPPER_FAST = -0.565;
-      /**
-       * the percent to run the lower outtake during the outtake fast state (~1 robot's distance
-       * from the goal)
-       */
-      public static final double OUTTAKE_LOWER_FAST = -0.275;
-
       // speeds for the high shoot
+      public static final double OUTTAKE_UPPER_HIGH = -.75;
 
-      public static final double OUTTAKE_UPPER_HIGH = -1.0;
-
-      public static final double OUTTAKE_LOWER_HIGH = -1.0;
+      public static final double OUTTAKE_LOWER_HIGH = -.9;
     }
 
     public static final class Ports {
