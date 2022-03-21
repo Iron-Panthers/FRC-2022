@@ -234,7 +234,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private void idlingModePeriodic() {
-    stopIntakeRollers();
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
+
     runEjectRollers(EjectRollers.IDLE);
   }
 

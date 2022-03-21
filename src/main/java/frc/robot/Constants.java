@@ -177,7 +177,7 @@ public final class Constants {
 
       // nasty name because we cannot nest
       public static final class IntakeWaits {
-        public static final double IDLE_TO_OFF = 5;
+        public static final double IDLE_TO_OFF = 1;
       }
     }
 
