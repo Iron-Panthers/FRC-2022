@@ -165,9 +165,9 @@ public final class Constants {
     /** time in seconds to wait between certain modes */
     public static final class ModeWaits {
       public static final class High {
-        public static final double ALIGN_TO_LEFT = .24;
-        public static final double LEFT_TO_ALL = .24;
-        public static final double ALL_TO_OFF = .2;
+        public static final double ALIGN_TO_LEFT = .24 * 2;
+        public static final double LEFT_TO_ALL = .24 * 6;
+        public static final double ALL_TO_OFF = 2;
       }
 
       /** this is out taking backwards, ie over the elevator */
@@ -188,6 +188,9 @@ public final class Constants {
       /** the percent to run the eject motor at in the ejection state */
       public static final double EJECT = -.7;
 
+      /** the percent to run for high shot */
+      public static final double FEED_HIGH = 1;
+
       public static final double ALIGN_INTERNAL = -0.1;
     }
 
@@ -203,9 +206,9 @@ public final class Constants {
       public static final double ALIGN_INTERNAL = 0.1103;
 
       // speeds for the high shoot
-      public static final double OUTTAKE_UPPER_HIGH = -.75;
+      public static final double OUTTAKE_UPPER_HIGH = -1;
 
-      public static final double OUTTAKE_LOWER_HIGH = -.9;
+      public static final double OUTTAKE_LOWER_HIGH = -1;
     }
 
     public static final class Ports {
