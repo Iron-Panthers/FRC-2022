@@ -259,7 +259,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private void outtakeHighLeftModePeriodic() {
-    runLeftEjectMotor(EjectRollers.IDLE);
+    runLeftEjectMotor(EjectRollers.FEED_HIGH);
     stopMotor(rightEjectMotor);
 
     lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_HIGH);
@@ -267,7 +267,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private void outtakeHighAllModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
+    runEjectRollers(EjectRollers.FEED_HIGH);
 
     lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_HIGH);
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_HIGH);
