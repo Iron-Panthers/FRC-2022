@@ -56,10 +56,15 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
     // Sequence is explained by comments
     addCommands(
         new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope(), drivebaseSubsystem),
+        // Score preload
+        deadline(
+            new WaitCommand(0.75 /* secs */),
+            new SetIntakeModeCommand(
+                intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF)),
         // Follow trajectory and intake when we are near our target cargo
         parallel(
             sequence(
-                new WaitCommand(0.5),
+                new WaitCommand(1),
                 new InstantCommand(
                     () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION), armSubsystem)),
             deadline(
@@ -73,7 +78,7 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
             new WaitCommand(0.5),
             new InstantCommand(
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION), armSubsystem)),
-        // Score the 2 cargo
+        // Score the floor cargo
         deadline(
             new WaitCommand(0.75 /* secs */),
             new SetIntakeModeCommand(
