@@ -14,8 +14,9 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
@@ -82,9 +83,13 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configSensorDirection(true);
     armEncoder.setPositionToAbsolute(10); // ms
 
-    ShuffleboardTab tab = Shuffleboard.getTab("DriverView");
-    tab.addNumber("target arm angle", this::getTargetAngle);
-    tab.addNumber("actual arm angle", this::getAngle);
+    ShuffleboardLayout tab =
+        Shuffleboard.getTab("DriverView")
+            .getLayout("arm", BuiltInLayouts.kList)
+            .withSize(2, 2)
+            .withPosition(16, 1);
+    tab.addNumber("target angle", this::getTargetAngle);
+    tab.addNumber("actual angle", this::getAngle);
   }
 
   public double getAngle() {
