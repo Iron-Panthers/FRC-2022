@@ -125,8 +125,7 @@ public class ArmSubsystem extends SubsystemBase {
         MathUtil.clamp(
             desiredAngle,
             Setpoints.INTAKE_POSITION,
-            (elevatorSubsystem.getTargetHeight() >= Elevator.ENGAGED_HEIGHT
-                    || elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT)
+            elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT
                 ? Setpoints.CLIMB_POSITION
                 : Setpoints.MAX_HEIGHT);
 
