@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Arm.Setpoints;
+import frc.robot.Constants.Elevator;
 
 /*
 For Engineering:
@@ -120,7 +121,14 @@ public class ArmSubsystem extends SubsystemBase {
     final double currentAngle = getAngle();
 
     // make target angle safe lol
-    desiredAngle = MathUtil.clamp(desiredAngle, Setpoints.INTAKE_POSITION, Setpoints.MAX_HEIGHT);
+    desiredAngle =
+        MathUtil.clamp(
+            desiredAngle,
+            Setpoints.INTAKE_POSITION,
+            (elevatorSubsystem.getTargetHeight() >= Elevator.ENGAGED_HEIGHT
+                    || elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT)
+                ? Setpoints.CLIMB_POSITION
+                : Setpoints.MAX_HEIGHT);
 
     // SmartDashboard.putNumber("current angle", currentAngle);
     // SmartDashboard.putNumber("desired angle", desiredAngle);
