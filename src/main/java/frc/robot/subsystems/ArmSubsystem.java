@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
+import frc.robot.Constants.Arm.Setpoints;
 
 /*
 For Engineering:
@@ -36,10 +37,14 @@ public class ArmSubsystem extends SubsystemBase {
   private final PIDController pidController;
   private final CANCoder armEncoder;
 
+  private ElevatorSubsystem elevatorSubsystem;
+
   private double desiredAngle = Arm.Setpoints.OUTTAKE_HIGH_POSITION;
 
   /** Creates a new ArmSubsystem. */
-  public ArmSubsystem() {
+  public ArmSubsystem(ElevatorSubsystem elevatorSubsystem) {
+
+    this.elevatorSubsystem = elevatorSubsystem;
 
     armRightMotor = new TalonFX(Arm.Ports.RIGHT_MOTOR_PORT);
     armLeftMotor = new TalonFX(Arm.Ports.LEFT_MOTOR_PORT);
@@ -113,6 +118,9 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     final double currentAngle = getAngle();
+
+    // make target angle safe lol
+    desiredAngle = MathUtil.clamp(desiredAngle, Setpoints.INTAKE_POSITION, Setpoints.MAX_HEIGHT);
 
     // SmartDashboard.putNumber("current angle", currentAngle);
     // SmartDashboard.putNumber("desired angle", desiredAngle);
