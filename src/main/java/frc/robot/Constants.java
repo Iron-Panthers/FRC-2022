@@ -201,7 +201,7 @@ public final class Constants {
       /** the percent to run the upper outtake during the outtake state */
       public static final double OUTTAKE_UPPER = -0.3;
       /** the percent to run the lower outtake during the outtake state */
-      public static final double OUTTAKE_LOWER = -0.225;
+      public static final double OUTTAKE_LOWER = -0.4;
 
       public static final double ALIGN_INTERNAL = 0.1103;
 
