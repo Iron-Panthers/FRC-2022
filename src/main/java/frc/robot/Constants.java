@@ -104,7 +104,7 @@ public final class Constants {
       public static final int ENCODER_PORT = 22;
     }
 
-    public static final double ANGULAR_OFFSET = IS_COMP_BOT ? -70 : 60;
+    public static final double ANGULAR_OFFSET = IS_COMP_BOT ? 58 : 60;
     public static final double GRAVITY_CONTROL_PERCENT = .06;
 
     public static final class PID {
@@ -112,10 +112,10 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 67 : 146.4;
+      public static final double MAX_HEIGHT = IS_COMP_BOT ? 146.3 : 146.4;
 
       public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT;
-      public static final double INTAKE_POSITION = MAX_HEIGHT - 156.3;
+      public static final double INTAKE_POSITION = MAX_HEIGHT - 155.3;
       public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 93.3;
       public static final double CLIMB_POSITION = MAX_HEIGHT - 37.2;
     }
@@ -201,12 +201,12 @@ public final class Constants {
       /** the percent to run the upper outtake during the outtake state */
       public static final double OUTTAKE_UPPER = -0.3;
       /** the percent to run the lower outtake during the outtake state */
-      public static final double OUTTAKE_LOWER = -0.225;
+      public static final double OUTTAKE_LOWER = -0.4;
 
       public static final double ALIGN_INTERNAL = 0.1103;
 
       // speeds for the high shoot
-      public static final double OUTTAKE_UPPER_HIGH = -1;
+      public static final double OUTTAKE_UPPER_HIGH = -.45;
 
       public static final double OUTTAKE_LOWER_HIGH = -1;
     }

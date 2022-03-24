@@ -41,6 +41,7 @@ import frc.util.ControllerUtil;
 import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
@@ -57,7 +58,7 @@ public class RobotContainer {
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final ArmSubsystem armSubsystem = new ArmSubsystem(elevatorSubsystem);
 
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
@@ -294,13 +295,25 @@ public class RobotContainer {
     Shuffleboard.getTab("DriverView")
         .add("auto selector", autoSelector)
         .withSize(4, 1)
-        .withPosition(16, 0);
+        .withPosition(6, 0);
   }
 
   private void setupCameras() {
     UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
-    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 176, 144, 15);
-    Shuffleboard.getTab("DriverView").add(intakeCamera).withSize(15, 16).withPosition(0, 0);
+    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 15);
+    Shuffleboard.getTab("DriverView")
+        .add(intakeCamera)
+        .withSize(6, 6)
+        .withPosition(0, 0)
+        .withProperties(Map.of("show controls", false));
+
+    // UsbCamera fieldCamera = CameraServer.startAutomaticCapture("field camera", 1);
+    // fieldCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 7);
+    // Shuffleboard.getTab("DriverView")
+    //     .add(fieldCamera)
+    //     .withSize(6, 6)
+    //     .withPosition(6, 0)
+    //     .withProperties(Map.of("show controls", false));
   }
 
   /**
