@@ -206,7 +206,7 @@ public final class Constants {
       public static final double ALIGN_INTERNAL = 0.1103;
 
       // speeds for the high shoot
-      public static final double OUTTAKE_UPPER_HIGH = -.33;
+      public static final double OUTTAKE_UPPER_HIGH = -.45;
 
       public static final double OUTTAKE_LOWER_HIGH = -1;
     }
