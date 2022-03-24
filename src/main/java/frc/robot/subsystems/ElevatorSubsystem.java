@@ -8,7 +8,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -73,9 +75,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
 
-    ShuffleboardTab DriverTab = Shuffleboard.getTab("DriverView");
-    DriverTab.addNumber("elevator % height", () -> getHeight() / -heightToTicks(24));
-    DriverTab.addNumber("elevator height inches", this::getHeight);
+    ShuffleboardLayout driverView =
+        Shuffleboard.getTab("DriverView")
+            .getLayout("elevator", BuiltInLayouts.kList)
+            .withSize(2, 2)
+            .withPosition(16, 3);
+    driverView.addNumber("elevator % height", () -> getHeight() / -heightToTicks(24));
+    driverView.addNumber("elevator height inches", this::getHeight);
   }
 
   public static double heightToTicks(double height) {

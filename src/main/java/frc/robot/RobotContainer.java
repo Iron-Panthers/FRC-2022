@@ -307,13 +307,16 @@ public class RobotContainer {
             drivebaseSubsystem,
             intakeSubsystem));
 
-    Shuffleboard.getTab("DriverView").add("auto selector", autoSelector);
+    Shuffleboard.getTab("DriverView")
+        .add("auto selector", autoSelector)
+        .withSize(4, 1)
+        .withPosition(16, 0);
   }
 
   private void setupCameras() {
     UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
     intakeCamera.setVideoMode(PixelFormat.kMJPEG, 176, 144, 15);
-    Shuffleboard.getTab("DriverView").add(intakeCamera);
+    Shuffleboard.getTab("DriverView").add(intakeCamera).withSize(15, 16).withPosition(0, 0);
   }
 
   /**
