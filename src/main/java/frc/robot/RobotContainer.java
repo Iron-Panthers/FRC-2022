@@ -21,10 +21,8 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
-import frc.robot.autonomous.commands.BaselineAutoSequence;
+import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
-import frc.robot.autonomous.commands.OnsideThreeCargoAutoSequence;
-import frc.robot.autonomous.commands.OnsideTwoCargoAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorPositionCommand;
@@ -274,11 +272,7 @@ public class RobotContainer {
    */
   private void setupAutonomousCommands() {
     autoSelector.setDefaultOption(
-        "baseline auto",
-        new BaselineAutoSequence(4, 2, drivebaseSubsystem.getKinematics(), drivebaseSubsystem));
-
-    autoSelector.addOption(
-        "offside two cargo",
+        "OffsideAuto2",
         new OffsideTwoCargoAutoSequence(
             3, // Optimal values per 2022-03-08 test (ih)
             1.5,
@@ -288,20 +282,10 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "onside two cargo",
-        new OnsideTwoCargoAutoSequence(
-            3,
-            1.5,
-            drivebaseSubsystem.getKinematics(),
-            armSubsystem,
-            drivebaseSubsystem,
-            intakeSubsystem));
-
-    autoSelector.addOption(
-        "onside three cargo",
-        new OnsideThreeCargoAutoSequence(
-            3,
-            1.5,
+        "OnsideAuto5",
+        new GreedyOnsideAutoSequence(
+            4,
+            5,
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,
