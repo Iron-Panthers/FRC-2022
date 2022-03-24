@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
+import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorPositionCommand;
@@ -283,10 +284,20 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "OnsideAuto5",
+        "OnsideAuto4",
+        new OnsideFourSequence(
+            4, // m/s
+            2.75, // m/s2
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
+        "DONOTUSE",
         new GreedyOnsideAutoSequence(
-            4,
-            5,
+            4, // m/s
+            5, // m/s2
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,
