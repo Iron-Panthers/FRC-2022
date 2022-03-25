@@ -21,7 +21,7 @@ public final class Waypoints {
       new Pose2d(7.010, 4.572, Rotation2d.fromDegrees(160.0));
 
   private static final Pose2d DEFAULT_ONSIDE_START =
-      new Pose2d(7.772, 2.896, Rotation2d.fromDegrees(251 + 180.0));
+      new Pose2d(7.772, 2.896, Rotation2d.fromDegrees(-110));
 
   public static final class OffsideStartToCenterCargo {
     public static final Pose2d FIRST = DEFAULT_OFFSIDE_START;

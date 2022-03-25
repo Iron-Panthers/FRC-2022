@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.Waypoints.OnsideStartToInnerCargo;
 import frc.robot.autonomous.Waypoints.OnsideStartToOuterCargo;
-import frc.robot.autonomous.Waypoints.OnsideStartToTerminalTwoCargo;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.commands.SetIntakeModeCommand;
@@ -23,9 +22,9 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import java.util.List;
 
-public class OnsideFourSequence extends SequentialCommandGroup {
-  /** Creates a new OnsideFourSequence. */
-  public OnsideFourSequence(
+public class OnsideThreeSequence extends SequentialCommandGroup {
+  /** Creates a new OnsideThreeSequence. */
+  public OnsideThreeSequence(
       double maxVelocityMetersPerSecond,
       double maxAccelerationMetersPerSecondSq,
       SwerveDriveKinematics kinematics,
@@ -52,13 +51,6 @@ public class OnsideFourSequence extends SequentialCommandGroup {
             OnsideStartToInnerCargo.LAST,
             trajectoryConfig);
 
-    Trajectory innerCargoToTerminal =
-        TrajectoryGenerator.generateTrajectory(
-            OnsideStartToInnerCargo.LAST, // inner cargo loc
-            List.of(),
-            OnsideStartToTerminalTwoCargo.LAST, // terminal loc
-            trajectoryConfig);
-
     //
     // THE PATHS BACK
     //
@@ -71,11 +63,11 @@ public class OnsideFourSequence extends SequentialCommandGroup {
             OnsideStartToOuterCargo.FIRST,
             trajectoryConfig);
 
-    Trajectory terminalTwoCargoToOnside =
+    Trajectory innerCargoToOnside =
         TrajectoryGenerator.generateTrajectory(
-            OnsideStartToTerminalTwoCargo.LAST,
+            OnsideStartToInnerCargo.LAST,
             List.of(),
-            OnsideStartToTerminalTwoCargo.FIRST,
+            OnsideStartToInnerCargo.FIRST,
             trajectoryConfig);
 
     // Sequence is explained by comments
@@ -113,19 +105,8 @@ public class OnsideFourSequence extends SequentialCommandGroup {
                 sequence(
                     new WaitCommand(0.25),
                     new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)))),
-        // GOTO TERMINAL
-        parallel(
-            sequence(
-                new WaitCommand(1), // TODO: tune
-                new InstantCommand(
-                    () -> armSubsystem.setAngle(Arm.Setpoints.INTAKE_POSITION), armSubsystem)),
-            deadline(
-                new FollowTrajectoryCommand(innerCargoToTerminal, drivebaseSubsystem),
-                sequence(
-                    new WaitCommand(0.25),
-                    new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)))),
         // GOTO ONSIDE START
-        new FollowTrajectoryCommand(terminalTwoCargoToOnside, drivebaseSubsystem),
+        new FollowTrajectoryCommand(innerCargoToOnside, drivebaseSubsystem),
         // SCORE 2 CARGO
         new SetIntakeModeCommand(
             intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF));

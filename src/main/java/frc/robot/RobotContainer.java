@@ -24,6 +24,7 @@ import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
+import frc.robot.autonomous.commands.OnsideThreeSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorPositionCommand;
@@ -277,6 +278,16 @@ public class RobotContainer {
         "OffsideAuto2",
         new OffsideTwoCargoAutoSequence(
             3, // Optimal values per 2022-03-08 test (ih)
+            1.5,
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
+        "OnsideAuto3",
+        new OnsideThreeSequence(
+            3,
             1.5,
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
