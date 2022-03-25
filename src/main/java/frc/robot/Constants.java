@@ -166,7 +166,7 @@ public final class Constants {
     public static final class ModeWaits {
       public static final class High {
         public static final double ALIGN_TO_LEFT = .24 * 2;
-        public static final double LEFT_TO_ALL = .35;
+        public static final double LEFT_TO_ALL = .45;
         public static final double ALL_TO_OFF = 2;
       }
 
@@ -206,9 +206,9 @@ public final class Constants {
       public static final double ALIGN_INTERNAL = 0.1103;
 
       // speeds for the high shoot
-      public static final double OUTTAKE_UPPER_HIGH = -.45;
+      public static final double OUTTAKE_UPPER_HIGH = -.55 * .85;
 
-      public static final double OUTTAKE_LOWER_HIGH = -1;
+      public static final double OUTTAKE_LOWER_HIGH = -.7 * .85;
     }
 
     public static final class Ports {
