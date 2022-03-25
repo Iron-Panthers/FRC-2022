@@ -172,7 +172,9 @@ public final class Constants {
 
       /** this is out taking backwards, ie over the elevator */
       public static final class Outtake {
-        public static final double OUTTAKE_TO_OFF = .4;
+        public static final double ALIGN_TO_LEFT = .24 * 2;
+        public static final double LEFT_TO_ALL = .55;
+        public static final double ALL_TO_OFF = 2;
       }
 
       // nasty name because we cannot nest
@@ -191,6 +193,9 @@ public final class Constants {
       /** the percent to run for high shot */
       public static final double FEED_HIGH = 1;
 
+      /** the percent to run for the low shot */
+      public static final double FEED_LOW = .7;
+
       public static final double ALIGN_INTERNAL = -0.1;
     }
 
@@ -199,9 +204,9 @@ public final class Constants {
       /** the percent to run the intake motors during the intake state */
       public static final double INTAKE = .385;
       /** the percent to run the upper outtake during the outtake state */
-      public static final double OUTTAKE_UPPER = -0.3;
+      public static final double OUTTAKE_UPPER_LOW = -0.3;
       /** the percent to run the lower outtake during the outtake state */
-      public static final double OUTTAKE_LOWER = -0.4;
+      public static final double OUTTAKE_LOWER_LOW = -0.4;
 
       public static final double ALIGN_INTERNAL = 0.1103;
 

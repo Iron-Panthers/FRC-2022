@@ -57,7 +57,9 @@ public class IntakeSubsystem extends SubsystemBase {
     OFF,
     IDLING,
     INTAKE,
-    OUTTAKE,
+    ALIGN_LOW,
+    OUTTAKE_LOW_LEFT,
+    OUTTAKE_LOW_ALL,
     ALIGN_HIGH,
     OUTTAKE_HIGH_LEFT,
     OUTTAKE_HIGH_ALL,
@@ -148,8 +150,18 @@ public class IntakeSubsystem extends SubsystemBase {
         // end intake block
 
         // outtake block
-      case OUTTAKE:
-        if (timeSinceModeTransition() >= ModeWaits.Outtake.OUTTAKE_TO_OFF) {
+      case ALIGN_LOW:
+        if (timeSinceModeTransition() >= ModeWaits.Outtake.ALIGN_TO_LEFT) {
+          setMode(Modes.OUTTAKE_LOW_LEFT);
+        }
+        break;
+      case OUTTAKE_LOW_LEFT:
+        if (timeSinceModeTransition() >= ModeWaits.Outtake.LEFT_TO_ALL) {
+          setMode(Modes.OUTTAKE_LOW_ALL);
+        }
+        break;
+      case OUTTAKE_LOW_ALL:
+        if (timeSinceModeTransition() >= ModeWaits.Outtake.ALL_TO_OFF) {
           setMode(Modes.OFF);
         }
         break;
@@ -245,11 +257,25 @@ public class IntakeSubsystem extends SubsystemBase {
     runIntakeRollers(IntakeRollers.INTAKE);
   }
 
-  private void outtakeModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
+  private void alignLowPeriodic() {
+    runEjectRollers(EjectRollers.ALIGN_INTERNAL);
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.ALIGN_INTERNAL);
+  }
 
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
+  private void outtakeLowLeftModePeriodic() {
+    runLeftEjectMotor(EjectRollers.FEED_LOW);
+    stopMotor(rightEjectMotor);
+
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_LOW);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_LOW);
+  }
+
+  private void outtakeLowAllModePeriodic() {
+    runEjectRollers(EjectRollers.FEED_LOW);
+
+    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_LOW);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_LOW);
   }
 
   private void alignHighPeriodic() {
@@ -308,8 +334,14 @@ public class IntakeSubsystem extends SubsystemBase {
       case INTAKE:
         intakeModePeriodic();
         break;
-      case OUTTAKE:
-        outtakeModePeriodic();
+      case ALIGN_LOW:
+        alignLowPeriodic();
+        break;
+      case OUTTAKE_LOW_LEFT:
+        outtakeLowLeftModePeriodic();
+        break;
+      case OUTTAKE_LOW_ALL:
+        outtakeLowAllModePeriodic();
         break;
       case ALIGN_HIGH:
         alignHighPeriodic();

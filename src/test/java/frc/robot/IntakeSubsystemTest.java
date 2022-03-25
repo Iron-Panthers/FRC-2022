@@ -114,8 +114,8 @@ public class IntakeSubsystemTest {
         Arguments.of(Modes.IDLING, Modes.IDLING),
         // this set should go off
         Arguments.of(Modes.EJECT_LEFT, Modes.OFF),
-        Arguments.of(Modes.EJECT_RIGHT, Modes.OFF),
-        Arguments.of(Modes.OUTTAKE, Modes.OFF)
+        Arguments.of(Modes.EJECT_RIGHT, Modes.OFF)
+        // Arguments.of(Modes.OUTTAKE, Modes.OFF)
         // Arguments.of(Modes.OUTTAKE_FAST, Modes.OFF)
         // Arguments.of(Modes.OUTTAKE_HIGH, Modes.OFF),
         // after intake, mode should be idle to keep aligning balls (NOT TRUE ANYMORE)
@@ -186,12 +186,12 @@ public class IntakeSubsystemTest {
             Modes.INTAKE, IntakeRollers.INTAKE /*intake*/, EjectRollers.IDLE /*eject*/),
 
         // outtake, run the eject to feed the balls in and run the intake in reverse
-        targetMotorPercents(
-            Modes.OUTTAKE,
-            IntakeRollers.OUTTAKE_LOWER /*lower intake*/,
-            IntakeRollers.OUTTAKE_UPPER /*upper intake*/,
-            EjectRollers.IDLE /*right eject*/,
-            EjectRollers.IDLE /*left eject*/),
+        // targetMotorPercents(
+        //     Modes.OUTTAKE,
+        //     IntakeRollers.OUTTAKE_LOWER /*lower intake*/,
+        //     IntakeRollers.OUTTAKE_UPPER /*upper intake*/,
+        //     EjectRollers.IDLE /*right eject*/,
+        //     EjectRollers.IDLE /*left eject*/),
 
         // // outtake, run the eject to feed the balls in and run the intake in reverse
         // targetMotorPercents(

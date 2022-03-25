@@ -243,7 +243,7 @@ public class RobotContainer {
     jasonLayer
         .off(jason::getYButton)
         .whenPressed(
-            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE));
+            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.ALIGN_LOW));
     // score into high from fender
     jasonLayer
         .off(jason::getLeftBumper)
