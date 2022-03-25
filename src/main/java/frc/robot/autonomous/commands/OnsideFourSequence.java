@@ -17,6 +17,7 @@ import frc.robot.autonomous.Waypoints.OnsideStartToOuterCargo;
 import frc.robot.autonomous.Waypoints.OnsideStartToTerminalTwoCargo;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
+import frc.robot.commands.SetIntakeModeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -100,9 +101,8 @@ public class OnsideFourSequence extends SequentialCommandGroup {
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION - 10),
                 armSubsystem)),
         // Score the 2 cargo
-        deadline(
-            new WaitCommand(0.5 /* sec */),
-            new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE)),
+        new SetIntakeModeCommand(
+            intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF),
         // GOTO INNER CARGO
         parallel(
             sequence(
@@ -128,8 +128,7 @@ public class OnsideFourSequence extends SequentialCommandGroup {
         // GOTO ONSIDE START
         new FollowTrajectoryCommand(terminalTwoCargoToOnside, drivebaseSubsystem),
         // SCORE 2 CARGO
-        deadline(
-            new WaitCommand(0.5 /* sec */),
-            new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE)));
+        new SetIntakeModeCommand(
+            intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF));
   }
 }
