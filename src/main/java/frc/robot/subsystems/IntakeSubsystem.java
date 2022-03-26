@@ -32,6 +32,7 @@ public class IntakeSubsystem extends SubsystemBase {
     talon.setStatusFramePeriod(2, 100);
     talon.enableVoltageCompensation(true);
     talon.configVoltageCompSaturation(12);
+    talon.setNeutralMode(NeutralMode.Coast);
   }
 
   /** Creates a new IntakeSubsystem. */
