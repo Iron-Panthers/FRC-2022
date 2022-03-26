@@ -217,22 +217,40 @@ public class IntakeSubsystem extends SubsystemBase {
     stopMotor(rightEjectMotor);
   }
 
-  private void runEjectRollers(double percent) {
-    runLeftEjectMotor(percent);
-    runRightEjectRoller(percent);
+  private void runEjectRollersPercent(double percent) {
+    runLeftEjectRollerPercent(percent);
+    runRightEjectRollerPercent(percent);
   }
 
-  private void runLeftEjectMotor(double percent) {
+  private void runLeftEjectRollerPercent(double percent) {
     leftEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
   }
 
-  private void runRightEjectRoller(double percent) {
+  private void runRightEjectRollerPercent(double percent) {
     rightEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
   }
 
-  private void runIntakeRollers(double percent) {
+  private void runIntakeRollersPercent(double percent) {
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, percent);
     lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
+  private void runEjectRollersVelocity(double velocity) {
+    runLeftEjectRollerVelocity(velocity);
+    runRightEjectRollerVelocity(velocity);
+  }
+
+  private void runLeftEjectRollerVelocity(double velocity) {
+    leftEjectMotor.set(TalonFXControlMode.Velocity, velocity);
+  }
+
+  private void runRightEjectRollerVelocity(double velocity) {
+    rightEjectMotor.set(TalonFXControlMode.Velocity, velocity);
+  }
+
+  private void runIntakeRollersVelocity(double velocity) {
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, velocity);
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, velocity);
   }
 
   private void feedBallsViaIntakeForEject() {
@@ -249,72 +267,72 @@ public class IntakeSubsystem extends SubsystemBase {
     stopMotor(lowerIntakeMotor);
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
 
-    runEjectRollers(EjectRollers.IDLE);
+    runEjectRollersPercent(EjectRollers.IDLE);
   }
 
   private void intakeModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
-    runIntakeRollers(IntakeRollers.INTAKE);
+    runEjectRollersPercent(EjectRollers.IDLE);
+    runIntakeRollersPercent(IntakeRollers.INTAKE);
   }
 
   private void alignLowPeriodic() {
-    runEjectRollers(EjectRollers.ALIGN_INTERNAL);
+    runEjectRollersPercent(EjectRollers.ALIGN_INTERNAL);
     stopMotor(lowerIntakeMotor);
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.ALIGN_INTERNAL);
   }
 
   private void outtakeLowLeftModePeriodic() {
-    runLeftEjectMotor(EjectRollers.FEED_LOW);
+    runLeftEjectRollerPercent(EjectRollers.FEED_LOW);
     stopMotor(rightEjectMotor);
 
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_LOW);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_LOW);
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_LOW);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_LOW);
   }
 
   private void outtakeLowAllModePeriodic() {
-    runEjectRollers(EjectRollers.FEED_LOW);
+    runEjectRollersPercent(EjectRollers.FEED_LOW);
 
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_LOW);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_LOW);
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_LOW);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_LOW);
   }
 
   private void alignHighPeriodic() {
-    runEjectRollers(EjectRollers.ALIGN_INTERNAL);
+    runEjectRollersPercent(EjectRollers.ALIGN_INTERNAL);
     stopMotor(lowerIntakeMotor);
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.ALIGN_INTERNAL);
   }
 
   private void outtakeHighLeftModePeriodic() {
-    runLeftEjectMotor(EjectRollers.FEED_HIGH);
+    runLeftEjectRollerPercent(EjectRollers.FEED_HIGH);
     stopMotor(rightEjectMotor);
 
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_HIGH);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_HIGH);
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_HIGH);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_HIGH);
   }
 
   private void outtakeHighAllModePeriodic() {
-    runEjectRollers(EjectRollers.FEED_HIGH);
+    runEjectRollersPercent(EjectRollers.FEED_HIGH);
 
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_HIGH);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_HIGH);
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_HIGH);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_HIGH);
   }
 
   private void ejectLeftModePeriodic() {
-    runLeftEjectMotor(EjectRollers.EJECT);
-    runRightEjectRoller(EjectRollers.IDLE);
+    runLeftEjectRollerPercent(EjectRollers.EJECT);
+    runRightEjectRollerPercent(EjectRollers.IDLE);
 
     feedBallsViaIntakeForEject();
   }
 
   private void ejectRightModePeriodic() {
-    runLeftEjectMotor(EjectRollers.IDLE);
-    runRightEjectRoller(EjectRollers.EJECT);
+    runLeftEjectRollerPercent(EjectRollers.IDLE);
+    runRightEjectRollerPercent(EjectRollers.EJECT);
 
     feedBallsViaIntakeForEject();
   }
 
   private void ejectAllModePeriodic() {
-    runEjectRollers(EjectRollers.EJECT);
+    runEjectRollersPercent(EjectRollers.EJECT);
 
     feedBallsViaIntakeForEject();
   }
