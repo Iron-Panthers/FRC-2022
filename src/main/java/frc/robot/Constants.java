@@ -114,7 +114,7 @@ public final class Constants {
     public static final class Setpoints {
       public static final double MAX_HEIGHT = IS_COMP_BOT ? 146.3 : 146.4;
 
-      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT;
+      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 3.9;
       public static final double INTAKE_POSITION = MAX_HEIGHT - 155.3;
       public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 93.3;
       public static final double CLIMB_POSITION = MAX_HEIGHT - 37.2;
@@ -173,7 +173,7 @@ public final class Constants {
       /** this is out taking backwards, ie over the elevator */
       public static final class Outtake {
         public static final double ALIGN_TO_LEFT = .24 * 2;
-        public static final double LEFT_TO_ALL = .55;
+        public static final double LEFT_TO_ALL = .55 * 3;
         public static final double ALL_TO_OFF = 2;
       }
 
@@ -208,13 +208,13 @@ public final class Constants {
       /** the velocity to run the lower outtake during the outtake state */
       public static final double OUTTAKE_LOWER_LOW = -0.6;
       /** percent */
-      public static final double ALIGN_INTERNAL = 0.1103;
+      public static final double ALIGN_INTERNAL = 0.1103 * .5;
 
       // velocity speeds for the high shoot
       /** velocity */
-      public static final double OUTTAKE_UPPER_HIGH = -11000;
+      public static final double OUTTAKE_UPPER_HIGH = -11000 * .9;
       /** velocity */
-      public static final double OUTTAKE_LOWER_HIGH = -9000;
+      public static final double OUTTAKE_LOWER_HIGH = -9000 * 1;
     }
 
     public static final class Ports {

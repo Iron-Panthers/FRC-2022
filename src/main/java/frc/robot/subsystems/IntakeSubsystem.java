@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
@@ -30,7 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void configStatusFramePeriodsAndBatteryComp(TalonFX talon) {
     talon.setStatusFramePeriod(1, 100);
-    talon.setStatusFramePeriod(2, 100);
+    talon.setStatusFramePeriod(2, 20);
     talon.enableVoltageCompensation(true);
     talon.configVoltageCompSaturation(12);
     talon.setNeutralMode(NeutralMode.Coast);
@@ -57,6 +58,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     applyPID(upperIntakeMotor);
     applyPID(lowerIntakeMotor);
+
+    var tab = Shuffleboard.getTab("intake");
+
+    tab.addNumber("RIGHT roller", rightEjectMotor::getSelectedSensorVelocity);
+    tab.addNumber("left roller", leftEjectMotor::getSelectedSensorVelocity);
 
     configStatusFramePeriodsAndBatteryComp(lowerIntakeMotor);
     configStatusFramePeriodsAndBatteryComp(upperIntakeMotor);
@@ -136,9 +142,9 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         break;
       case OUTTAKE_HIGH_LEFT:
-        if (timeSinceModeTransition() >= ModeWaits.High.LEFT_TO_ALL) {
-          setMode(Modes.OUTTAKE_HIGH_ALL);
-        }
+        // if (timeSinceModeTransition() >= ModeWaits.High.LEFT_TO_ALL) {
+        setMode(Modes.OUTTAKE_HIGH_ALL);
+        // }
         break;
       case OUTTAKE_HIGH_ALL:
         if (timeSinceModeTransition() >= ModeWaits.High.ALL_TO_OFF) {
