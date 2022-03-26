@@ -186,9 +186,9 @@ public final class Constants {
     /** percent to run motors at for given states */
     public static final class EjectRollers {
       /** the percent to run the eject motor at in the idling state */
-      public static final double IDLE = .7;
+      public static final double IDLE = 1;
       /** the percent to run the eject motor at in the ejection state */
-      public static final double EJECT = -.7;
+      public static final double EJECT = -1;
 
       /** the percent to run for high shot */
       public static final double FEED_HIGH = 1;
