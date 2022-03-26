@@ -204,9 +204,9 @@ public final class Constants {
       /** the percent to run the intake motors during the intake state */
       public static final double INTAKE = .385;
       /** the velocity to run the upper outtake during the outtake state */
-      public static final double OUTTAKE_UPPER_LOW = -0.1;
+      public static final double OUTTAKE_UPPER_LOW = -8000;
       /** the velocity to run the lower outtake during the outtake state */
-      public static final double OUTTAKE_LOWER_LOW = -0.6;
+      public static final double OUTTAKE_LOWER_LOW = -8000;
       /** percent */
       public static final double ALIGN_INTERNAL = 0.1103 * .5;
 
