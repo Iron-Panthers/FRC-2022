@@ -24,6 +24,7 @@ import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
+import frc.robot.autonomous.commands.OnsideOneBallSteal;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -277,6 +278,16 @@ public class RobotContainer {
     autoSelector.setDefaultOption(
         "OffsideAuto2",
         new OffsideTwoCargoAutoSequence(
+            3, // Optimal values per 2022-03-08 test (ih)
+            1.5,
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.setDefaultOption(
+        "OnsideOneBallSteal (choose this maddie, we got this)",
+        new OnsideOneBallSteal(
             3, // Optimal values per 2022-03-08 test (ih)
             1.5,
             drivebaseSubsystem.getKinematics(),
