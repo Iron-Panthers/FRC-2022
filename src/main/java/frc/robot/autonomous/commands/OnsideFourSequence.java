@@ -80,7 +80,6 @@ public class OnsideFourSequence extends SequentialCommandGroup {
 
     // Sequence is explained by comments
     addCommands(
-        new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope(), drivebaseSubsystem),
         // Follow trajectory and intake after a delay
         // Lower arm once so as to not induce too much dive at the beginning
         parallel(

@@ -55,7 +55,6 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
 
     // Sequence is explained by comments
     addCommands(
-        new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope(), drivebaseSubsystem),
         // Score preload
         deadline(
             new WaitCommand(0.75 /* secs */),
