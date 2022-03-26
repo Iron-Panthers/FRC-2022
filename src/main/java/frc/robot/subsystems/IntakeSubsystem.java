@@ -35,6 +35,13 @@ public class IntakeSubsystem extends SubsystemBase {
     talon.setNeutralMode(NeutralMode.Coast);
   }
 
+  private void applyPID(TalonFX motor) {
+    motor.config_kP(0, .07);
+    motor.config_kI(0, 0);
+    motor.config_kD(0, 0);
+    motor.config_kF(0, .05);
+  }
+
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     lowerIntakeMotor = new TalonFX(Ports.LOWER_MOTOR);
@@ -46,6 +53,9 @@ public class IntakeSubsystem extends SubsystemBase {
     rightEjectMotor = new TalonFX(Ports.RIGHT_EJECT_MOTOR);
     rightEjectMotor.setInverted(true);
     leftEjectMotor = new TalonFX(Ports.LEFT_EJECT_MOTOR);
+
+    applyPID(upperIntakeMotor);
+    applyPID(lowerIntakeMotor);
 
     configStatusFramePeriodsAndBatteryComp(lowerIntakeMotor);
     configStatusFramePeriodsAndBatteryComp(upperIntakeMotor);
