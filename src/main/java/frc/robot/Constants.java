@@ -212,9 +212,9 @@ public final class Constants {
 
       // velocity speeds for the high shoot
       /** velocity */
-      public static final double OUTTAKE_UPPER_HIGH = -11000 * .9;
+      public static final double OUTTAKE_UPPER_HIGH = -10000 * 1.1;
       /** velocity */
-      public static final double OUTTAKE_LOWER_HIGH = -9000 * 1;
+      public static final double OUTTAKE_LOWER_HIGH = -90000 * 1.1;
     }
 
     public static final class Ports {
