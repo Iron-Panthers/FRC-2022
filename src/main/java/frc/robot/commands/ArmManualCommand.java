@@ -5,35 +5,39 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 
-public class ElevatorPositionCommand extends CommandBase {
-  private final ElevatorSubsystem elevatorSubsystem;
-  private final Double targetHeight;
+public class ArmManualCommand extends CommandBase {
+  private ArmSubsystem armSubsystem;
+  private final Double rate;
 
   /** Creates a new ElevatorCommand. */
-  public ElevatorPositionCommand(ElevatorSubsystem subsystem, Double targetHeight) {
-    this.elevatorSubsystem = subsystem;
-    addRequirements(elevatorSubsystem);
-    this.targetHeight = targetHeight;
+  public ArmManualCommand(ArmSubsystem subsystem, Double rate) {
+    this.rate = rate;
+    this.armSubsystem = subsystem;
+    addRequirements(armSubsystem);
+
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    elevatorSubsystem.setTargetHeight(targetHeight);
-  }
+  public void initialize() {}
 
+  
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // get current height
+    // SmartDashboard.putNumber("rate", rate);
+    armSubsystem.setManualPower(rate);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    armSubsystem.setManualPower(0);
+  }
 
   // Returns true when the command should end.
   @Override
@@ -41,10 +45,3 @@ public class ElevatorPositionCommand extends CommandBase {
     return false;
   }
 }
-
-// 12.75 full motor rotations = 1.5pi inches of height
-
-// 12.75:1 gear ratio
-// talonfx to the entire thing
-// Big gear is 2.6 inches
-// 1.5 sprocket diameter

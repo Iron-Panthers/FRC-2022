@@ -97,28 +97,12 @@ public final class Constants {
   }
 
   public static final class Arm {
-    // Throw any Arm constants in this file
     public static final class Ports {
-      public static final int RIGHT_MOTOR_PORT = 14;
-      public static final int LEFT_MOTOR_PORT = 5;
-      public static final int ENCODER_PORT = 22;
+      public static final int leftMotor = 5;
+      public static final int rightMotor = 14;
     }
 
-    public static final double ANGULAR_OFFSET = IS_COMP_BOT ? 58 : 60;
-    public static final double GRAVITY_CONTROL_PERCENT = .06;
-
-    public static final class PID {
-      public static final double ANGULAR_TOLERANCE = 1.0;
-    }
-
-    public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 146.3 : 146.4;
-
-      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 3.9;
-      public static final double INTAKE_POSITION = MAX_HEIGHT - 155.3;
-      public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 93.3;
-      public static final double CLIMB_POSITION = MAX_HEIGHT - 37.2;
-    }
+    public static final double power = 0.24;
   }
 
   public static final class Elevator {
