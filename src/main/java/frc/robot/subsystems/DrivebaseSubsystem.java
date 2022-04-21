@@ -176,6 +176,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
     Shuffleboard.getTab("Drivebase").add(rotController);
 
     swerveOdometry = new SwerveDriveOdometry(kinematics, navx.getRotation2d());
+
+    zeroGyroscope();
   }
 
   /** Return the current pose estimation of the robot */

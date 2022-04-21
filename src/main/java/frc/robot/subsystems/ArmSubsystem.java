@@ -14,8 +14,10 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Arm.Setpoints;
@@ -36,12 +38,13 @@ public class ArmSubsystem extends SubsystemBase {
   private final PIDController pidController;
   private final CANCoder armEncoder;
 
-  private final ElevatorSubsystem elevatorSubsystem;
+  private ElevatorSubsystem elevatorSubsystem;
 
-  private double desiredAngle = Arm.Setpoints.MAX_HEIGHT;
+  private double desiredAngle = Arm.Setpoints.OUTTAKE_HIGH_POSITION;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem(ElevatorSubsystem elevatorSubsystem) {
+
     this.elevatorSubsystem = elevatorSubsystem;
 
     armRightMotor = new TalonFX(Arm.Ports.RIGHT_MOTOR_PORT);
@@ -53,7 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
     armLeftMotor.follow(armRightMotor);
     armLeftMotor.setInverted(InvertType.OpposeMaster);
 
-    armRightMotor.configOpenloopRamp(.5);
+    armRightMotor.configOpenloopRamp(0.2);
 
     armRightMotor.setStatusFramePeriod(1, 100);
     armRightMotor.setStatusFramePeriod(2, 100);
@@ -71,9 +74,10 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.configStatorCurrentLimit(config);
     armLeftMotor.configStatorCurrentLimit(config);
 
-    pidController = new PIDController(0.015, 0, 0);
+    pidController = new PIDController(0.007, 0, 0.00015);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
-    // Shuffleboard.getTab("arm").add(pidController);
+
+    Shuffleboard.getTab("arm").add(pidController);
 
     armEncoder =
         new CANCoder(Arm.Ports.ENCODER_PORT); // FIX ME: we will need to figure out the real value
@@ -82,10 +86,16 @@ public class ArmSubsystem extends SubsystemBase {
         SensorInitializationStrategy.BootToAbsolutePosition);
     armEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
     armEncoder.configMagnetOffset(Arm.ANGULAR_OFFSET);
+    armEncoder.configSensorDirection(true);
+    armEncoder.setPositionToAbsolute(10); // ms
 
-    ShuffleboardTab tab = Shuffleboard.getTab("DriverView");
-    tab.addNumber("target arm angle", this::getTargetAngle);
-    tab.addNumber("actual arm angle", this::getAngle);
+    ShuffleboardLayout tab =
+        Shuffleboard.getTab("DriverView")
+            .getLayout("arm", BuiltInLayouts.kList)
+            .withSize(2, 2)
+            .withPosition(16, 1);
+    tab.addNumber("target angle", this::getTargetAngle);
+    tab.addNumber("actual angle", this::getAngle);
   }
 
   public double getAngle() {
@@ -110,11 +120,14 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     final double currentAngle = getAngle();
 
-    // here we test for if the desired angle would interfere with the elevator
-    if (elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT) {
-      // reduce our target so it cannot collide
-      desiredAngle = Math.min(desiredAngle, Setpoints.CLIMB_POSITION);
-    }
+    // make target angle safe lol
+    desiredAngle =
+        MathUtil.clamp(
+            desiredAngle,
+            Setpoints.INTAKE_POSITION,
+            elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT
+                ? Setpoints.CLIMB_POSITION
+                : Setpoints.MAX_HEIGHT);
 
     // SmartDashboard.putNumber("current angle", currentAngle);
     // SmartDashboard.putNumber("desired angle", desiredAngle);
@@ -139,7 +152,8 @@ public class ArmSubsystem extends SubsystemBase {
     final double gravityOffset =
         Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
 
-    // SmartDashboard.putNumber("gravityOffset", gravityOffset);
+    SmartDashboard.putNumber("gravityOffset", gravityOffset);
+    SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
 
     final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
 
