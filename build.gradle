@@ -4,6 +4,7 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2022.4.1"
     id "com.diffplug.spotless" version "6.2.0"
+    id "de.undercouch.download" version "5.0.5"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -110,10 +111,21 @@ def jetsonDownload = tasks.register("jetsonDownload") {
     // this section specifies inputs and outputs for the caching
     outputs.cacheIf { true }
 
+    inputs.files("./jetson/deps")
+            .withPropertyName("deps")
+            .withPathSensitivity(PathSensitivity.ABSOLUTE)
 
     // end of caching
     doLast {
-        System.out.println("download")
+        String[] deps = new File("./jetson/deps").text.split("\n")
+
+        for(def dep in deps) {
+            download.run {
+                src dep
+                dest buildDir
+                overwrite false
+            }
+        }
     }
 }
 def jetsonDeploy = tasks.register("jetsonDeploy") {
