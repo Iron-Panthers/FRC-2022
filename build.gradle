@@ -106,6 +106,26 @@ deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
+def jetsonDownload = tasks.register("jetsonDownload") {
+    // this section specifies inputs and outputs for the caching
+    outputs.cacheIf { true }
+
+
+    // end of caching
+    doLast {
+        System.out.println("download")
+    }
+}
+def jetsonDeploy = tasks.register("jetsonDeploy") {
+    configure {
+        dependsOn jetsonDownload
+    }
+    doLast {
+        System.out.println("deploy")
+    }
+}
+
+
 spotless {
     java {
         target fileTree('.') {
