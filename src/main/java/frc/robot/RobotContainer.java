@@ -22,6 +22,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.commands.ArmManualCommand;
+import frc.robot.commands.EjectLeftManualCommand;
+import frc.robot.commands.EjectRightManualCommand;
+import frc.robot.commands.IntakeManualCommand;
 import frc.robot.subsystems.ArmSubsystem; 
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -44,6 +47,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
  
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  
 
 
   /** controller 1 */
@@ -85,6 +90,20 @@ public class RobotContainer {
 
     new Button(remy::getXButton)
     .whenHeld(new ArmManualCommand(armSubsystem, -Constants.Arm.power));
+
+    new Button(remy::getAButton)
+        .whileHeld(new IntakeManualCommand(intakeSubsystem, Constants.Intake.intakePower));
+
+    new Button(remy::getYButton)
+        .whileHeld(new IntakeManualCommand(intakeSubsystem, Constants.Intake.outtakePower));
+    
+    new Button(() -> remy.getLeftTriggerAxis() > 0.5 )
+        .whileHeld(new EjectLeftManualCommand(intakeSubsystem, Constants.Intake.intakePower));
+
+    new Button(() -> remy.getRightTriggerAxis() > 0.5 )
+        .whileHeld(new EjectRightManualCommand(intakeSubsystem, Constants.Intake.intakePower));
+
+    
   }
 
   /**
@@ -93,37 +112,4 @@ public class RobotContainer {
   private void setupAutonomousCommands() { 
   }
 
-  private void setupCameras() {
-    UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
-    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 15);
-    Shuffleboard.getTab("DriverView")
-        .add(intakeCamera)
-        .withSize(6, 6)
-        .withPosition(0, 0)
-        .withProperties(Map.of("show controls", false));
-
-    // UsbCamera fieldCamera = CameraServer.startAutomaticCapture("field camera", 1);
-    // fieldCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 7);
-    // Shuffleboard.getTab("DriverView")
-    //     .add(fieldCamera)
-    //     .withSize(6, 6)
-    //     .withPosition(6, 0)
-    //     .withProperties(Map.of("show controls", false));
-  }
- 
-  /**
-   * applies deadband and squares axis
-   *
-   * @param value the axis value to be modified
-   * @return the modified axis values
-   */
-  private static double modifyAxis(double value) {
-    // Deadband
-    value = ControllerUtil.deadband(value, 0.07);
-
-    // Square the axis
-    value = Math.copySign(value * value, value);
-
-    return value;
-  }
 }

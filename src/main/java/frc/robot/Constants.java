@@ -105,6 +105,21 @@ public final class Constants {
     public static final double power = 0.24;
   }
 
+  public static final class Intake{
+    public static final class Ports{
+      public static final int intakeLower = 15;
+      public static final int intakeUpper = 9;
+      public static final int ejectLeft = 8;
+      public static final int ejectRight = 16;
+
+    }
+
+    public static final double intakePower = 0.25;
+    public static final double outtakePower = -0.75;
+    public static final double ejectPower = 0.75;
+  }
+
+
   public static final class Elevator {
 
     public static final double POSITION = 1.0;
@@ -144,68 +159,4 @@ public final class Constants {
     }
   }
 
-  public static final class Intake {
-
-    /** time in seconds to wait between certain modes */
-    public static final class ModeWaits {
-      public static final class High {
-        public static final double ALIGN_TO_LEFT = .24 * 2;
-        public static final double LEFT_TO_ALL = .55;
-        public static final double ALL_TO_OFF = 2;
-      }
-
-      /** this is out taking backwards, ie over the elevator */
-      public static final class Outtake {
-        public static final double ALIGN_TO_LEFT = .24 * 2;
-        public static final double LEFT_TO_ALL = .55 * 3;
-        public static final double ALL_TO_OFF = 2;
-      }
-
-      // nasty name because we cannot nest
-      public static final class IntakeWaits {
-        public static final double IDLE_TO_OFF = 1;
-      }
-    }
-
-    /** percent to run motors at for given states */
-    public static final class EjectRollers {
-      /** the percent to run the eject motor at in the idling state */
-      public static final double IDLE = 1;
-      /** the percent to run the eject motor at in the ejection state */
-      public static final double EJECT = -1;
-
-      /** the percent to run for high shot */
-      public static final double FEED_HIGH = 1;
-
-      /** the percent to run for the low shot */
-      public static final double FEED_LOW = .7;
-
-      public static final double ALIGN_INTERNAL = -0.1;
-    }
-
-    /** percent to run motors at for given states */
-    public static final class IntakeRollers {
-      /** the percent to run the intake motors during the intake state */
-      public static final double INTAKE = .385;
-      /** the velocity to run the upper outtake during the outtake state */
-      public static final double OUTTAKE_UPPER_LOW = -8000;
-      /** the velocity to run the lower outtake during the outtake state */
-      public static final double OUTTAKE_LOWER_LOW = -8000;
-      /** percent */
-      public static final double ALIGN_INTERNAL = 0.1103 * .5;
-
-      // velocity speeds for the high shoot
-      /** velocity */
-      public static final double OUTTAKE_UPPER_HIGH = -10000 * 1.1;
-      /** velocity */
-      public static final double OUTTAKE_LOWER_HIGH = -90000 * 1.1;
-    }
-
-    public static final class Ports {
-      public static final int LOWER_MOTOR = 15;
-      public static final int UPPER_MOTOR = 9;
-      public static final int RIGHT_EJECT_MOTOR = 16;
-      public static final int LEFT_EJECT_MOTOR = 8;
-    }
-  }
 }
