@@ -25,6 +25,7 @@ import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.EjectLeftManualCommand;
 import frc.robot.commands.EjectRightManualCommand;
 import frc.robot.commands.IntakeManualCommand;
+import frc.robot.commands.OuttakeCommand;
 import frc.robot.subsystems.ArmSubsystem; 
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -92,16 +93,16 @@ public class RobotContainer {
     .whenHeld(new ArmManualCommand(armSubsystem, -Constants.Arm.power));
 
     new Button(remy::getAButton)
-        .whileHeld(new IntakeManualCommand(intakeSubsystem, Constants.Intake.intakePower));
+        .whileHeld(new IntakeManualCommand(intakeSubsystem, Constants.Intake.intakePower, -Constants.Intake.ejectPower));
 
     new Button(remy::getYButton)
-        .whileHeld(new IntakeManualCommand(intakeSubsystem, Constants.Intake.outtakePower));
+        .whileHeld(new OuttakeCommand(intakeSubsystem, Constants.Intake.outtakePower, -Constants.Intake.ejectPower));
     
     new Button(() -> remy.getLeftTriggerAxis() > 0.5 )
-        .whileHeld(new EjectLeftManualCommand(intakeSubsystem, Constants.Intake.intakePower));
+        .whileHeld(new EjectLeftManualCommand(intakeSubsystem, Constants.Intake.ejectPower));
 
     new Button(() -> remy.getRightTriggerAxis() > 0.5 )
-        .whileHeld(new EjectRightManualCommand(intakeSubsystem, Constants.Intake.intakePower));
+        .whileHeld(new EjectRightManualCommand(intakeSubsystem, Constants.Intake.ejectPower));
 
     
   }

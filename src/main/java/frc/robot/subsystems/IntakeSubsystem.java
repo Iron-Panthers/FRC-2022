@@ -49,3 +49,5 @@ public class IntakeSubsystem extends SubsystemBase {
 
 
 }
+
+//During outtake first spin upper intake and eject towards each other so it sucks the balls back. Then spin 1st eject and shoot, then shoot 2nd eject and shoot
