@@ -4,11 +4,15 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake.EjectRollers;
 import frc.robot.Constants.Intake.IntakeRollers;
+import frc.robot.Constants.Intake.ModeWaits;
 import frc.robot.Constants.Intake.Ports;
 import frc.util.MacUtil;
 
@@ -27,9 +31,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private void configStatusFramePeriodsAndBatteryComp(TalonFX talon) {
     talon.setStatusFramePeriod(1, 100);
-    talon.setStatusFramePeriod(2, 100);
+    talon.setStatusFramePeriod(2, 20);
     talon.enableVoltageCompensation(true);
     talon.configVoltageCompSaturation(12);
+    talon.setNeutralMode(NeutralMode.Coast);
+  }
+
+  private void applyPID(TalonFX motor) {
+    motor.config_kP(0, .07);
+    motor.config_kI(0, 0);
+    motor.config_kD(0, 0);
+    motor.config_kF(0, .05);
   }
 
   /** Creates a new IntakeSubsystem. */
@@ -44,6 +56,14 @@ public class IntakeSubsystem extends SubsystemBase {
     rightEjectMotor.setInverted(true);
     leftEjectMotor = new TalonFX(Ports.LEFT_EJECT_MOTOR);
 
+    applyPID(upperIntakeMotor);
+    applyPID(lowerIntakeMotor);
+
+    var tab = Shuffleboard.getTab("intake");
+
+    tab.addNumber("RIGHT roller", rightEjectMotor::getSelectedSensorVelocity);
+    tab.addNumber("left roller", leftEjectMotor::getSelectedSensorVelocity);
+
     configStatusFramePeriodsAndBatteryComp(lowerIntakeMotor);
     configStatusFramePeriodsAndBatteryComp(upperIntakeMotor);
     configStatusFramePeriodsAndBatteryComp(rightEjectMotor);
@@ -55,9 +75,12 @@ public class IntakeSubsystem extends SubsystemBase {
     OFF,
     IDLING,
     INTAKE,
-    OUTTAKE,
-    OUTTAKE_FAST,
-    OUTTAKE_HIGH,
+    ALIGN_LOW,
+    OUTTAKE_LOW_LEFT,
+    OUTTAKE_LOW_ALL,
+    ALIGN_HIGH,
+    OUTTAKE_HIGH_LEFT,
+    OUTTAKE_HIGH_ALL,
     EJECT_LEFT,
     EJECT_RIGHT,
     EJECT_ALL,
@@ -66,34 +89,106 @@ public class IntakeSubsystem extends SubsystemBase {
   /** the current mode of the subsystem */
   private Modes mode = Modes.OFF;
 
+  /** timestamp in fpga seconds of mode transition */
+  private double timeOfModeTransition = Timer.getFPGATimestamp();
+
+  /**
+   * this variable represents if automatic mode transitions are locked. this is used to hold in a
+   * mode. this value should never explicitly be set
+   */
+  private boolean modeLocked = false;
+
   /** Get the current state machine mode. */
   public Modes getMode() {
     return mode;
   }
 
+  /** Gets the boolean that determines if the mode is locked, preventing transition */
+  public boolean getModeLocked() {
+    return modeLocked;
+  }
+
   /**
-   * This command should only be called once, after a given mode is finished, or prematurely stopped
+   * Time in seconds since mode has changed, good for modes that only run for a certain amount of
+   * time.
+   *
+   * @return time in seconds since mode change
+   */
+  public double timeSinceModeTransition() {
+    return Timer.getFPGATimestamp() - timeOfModeTransition;
+  }
+
+  /**
+   * This function is called in periodic to increment the state machine
    *
    * <p>Puts the subsystem state machine into the next mode. Some modes, like idling, are resting
    * points, from which there are not "next" modes. For other modes, like intake, idling is the
    * logical progression, and "next" mode
    */
-  public void nextMode() {
+  private void nextModePeriodic() {
+    // if our mode is locked, we should not increment the mode
+    if (modeLocked) return;
+
     switch (mode) {
-      case IDLING:
       case OFF:
         // these modes are resting points, and do not have a next mode until user input is provided
         break;
+
+        // high shot block
+      case ALIGN_HIGH:
+        // when our time is up, we transition to high left, otherwise we wait at this mode
+        if (timeSinceModeTransition() >= ModeWaits.High.ALIGN_TO_LEFT) {
+          setMode(Modes.OUTTAKE_HIGH_LEFT);
+        }
+        break;
+      case OUTTAKE_HIGH_LEFT:
+        // if (timeSinceModeTransition() >= ModeWaits.High.LEFT_TO_ALL) {
+        setMode(Modes.OUTTAKE_HIGH_ALL);
+        // }
+        break;
+      case OUTTAKE_HIGH_ALL:
+        if (timeSinceModeTransition() >= ModeWaits.High.ALL_TO_OFF) {
+          setMode(Modes.OFF);
+        }
+        break;
+        // end high shot block
+
+        // intake block
       case INTAKE:
-        // after intake, we should run the idling motor to align balls for shooting and outtake
-        // setMode(Modes.IDLING);
-        // break;
+        // after intake, we should run the idling motor for a time to align balls for shooting and
+        // outtake
+        setMode(Modes.IDLING);
+        break;
+      case IDLING:
+        if (timeSinceModeTransition() >= ModeWaits.IntakeWaits.IDLE_TO_OFF) {
+          setMode(Modes.OFF);
+        }
+        break;
+
+        // end intake block
+
+        // outtake block
+      case ALIGN_LOW:
+        if (timeSinceModeTransition() >= ModeWaits.Outtake.ALIGN_TO_LEFT) {
+          setMode(Modes.OUTTAKE_LOW_LEFT);
+        }
+        break;
+      case OUTTAKE_LOW_LEFT:
+        if (timeSinceModeTransition() >= ModeWaits.Outtake.LEFT_TO_ALL) {
+          setMode(Modes.OUTTAKE_LOW_ALL);
+        }
+        break;
+      case OUTTAKE_LOW_ALL:
+        if (timeSinceModeTransition() >= ModeWaits.Outtake.ALL_TO_OFF) {
+          setMode(Modes.OFF);
+        }
+        break;
+        // end outtake block
+
+        // this set of modes should go to off
       case EJECT_LEFT:
       case EJECT_RIGHT:
       case EJECT_ALL:
-      case OUTTAKE:
-      case OUTTAKE_FAST:
-      case OUTTAKE_HIGH:
         // after ejection and outtake, we should stop all motors, because there shouldn't still be
         // balls in the intake
         setMode(Modes.OFF);
@@ -107,7 +202,20 @@ public class IntakeSubsystem extends SubsystemBase {
    * <p>fixme: this should have checks, but currently doesn't
    */
   public void setMode(Modes mode) {
+    timeOfModeTransition = Timer.getFPGATimestamp();
     this.mode = mode;
+    modeLocked = false;
+  }
+
+  /** sets mode, and locks it to prevent state transitions */
+  public void setLockMode(Modes mode) {
+    setMode(mode);
+    modeLocked = true;
+  }
+
+  /** unlocks mode transitions, so that they can occur */
+  public void unlockMode() {
+    modeLocked = false;
   }
 
   /** periodic helper method, easy way to turn a motor off, by setting to 0 percent output */
@@ -127,22 +235,40 @@ public class IntakeSubsystem extends SubsystemBase {
     stopMotor(rightEjectMotor);
   }
 
-  private void runEjectRollers(double percent) {
-    runLeftEjectMotor(percent);
-    runRightEjectRoller(percent);
+  private void runEjectRollersPercent(double percent) {
+    runLeftEjectRollerPercent(percent);
+    runRightEjectRollerPercent(percent);
   }
 
-  private void runLeftEjectMotor(double percent) {
+  private void runLeftEjectRollerPercent(double percent) {
     leftEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
   }
 
-  private void runRightEjectRoller(double percent) {
+  private void runRightEjectRollerPercent(double percent) {
     rightEjectMotor.set(TalonFXControlMode.PercentOutput, percent);
   }
 
-  private void runIntakeRollers(double percent) {
+  private void runIntakeRollersPercent(double percent) {
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, percent);
     lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, percent);
+  }
+
+  private void runEjectRollersVelocity(double velocity) {
+    runLeftEjectRollerVelocity(velocity);
+    runRightEjectRollerVelocity(velocity);
+  }
+
+  private void runLeftEjectRollerVelocity(double velocity) {
+    leftEjectMotor.set(TalonFXControlMode.Velocity, velocity);
+  }
+
+  private void runRightEjectRollerVelocity(double velocity) {
+    rightEjectMotor.set(TalonFXControlMode.Velocity, velocity);
+  }
+
+  private void runIntakeRollersVelocity(double velocity) {
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, velocity);
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, velocity);
   }
 
   private void feedBallsViaIntakeForEject() {
@@ -156,52 +282,75 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private void idlingModePeriodic() {
-    stopIntakeRollers();
-    runEjectRollers(EjectRollers.IDLE);
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
+
+    runEjectRollersPercent(EjectRollers.IDLE);
   }
 
   private void intakeModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
-    runIntakeRollers(IntakeRollers.INTAKE);
+    runEjectRollersPercent(EjectRollers.IDLE);
+    runIntakeRollersPercent(IntakeRollers.INTAKE);
   }
 
-  private void outtakeModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
-
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER);
+  private void alignLowPeriodic() {
+    runEjectRollersPercent(EjectRollers.ALIGN_INTERNAL);
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.ALIGN_INTERNAL);
   }
 
-  private void outtakeFastModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
+  private void outtakeLowLeftModePeriodic() {
+    runLeftEjectRollerPercent(EjectRollers.FEED_LOW);
+    stopMotor(rightEjectMotor);
 
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_FAST);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_FAST);
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_LOW);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_LOW);
   }
 
-  private void outtakeHighModePeriodic() {
-    runEjectRollers(EjectRollers.IDLE);
+  private void outtakeLowAllModePeriodic() {
+    runEjectRollersPercent(EjectRollers.FEED_LOW);
 
-    lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_LOWER_HIGH);
-    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.OUTTAKE_UPPER_HIGH);
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_LOW);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_LOW);
+  }
+
+  private void alignHighPeriodic() {
+    runEjectRollersPercent(EjectRollers.ALIGN_INTERNAL);
+    stopMotor(lowerIntakeMotor);
+    upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.ALIGN_INTERNAL);
+  }
+
+  private void outtakeHighLeftModePeriodic() {
+    runLeftEjectRollerPercent(EjectRollers.FEED_HIGH);
+    stopMotor(rightEjectMotor);
+
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_HIGH);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_HIGH);
+  }
+
+  private void outtakeHighAllModePeriodic() {
+    runEjectRollersPercent(EjectRollers.FEED_HIGH);
+
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_HIGH);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_HIGH);
   }
 
   private void ejectLeftModePeriodic() {
-    runLeftEjectMotor(EjectRollers.EJECT);
-    runRightEjectRoller(EjectRollers.IDLE);
+    runLeftEjectRollerPercent(EjectRollers.EJECT);
+    runRightEjectRollerPercent(EjectRollers.IDLE);
 
     feedBallsViaIntakeForEject();
   }
 
   private void ejectRightModePeriodic() {
-    runLeftEjectMotor(EjectRollers.IDLE);
-    runRightEjectRoller(EjectRollers.EJECT);
+    runLeftEjectRollerPercent(EjectRollers.IDLE);
+    runRightEjectRollerPercent(EjectRollers.EJECT);
 
     feedBallsViaIntakeForEject();
   }
 
   private void ejectAllModePeriodic() {
-    runEjectRollers(EjectRollers.EJECT);
+    runEjectRollersPercent(EjectRollers.EJECT);
 
     feedBallsViaIntakeForEject();
   }
@@ -209,6 +358,8 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    nextModePeriodic();
+
     switch (mode) {
       case OFF:
         offModePeriodic();
@@ -219,14 +370,23 @@ public class IntakeSubsystem extends SubsystemBase {
       case INTAKE:
         intakeModePeriodic();
         break;
-      case OUTTAKE:
-        outtakeModePeriodic();
+      case ALIGN_LOW:
+        alignLowPeriodic();
         break;
-      case OUTTAKE_FAST:
-        outtakeFastModePeriodic();
+      case OUTTAKE_LOW_LEFT:
+        outtakeLowLeftModePeriodic();
         break;
-      case OUTTAKE_HIGH:
-        outtakeHighModePeriodic();
+      case OUTTAKE_LOW_ALL:
+        outtakeLowAllModePeriodic();
+        break;
+      case ALIGN_HIGH:
+        alignHighPeriodic();
+        break;
+      case OUTTAKE_HIGH_LEFT:
+        outtakeHighLeftModePeriodic();
+        break;
+      case OUTTAKE_HIGH_ALL:
+        outtakeHighAllModePeriodic();
         break;
       case EJECT_LEFT:
         ejectLeftModePeriodic();

@@ -15,15 +15,16 @@ import frc.robot.Constants.Arm;
 import frc.robot.autonomous.Waypoints.OffsideStartToCenterCargo;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
+import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.commands.SetIntakeModeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import java.util.List;
 
-public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
+public class OnsideOneBallSteal extends SequentialCommandGroup {
   /** Creates a new OffsideTwoCargoAutoSequence. */
-  public OffsideTwoCargoAutoSequence(
+  public OnsideOneBallSteal(
       double maxVelocityMetersPerSecond,
       double maxAccelerationMetersPerSecondSq,
       SwerveDriveKinematics kinematics,
@@ -71,16 +72,9 @@ public class OffsideTwoCargoAutoSequence extends SequentialCommandGroup {
                 sequence(
                     new WaitCommand(0.25),
                     new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)))),
-        new FollowTrajectoryCommand(centerCargoToOffsideStart, false, drivebaseSubsystem),
-        // Once we're back at the start pose, raise the arm to the scoring position
+        // keeping arm down, rotate to 0 degree
         deadline(
-            new WaitCommand(0.5),
-            new InstantCommand(
-                () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION), armSubsystem)),
-        // Score the floor cargo
-        deadline(
-            new WaitCommand(0.75 /* secs */),
-            new SetIntakeModeCommand(
-                intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF)));
+            new WaitCommand(3),
+            new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, 0)));
   }
 }

@@ -19,17 +19,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
-import frc.robot.autonomous.commands.BaselineAutoSequence;
+import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
-import frc.robot.autonomous.commands.OnsideThreeCargoAutoSequence;
-import frc.robot.autonomous.commands.OnsideTwoCargoAutoSequence;
+import frc.robot.autonomous.commands.OnsideFourSequence;
+import frc.robot.autonomous.commands.OnsideOneBallSteal;
+import frc.robot.autonomous.commands.OnsideThreeSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorPositionCommand;
+import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
+import frc.robot.commands.InstantSetIntakeModeCommand;
 import frc.robot.commands.PreciseArmCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
@@ -42,10 +44,10 @@ import frc.util.ControllerUtil;
 import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,9 +61,7 @@ public class RobotContainer {
   private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  private final ArmSubsystem armSubsystem =
-      new ArmSubsystem(
-          elevatorSubsystem /* the arm subsystem reacts to the state of the elevator subsystem */);
+  private final ArmSubsystem armSubsystem = new ArmSubsystem(elevatorSubsystem);
 
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
@@ -237,43 +237,38 @@ public class RobotContainer {
                 () -> false,
                 armSubsystem));
 
-    /**
-     * this curried start end command calls setMode with the passed mode, then calls next mode when
-     * the command is stopped
-     */
-    Function<IntakeSubsystem.Modes, StartEndCommand> intakeCommand =
-        mode ->
-            new StartEndCommand(
-                () -> intakeSubsystem.setMode(mode), intakeSubsystem::nextMode, intakeSubsystem);
-
     // intake balls
-    jasonLayer.off(jason::getAButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.INTAKE));
-    // score into low from fender
-    jasonLayer.off(jason::getYButton).whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE));
-    // score into low from far
     jasonLayer
-        .off(jason::getXButton)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_FAST));
+        .off(jason::getAButton)
+        .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE));
+    // score into low from fender
+    jasonLayer
+        .off(jason::getYButton)
+        .whenPressed(
+            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.ALIGN_LOW));
     // score into high from fender
     jasonLayer
         .off(jason::getLeftBumper)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.OUTTAKE_HIGH));
+        .whenPressed(
+            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH));
 
     // stop everything
-    jasonLayer.off(jason::getBButton).whenPressed(intakeCommand.apply(IntakeSubsystem.Modes.OFF));
+    jasonLayer
+        .off(jason::getBButton)
+        .whenPressed(new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OFF));
 
     // eject left side
     jasonLayer
         .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() <= .5)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_LEFT));
+        .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.EJECT_LEFT));
     // eject right side
     jasonLayer
         .off(() -> jason.getLeftTriggerAxis() <= .5 && jason.getRightTriggerAxis() > .5)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_RIGHT));
+        .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.EJECT_RIGHT));
     // eject everything
     jasonLayer
         .off(() -> jason.getLeftTriggerAxis() > .5 && jason.getRightTriggerAxis() > .5)
-        .whenHeld(intakeCommand.apply(IntakeSubsystem.Modes.EJECT_ALL));
+        .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.EJECT_ALL));
   }
 
   /**
@@ -281,11 +276,7 @@ public class RobotContainer {
    */
   private void setupAutonomousCommands() {
     autoSelector.setDefaultOption(
-        "baseline auto",
-        new BaselineAutoSequence(4, 2, drivebaseSubsystem.getKinematics(), drivebaseSubsystem));
-
-    autoSelector.addOption(
-        "offside two cargo",
+        "OffsideAuto2",
         new OffsideTwoCargoAutoSequence(
             3, // Optimal values per 2022-03-08 test (ih)
             1.5,
@@ -294,9 +285,19 @@ public class RobotContainer {
             drivebaseSubsystem,
             intakeSubsystem));
 
+    autoSelector.setDefaultOption(
+        "OnsideOneBallSteal (choose this maddie, we got this)",
+        new OnsideOneBallSteal(
+            3, // Optimal values per 2022-03-08 test (ih)
+            1.5,
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
     autoSelector.addOption(
-        "onside two cargo",
-        new OnsideTwoCargoAutoSequence(
+        "OnsideAuto3",
+        new OnsideThreeSequence(
             3,
             1.5,
             drivebaseSubsystem.getKinematics(),
@@ -305,22 +306,47 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "onside three cargo",
-        new OnsideThreeCargoAutoSequence(
-            3,
-            1.5,
+        "OnsideAuto4",
+        new OnsideFourSequence(
+            4, // m/s
+            2.75, // m/s2
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,
             intakeSubsystem));
 
-    Shuffleboard.getTab("DriverView").add("auto selector", autoSelector);
+    autoSelector.addOption(
+        "DONOTUSE",
+        new GreedyOnsideAutoSequence(
+            4, // m/s
+            5, // m/s2
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    Shuffleboard.getTab("DriverView")
+        .add("auto selector", autoSelector)
+        .withSize(4, 1)
+        .withPosition(6, 0);
   }
 
   private void setupCameras() {
     UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
-    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 176, 144, 15);
-    Shuffleboard.getTab("DriverView").add(intakeCamera);
+    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 15);
+    Shuffleboard.getTab("DriverView")
+        .add(intakeCamera)
+        .withSize(6, 6)
+        .withPosition(0, 0)
+        .withProperties(Map.of("show controls", false));
+
+    // UsbCamera fieldCamera = CameraServer.startAutomaticCapture("field camera", 1);
+    // fieldCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 7);
+    // Shuffleboard.getTab("DriverView")
+    //     .add(fieldCamera)
+    //     .withSize(6, 6)
+    //     .withPosition(6, 0)
+    //     .withProperties(Map.of("show controls", false));
   }
 
   /**
