@@ -1,5 +1,6 @@
 package frc.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
@@ -16,7 +17,11 @@ public class MacUtil {
           .equals(
               // this value is the mac address of the practice bot
               // if the read mac address is not the practice bot, we default to comp bot
-              "00:80:2F:32:FD:81");
+              "00:80:2F:28:AC:B1");
+
+  static {
+    SmartDashboard.putString("MAC address", macToString(getMacAddress()));
+  }
 
   private static void logErr(SocketException e) {
     System.out.print(
