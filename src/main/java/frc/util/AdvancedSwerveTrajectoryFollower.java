@@ -4,6 +4,7 @@
 
 package frc.util;
 
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -53,7 +54,8 @@ public class AdvancedSwerveTrajectoryFollower extends TrajectoryFollower<Chassis
     double yFF = linearVelocityRefMeters * poseRef.getRotation().getSin();
 
     double currentDegrees = (360 - currentPose.getRotation().getDegrees()) % 360;
-    double targetDegrees = (360 - poseRef.getRotation().getDegrees()) % 360;
+    double targetDegrees =
+        (360 - ((PathPlannerState) lastState).holonomicRotation.getDegrees()) % 360;
 
     // scope current and target angles
     double angularDifferenceDeg = Util.relativeAngularDifference(currentDegrees, targetDegrees);
