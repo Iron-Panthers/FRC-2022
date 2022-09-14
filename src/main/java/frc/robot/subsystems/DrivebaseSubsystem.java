@@ -27,13 +27,13 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
+import frc.util.AdvancedSwerveTrajectoryFollower;
 import frc.util.Util;
 import java.util.Optional;
 
 public class DrivebaseSubsystem extends SubsystemBase {
-  private final SimpleSwerveTrajectoryFollower follower =
-      new SimpleSwerveTrajectoryFollower(
+  private final AdvancedSwerveTrajectoryFollower follower =
+      new AdvancedSwerveTrajectoryFollower(
           new PIDController(0.4, 0.0, 0.025),
           new PIDController(0.4, 0.0, 0.025),
           new ProfiledPIDController(
@@ -47,7 +47,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   // Not mission critical as it "technically" drives fine as of now; but I suspect this is a site
   // for future improvements
 
-  public SimpleSwerveTrajectoryFollower getFollower() {
+  public AdvancedSwerveTrajectoryFollower getFollower() {
     return follower;
   }
 

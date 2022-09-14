@@ -1,8 +1,8 @@
 package frc.robot.autonomous.commands;
 
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.FollowTrajectoryCommand;
@@ -23,7 +23,7 @@ public class AutoTestSequence extends SequentialCommandGroup {
         new TrajectoryConfig(maxVelocityMetersPerSecond, maxAccelerationMetersPerSecondSq)
             .setKinematics(kinematics);
 
-    Trajectory path =
+    PathPlannerTrajectory path =
         PathPlanner.loadPath(
             "auto test", maxAccelerationMetersPerSecondSq, maxAccelerationMetersPerSecondSq);
 
