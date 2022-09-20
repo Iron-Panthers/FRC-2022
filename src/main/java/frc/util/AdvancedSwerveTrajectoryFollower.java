@@ -55,7 +55,10 @@ public class AdvancedSwerveTrajectoryFollower extends TrajectoryFollower<Chassis
 
     double currentDegrees = (360 - currentPose.getRotation().getDegrees()) % 360;
     double targetDegrees =
-        (360 - ((PathPlannerState) lastState).holonomicRotation.getDegrees()) % 360;
+        // only cast if safe
+        lastState instanceof PathPlannerState
+            ? ((360 - ((PathPlannerState) lastState).holonomicRotation.getDegrees()) % 360)
+            : ((360 - poseRef.getRotation().getDegrees()) % 360);
 
     // scope current and target angles
     double angularDifferenceDeg = Util.relativeAngularDifference(currentDegrees, targetDegrees);
