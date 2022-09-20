@@ -4,8 +4,9 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
 
@@ -57,8 +58,13 @@ public class FollowTrajectoryCommand extends CommandBase {
 
     if (localizeToStartPose) {
       // sample the trajectory at 0 seconds (its beginning)
-      Pose2d firstPoseMeters = trajectory.sample(0).poseMeters;
-      drivebaseSubsystem.resetOdometryToPose(firstPoseMeters);
+      State firstState = trajectory.sample(0);
+      if (firstState instanceof PathPlannerState) {
+        drivebaseSubsystem.resetOdometryToPose(
+            firstState.poseMeters, ((PathPlannerState) firstState).holonomicRotation);
+      } else {
+        drivebaseSubsystem.resetOdometryToPose(firstState.poseMeters);
+      }
     }
   }
 
