@@ -192,6 +192,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   /** Sets the gyro angle to zero, resetting the forward direction */
   public void zeroGyroscope() {
+    navx.setAngleAdjustment(0);
     navx.zeroYaw();
   }
 
@@ -202,16 +203,26 @@ public class DrivebaseSubsystem extends SubsystemBase {
    * @param pose The pose to reset to.
    */
   public void resetOdometryToPose(Pose2d pose) {
+    navx.setAngleAdjustment(0);
     swerveOdometry.resetPosition(pose, getGyroscopeRotation());
   }
 
-  public Rotation2d getGyroscopeRotation() {
-    if (navx.isMagnetometerCalibrated()) {
-      // We will only get valid fused headings if the magnetometer is calibrated
-      return Rotation2d.fromDegrees(navx.getFusedHeading());
-    }
+  /**
+   * Resets the odometry estimate to a specific pose.
+   *
+   * @param pose The pose to reset to.
+   * @param rotation The rotation to reset to
+   */
+  public void resetOdometryToPose(Pose2d pose, Rotation2d rotation) {
+    navx.setAngleAdjustment(0);
+    // navx.setAngleAdjustment(rotation.getDegrees() - navx.getAngle());
+    var newPose = new Pose2d(pose.getTranslation(), rotation);
+    swerveOdometry.resetPosition(newPose, getGyroscopeRotation());
+  }
 
-    double angle = 360d - navx.getYaw();
+  public Rotation2d getGyroscopeRotation() {
+
+    double angle = -navx.getAngle();
 
     angle %= 360;
 
