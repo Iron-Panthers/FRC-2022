@@ -214,8 +214,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
    * @param rotation The rotation to reset to
    */
   public void resetOdometryToPose(Pose2d pose, Rotation2d rotation) {
-    // navx.setAngleAdjustment(0);
-    // navx.setAngleAdjustment(rotation.getDegrees() - navx.getAngle());
+    navx.setAngleAdjustment(0);
+    navx.setAngleAdjustment(getGyroscopeRotation().minus(rotation).getDegrees());
     var newPose = new Pose2d(pose.getTranslation(), rotation);
     swerveOdometry.resetPosition(newPose, getGyroscopeRotation());
   }
