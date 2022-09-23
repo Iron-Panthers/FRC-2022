@@ -41,6 +41,23 @@ public class UtilTests {
     assertEquals(-90, Util.relativeAngularDifference(270, 0));
   }
 
+  public static Stream<Arguments> relativeAngularDifferenceParams() {
+    return Stream.of(
+        Arguments.of(0, 0, 0),
+        Arguments.of(1, 0, 1),
+        Arguments.of(359, 0, -1),
+        Arguments.of(1, 30, -29),
+        Arguments.of(359, 30, -31));
+  }
+
+  // parameterized test
+  @UtilParamTest
+  @MethodSource("relativeAngularDifferenceParams")
+  public void relativeAngleHandlesRollover(
+      double currentAngle, double newAngle, double difference) {
+    assertEquals(Util.relativeAngularDifference(currentAngle, newAngle), difference, 1e-9);
+  }
+
   @UtilTest
   public void vectorToAngleCorrect() {
     assertEquals(0, Util.vectorToAngle(0, 0));
