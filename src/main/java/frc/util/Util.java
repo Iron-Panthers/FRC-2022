@@ -18,6 +18,19 @@ public class Util {
   }
 
   /**
+   * Modulo on a negative number returns a negative number. This function always returns positive
+   * numbers, even for negative angles, without rotation.
+   *
+   * @param degrees
+   * @return normalized degrees
+   */
+  public static double normalizeDegrees(double degrees) {
+    degrees %= 360;
+    degrees += 360;
+    return degrees % 360;
+  }
+
+  /**
    * This function finds the degree difference between angles, the shortest path. useful for pid
    * control of drivebase rotation
    *
@@ -26,13 +39,13 @@ public class Util {
    * @return Shortest angular difference in degrees
    */
   public static double relativeAngularDifference(double currentAngle, double newAngle) {
-    currentAngle %= 360;
-    newAngle %= 360;
-    double difference1 = Math.abs(currentAngle - newAngle);
+    double normCurrentAngle = normalizeDegrees(currentAngle);
+    double normNewAngle = normalizeDegrees(newAngle);
+    double difference1 = Math.abs(normCurrentAngle - normNewAngle);
     double difference2 = Math.abs(360 - difference1);
     double difference = difference1 < difference2 ? difference1 : difference2;
 
-    if ((currentAngle + difference) % 360 == newAngle) return difference * -1;
+    if ((normCurrentAngle + difference) % 360 == normNewAngle) return difference * -1;
     return difference;
   }
 

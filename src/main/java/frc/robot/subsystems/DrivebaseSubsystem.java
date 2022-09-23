@@ -173,11 +173,17 @@ public class DrivebaseSubsystem extends SubsystemBase {
     rotController.setSetpoint(0);
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
     // tune pid with:
-    Shuffleboard.getTab("Drivebase").add(rotController);
+    // tab.add(rotController);
 
     swerveOdometry = new SwerveDriveOdometry(kinematics, navx.getRotation2d());
 
     zeroGyroscope();
+
+    // tab.addNumber("target angle", () -> targetAngle);
+    // tab.addNumber("current angle", () -> getGyroscopeRotation().getDegrees());
+    // tab.addNumber(
+    //     "angular difference",
+    //     () -> -Util.relativeAngularDifference(targetAngle, getGyroscopeRotation().getDegrees()));
   }
 
   /** Return the current pose estimation of the robot */
@@ -222,9 +228,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   public Rotation2d getGyroscopeRotation() {
 
-    double angle = -navx.getAngle();
-
-    angle %= 360;
+    double angle = Util.normalizeDegrees(-navx.getAngle());
 
     // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
     // the angle increase.
