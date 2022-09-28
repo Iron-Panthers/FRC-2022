@@ -27,13 +27,13 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.autonomous.SimpleSwerveTrajectoryFollower;
+import frc.util.AdvancedSwerveTrajectoryFollower;
 import frc.util.Util;
 import java.util.Optional;
 
 public class DrivebaseSubsystem extends SubsystemBase {
-  private final SimpleSwerveTrajectoryFollower follower =
-      new SimpleSwerveTrajectoryFollower(
+  private final AdvancedSwerveTrajectoryFollower follower =
+      new AdvancedSwerveTrajectoryFollower(
           new PIDController(0.4, 0.0, 0.025),
           new PIDController(0.4, 0.0, 0.025),
           new ProfiledPIDController(
@@ -47,7 +47,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   // Not mission critical as it "technically" drives fine as of now; but I suspect this is a site
   // for future improvements
 
-  public SimpleSwerveTrajectoryFollower getFollower() {
+  public AdvancedSwerveTrajectoryFollower getFollower() {
     return follower;
   }
 
@@ -173,11 +173,17 @@ public class DrivebaseSubsystem extends SubsystemBase {
     rotController.setSetpoint(0);
     rotController.setTolerance(ANGULAR_ERROR); // degrees error
     // tune pid with:
-    Shuffleboard.getTab("Drivebase").add(rotController);
+    // tab.add(rotController);
 
     swerveOdometry = new SwerveDriveOdometry(kinematics, navx.getRotation2d());
 
     zeroGyroscope();
+
+    // tab.addNumber("target angle", () -> targetAngle);
+    // tab.addNumber("current angle", () -> getGyroscopeRotation().getDegrees());
+    // tab.addNumber(
+    //     "angular difference",
+    //     () -> -Util.relativeAngularDifference(targetAngle, getGyroscopeRotation().getDegrees()));
   }
 
   /** Return the current pose estimation of the robot */
@@ -192,6 +198,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   /** Sets the gyro angle to zero, resetting the forward direction */
   public void zeroGyroscope() {
+    navx.setAngleAdjustment(0);
     navx.zeroYaw();
   }
 
@@ -202,18 +209,26 @@ public class DrivebaseSubsystem extends SubsystemBase {
    * @param pose The pose to reset to.
    */
   public void resetOdometryToPose(Pose2d pose) {
+    navx.setAngleAdjustment(0);
     swerveOdometry.resetPosition(pose, getGyroscopeRotation());
   }
 
+  /**
+   * Resets the odometry estimate to a specific pose.
+   *
+   * @param pose The pose to reset to.
+   * @param rotation The rotation to reset to
+   */
+  public void resetOdometryToPose(Pose2d pose, Rotation2d rotation) {
+    navx.setAngleAdjustment(0);
+    navx.setAngleAdjustment(getGyroscopeRotation().minus(rotation).getDegrees());
+    var newPose = new Pose2d(pose.getTranslation(), rotation);
+    swerveOdometry.resetPosition(newPose, getGyroscopeRotation());
+  }
+
   public Rotation2d getGyroscopeRotation() {
-    if (navx.isMagnetometerCalibrated()) {
-      // We will only get valid fused headings if the magnetometer is calibrated
-      return Rotation2d.fromDegrees(navx.getFusedHeading());
-    }
 
-    double angle = 360d - navx.getYaw();
-
-    angle %= 360;
+    double angle = Util.normalizeDegrees(-navx.getAngle());
 
     // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
     // the angle increase.

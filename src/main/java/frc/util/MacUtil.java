@@ -1,5 +1,6 @@
 package frc.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
@@ -11,12 +12,19 @@ public class MacUtil {
    * is the robot code is running on the competition robot? defaults to true, better to assume comp
    * then practice
    */
-  public static final boolean IS_COMP_BOT =
-      !macToString(getMacAddress())
-          .equals(
-              // this value is the mac address of the practice bot
-              // if the read mac address is not the practice bot, we default to comp bot
-              "00:80:2F:32:FD:81");
+  public static final boolean IS_COMP_BOT;
+
+  static {
+    String macAddress = macToString(getMacAddress());
+    SmartDashboard.putString("MAC address", macAddress);
+    IS_COMP_BOT =
+        !(macAddress.equals(
+                // this value is the mac address of the practice bot
+                // if the read mac address is not the practice bot, we default to comp bot
+                "00:80:2F:28:AC:B0")
+            // this is the mac address of the practice bot with cable
+            || macAddress.equals("00:80:2F:28:AC:B1"));
+  }
 
   private static void logErr(SocketException e) {
     System.out.print(
