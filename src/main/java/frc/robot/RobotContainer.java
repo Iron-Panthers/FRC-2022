@@ -34,6 +34,7 @@ import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.InstantSetIntakeModeCommand;
 import frc.robot.commands.PreciseArmCommand;
+import frc.robot.commands.RobotDriveCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.VibrateControllerCommand;
@@ -133,6 +134,9 @@ public class RobotContainer {
     new Button(will::getStartButton)
         .whenPressed(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
     new Button(will::getLeftBumper).whenHeld(new DefenseModeCommand(drivebaseSubsystem));
+
+    new Button(will::getRightBumper)
+        .whenHeld(new RobotDriveCommand(drivebaseSubsystem, will::getLeftX, will::getLeftY));
 
     new Button(will::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
