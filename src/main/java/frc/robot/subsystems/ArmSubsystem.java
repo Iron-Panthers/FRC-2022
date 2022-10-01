@@ -155,15 +155,15 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("gravityOffset", gravityOffset);
     SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
 
-    final double motorPercent =
-        // runs the arm at a constant voltage if the arm is past the hardstop limit
-        desiredAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION) < Arm.HARDSTOP_ERROR_MARGIN
-                && (currentAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION) < Arm.HARDSTOP_ERROR_MARGIN
-            ? Arm.HARDSTOP_HOLD_VOLTAGE
-            : MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
+    // runs the arm at a constant voltage if the arm is past the hardstop limit
+    if ((desiredAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION < Arm.HARDSTOP.errorMargin)
+        && (currentAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION < Arm.HARDSTOP.errorMargin)) {
+      setPercentOutput(Arm.HARDSTOP.holdVoltage);
+    } else {
+      setPercentOutput(MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5));
+    }
 
     // SmartDashboard.putNumber("motor percent", motorPercent);
 
-    setPercentOutput(motorPercent);
   }
 }
