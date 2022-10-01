@@ -109,8 +109,8 @@ public final class Constants {
 
     public static final class Hardstop {
       // change hold_voltage later
-      public static final double HOLD_VOLTAGE = .1;
-      public static final double ERROR_MARGIN = 20;
+      public static final double HOLD_VOLTAGE = .08;
+      public static final double ERROR_MARGIN = 15;
     }
 
     public static final class PID {

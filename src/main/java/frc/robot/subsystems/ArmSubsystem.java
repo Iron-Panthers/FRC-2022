@@ -72,7 +72,7 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.configStatorCurrentLimit(config);
     armLeftMotor.configStatorCurrentLimit(config);
 
-    pidController = new PIDController(0.007, 0, 0.00015);
+    pidController = new PIDController(0.005, 0, 0.00017);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
 
     Shuffleboard.getTab("arm").add(pidController);
@@ -104,10 +104,6 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.set(TalonFXControlMode.PercentOutput, power);
   }
 
-  private void setCurrentOutput(double current) {
-    armRightMotor.set(TalonFXControlMode.Current, current);
-  }
-
   // Sets the goal of the pid controller
   public void setAngle(double desiredAngle) {
     this.desiredAngle = desiredAngle; // Set the setpoint of the PIDController
@@ -118,14 +114,15 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     final double currentAngle = getAngle();
 
+    boolean elevatorProtection = elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT;
+    SmartDashboard.putBoolean("elevatorProtection", elevatorProtection);
+
     // make target angle safe lol
     desiredAngle =
         MathUtil.clamp(
             desiredAngle,
             Setpoints.INTAKE_POSITION,
-            elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT
-                ? Setpoints.CLIMB_POSITION
-                : Setpoints.MAX_HEIGHT);
+            elevatorProtection ? Setpoints.CLIMB_POSITION : Setpoints.MAX_HEIGHT);
 
     // SmartDashboard.putNumber("current angle", currentAngle);
     // SmartDashboard.putNumber("desired angle", desiredAngle);
@@ -153,15 +150,21 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("gravityOffset", gravityOffset);
     SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
 
+    SmartDashboard.putBoolean(
+        "desired",
+        (Arm.Setpoints.OUTTAKE_HIGH_POSITION - desiredAngle < Arm.Hardstop.ERROR_MARGIN));
+    SmartDashboard.putBoolean(
+        "current",
+        (Arm.Setpoints.OUTTAKE_HIGH_POSITION - currentAngle < Arm.Hardstop.ERROR_MARGIN));
+
     // runs the arm at a constant voltage if the arm is past the hardstop limit
-    if ((desiredAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION > Arm.Hardstop.ERROR_MARGIN)
-        && (currentAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION > Arm.Hardstop.ERROR_MARGIN)) {
-      setCurrentOutput(Arm.Hardstop.HOLD_VOLTAGE);
+    if ((Arm.Setpoints.OUTTAKE_HIGH_POSITION - desiredAngle < Arm.Hardstop.ERROR_MARGIN)
+        && (Arm.Setpoints.OUTTAKE_HIGH_POSITION - currentAngle < Arm.Hardstop.ERROR_MARGIN)) {
+      SmartDashboard.putBoolean("volt", true);
+      setPercentOutput(Arm.Hardstop.HOLD_VOLTAGE);
     } else {
       setPercentOutput(MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5));
+      SmartDashboard.putBoolean("volt", false);
     }
-
-    // SmartDashboard.putNumber("motor percent", motorPercent);
-
   }
 }
