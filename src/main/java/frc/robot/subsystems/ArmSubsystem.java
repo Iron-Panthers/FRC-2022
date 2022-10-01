@@ -110,6 +110,10 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.set(TalonFXControlMode.PercentOutput, power);
   }
 
+  private void setCurrentOutput(double current) {
+    armRightMotor.set(TalonFXControlMode.Current, current);
+  }
+
   // Sets the goal of the pid controller
   public void setAngle(double desiredAngle) {
     this.desiredAngle = desiredAngle; // Set the setpoint of the PIDController
@@ -156,11 +160,11 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
 
     // runs the arm at a constant voltage if the arm is past the hardstop limit
-    if ((desiredAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION < Arm.HARDSTOP.errorMargin)
-        && (currentAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION < Arm.HARDSTOP.errorMargin)) {
-      setPercentOutput(Arm.HARDSTOP.holdVoltage);
+    if ((desiredAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION < Arm.Hardstop.ERROR_MARGIN)
+        && (currentAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION < Arm.Hardstop.ERROR_MARGIN)) {
+      setPercentOutput(Arm.Hardstop.HOLD_VOLTAGE);
     } else {
-      setPercentOutput(MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5));
+      setCurrentOutput(MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5));
     }
 
     // SmartDashboard.putNumber("motor percent", motorPercent);
