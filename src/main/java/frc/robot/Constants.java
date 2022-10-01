@@ -107,6 +107,10 @@ public final class Constants {
     public static final double ANGULAR_OFFSET = IS_COMP_BOT ? 58 : 60;
     public static final double GRAVITY_CONTROL_PERCENT = .06;
 
+    // change hold_voltage later
+    public static final double HARDSTOP_HOLD_VOLTAGE = 3;
+    public static final double HARDSTOP_ERROR_MARGIN = 5;
+
     public static final class PID {
       public static final double ANGULAR_TOLERANCE = 1.0;
     }
