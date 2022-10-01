@@ -15,7 +15,6 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Arm.Setpoints;
@@ -115,7 +114,7 @@ public class ArmSubsystem extends SubsystemBase {
     final double currentAngle = getAngle();
 
     boolean elevatorProtection = elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT;
-    SmartDashboard.putBoolean("elevatorProtection", elevatorProtection);
+    // SmartDashboard.putBoolean("elevatorProtection", elevatorProtection);
 
     // make target angle safe lol
     desiredAngle =
@@ -147,24 +146,15 @@ public class ArmSubsystem extends SubsystemBase {
     final double gravityOffset =
         Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
 
-    SmartDashboard.putNumber("gravityOffset", gravityOffset);
-    SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
+    // SmartDashboard.putNumber("gravityOffset", gravityOffset);
+    // SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
 
-    SmartDashboard.putBoolean(
-        "desired",
-        (Arm.Setpoints.OUTTAKE_HIGH_POSITION - desiredAngle < Arm.Hardstop.ERROR_MARGIN));
-    SmartDashboard.putBoolean(
-        "current",
-        (Arm.Setpoints.OUTTAKE_HIGH_POSITION - currentAngle < Arm.Hardstop.ERROR_MARGIN));
-
-    // runs the arm at a constant voltage if the arm is past the hardstop limit
+    // runs the arm at a constant percent if the arm is past the hardstop limit
     if ((Arm.Setpoints.OUTTAKE_HIGH_POSITION - desiredAngle < Arm.Hardstop.ERROR_MARGIN)
         && (Arm.Setpoints.OUTTAKE_HIGH_POSITION - currentAngle < Arm.Hardstop.ERROR_MARGIN)) {
-      SmartDashboard.putBoolean("volt", true);
-      setPercentOutput(Arm.Hardstop.HOLD_VOLTAGE);
+      setPercentOutput(Arm.Hardstop.HOLD_PERCENT);
     } else {
       setPercentOutput(MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5));
-      SmartDashboard.putBoolean("volt", false);
     }
   }
 }

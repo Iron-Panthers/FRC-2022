@@ -108,8 +108,7 @@ public final class Constants {
     public static final double GRAVITY_CONTROL_PERCENT = .06;
 
     public static final class Hardstop {
-      // change hold_voltage later
-      public static final double HOLD_VOLTAGE = .08;
+      public static final double HOLD_PERCENT = .07;
       public static final double ERROR_MARGIN = 15;
     }
 
