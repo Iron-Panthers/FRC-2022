@@ -14,9 +14,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
@@ -89,11 +87,7 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configSensorDirection(true);
     armEncoder.setPositionToAbsolute(10); // ms
 
-    ShuffleboardLayout tab =
-        Shuffleboard.getTab("DriverView")
-            .getLayout("arm", BuiltInLayouts.kList)
-            .withSize(2, 2)
-            .withPosition(16, 1);
+    var tab = Shuffleboard.getTab("Arm");
     tab.addNumber("target angle", this::getTargetAngle);
     tab.addNumber("actual angle", this::getAngle);
   }
@@ -160,11 +154,11 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
 
     // runs the arm at a constant voltage if the arm is past the hardstop limit
-    if ((desiredAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION < Arm.Hardstop.ERROR_MARGIN)
-        && (currentAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION < Arm.Hardstop.ERROR_MARGIN)) {
-      setPercentOutput(Arm.Hardstop.HOLD_VOLTAGE);
+    if ((desiredAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION > Arm.Hardstop.ERROR_MARGIN)
+        && (currentAngle - Arm.Setpoints.OUTTAKE_HIGH_POSITION > Arm.Hardstop.ERROR_MARGIN)) {
+      setCurrentOutput(Arm.Hardstop.HOLD_VOLTAGE);
     } else {
-      setCurrentOutput(MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5));
+      setPercentOutput(MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5));
     }
 
     // SmartDashboard.putNumber("motor percent", motorPercent);

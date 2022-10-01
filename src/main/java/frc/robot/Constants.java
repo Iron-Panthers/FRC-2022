@@ -109,8 +109,8 @@ public final class Constants {
 
     public static final class Hardstop {
       // change hold_voltage later
-      public static final double HOLD_VOLTAGE = 3;
-      public static final double ERROR_MARGIN = 5;
+      public static final double HOLD_VOLTAGE = .1;
+      public static final double ERROR_MARGIN = 20;
     }
 
     public static final class PID {
@@ -118,9 +118,9 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = IS_COMP_BOT ? 146.3 : 146.4;
+      public static final double MAX_HEIGHT = 145.811;
 
-      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT - 3.9;
+      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT;
       public static final double INTAKE_POSITION = MAX_HEIGHT - 155.3;
       public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 93.3;
       public static final double CLIMB_POSITION = MAX_HEIGHT - 37.2;
