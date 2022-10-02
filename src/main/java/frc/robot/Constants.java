@@ -170,12 +170,12 @@ public final class Constants {
     /** time in seconds to wait between certain modes */
     public static final class ModeWaits {
       public static final class High {
-        public static final double ALIGN_TO_LEFT = .24 * 2;
-        public static final double LEFT_TO_ALL = .55;
-        public static final double ALL_TO_OFF = 2;
+        public static final double ALIGN_TO_LEFT = .08;
+        public static final double LEFT_TO_ALL = .7;
+        public static final double ALL_TO_OFF = 4;
       }
 
-      /** this is out taking backwards, ie over the elevator */
+      /** this is out taking backwards, ie over the elevator (LOW SHOT) */
       public static final class Outtake {
         public static final double ALIGN_TO_LEFT = .24 * 2;
         public static final double LEFT_TO_ALL = .55 * 3;
@@ -196,7 +196,7 @@ public final class Constants {
       public static final double EJECT = -1;
 
       /** the percent to run for high shot */
-      public static final double FEED_HIGH = 1;
+      public static final double FEED_HIGH = .05;
 
       /** the percent to run for the low shot */
       public static final double FEED_LOW = .7;
@@ -217,9 +217,9 @@ public final class Constants {
 
       // velocity speeds for the high shoot
       /** velocity */
-      public static final double OUTTAKE_UPPER_HIGH = 10000 * 1.1;
+      public static final double OUTTAKE_UPPER_HIGH = 12_000;
       /** velocity */
-      public static final double OUTTAKE_LOWER_HIGH = 90000 * 1.1;
+      public static final double OUTTAKE_LOWER_HIGH = 10_000;
     }
 
     public static final class Ports {
