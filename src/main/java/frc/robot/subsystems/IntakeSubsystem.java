@@ -32,8 +32,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private void configStatusFramePeriodsAndBatteryComp(TalonFX talon) {
     talon.setStatusFramePeriod(1, 100);
     talon.setStatusFramePeriod(2, 20);
+    talon.configVoltageCompSaturation(11);
     talon.enableVoltageCompensation(true);
-    talon.configVoltageCompSaturation(12);
     talon.setNeutralMode(NeutralMode.Coast);
   }
 
@@ -142,9 +142,9 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         break;
       case OUTTAKE_HIGH_LEFT:
-        // if (timeSinceModeTransition() >= ModeWaits.High.LEFT_TO_ALL) {
-        setMode(Modes.OUTTAKE_HIGH_ALL);
-        // }
+        if (timeSinceModeTransition() >= ModeWaits.High.LEFT_TO_ALL) {
+          setMode(Modes.OUTTAKE_HIGH_ALL);
+        }
         break;
       case OUTTAKE_HIGH_ALL:
         if (timeSinceModeTransition() >= ModeWaits.High.ALL_TO_OFF) {
