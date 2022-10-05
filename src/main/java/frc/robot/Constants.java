@@ -197,12 +197,12 @@ public final class Constants {
       public static final double EJECT = -1;
 
       /** the percent to run for high shot */
-      public static final double FEED_HIGH = .05;
+      public static final double FEED_HIGH = .1;
 
       /** the percent to run for the low shot */
       public static final double FEED_LOW = .7;
 
-      public static final double ALIGN_INTERNAL = -0.1;
+      public static final double ALIGN_INTERNAL = -0.5;
     }
 
     /** percent to run motors at for given states */
@@ -210,7 +210,7 @@ public final class Constants {
       /** the percent to run the intake motors during the intake state */
       public static final double INTAKE = -.2;
       /** speed to run intake motors for unsticking balls */
-      public static final double INTAKE_FORCEFUL = -.8;
+      public static final double INTAKE_FORCEFUL = -1;
       /** LOW SHOT; the velocity to run the upper outtake during the outtake state */
       public static final double OUTTAKE_UPPER_LOW = 8000;
       /** LOW SHOT; the velocity to run the lower outtake during the outtake state */
