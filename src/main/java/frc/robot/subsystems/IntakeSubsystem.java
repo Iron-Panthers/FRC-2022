@@ -75,6 +75,7 @@ public class IntakeSubsystem extends SubsystemBase {
     OFF,
     IDLING,
     INTAKE,
+    INTAKE_FORCEFUL,
     ALIGN_LOW,
     OUTTAKE_LOW_LEFT,
     OUTTAKE_LOW_ALL,
@@ -155,6 +156,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // intake block
       case INTAKE:
+        // intake forceful has the same next mode as intake
+      case INTAKE_FORCEFUL:
         // after intake, we should run the idling motor for a time to align balls for shooting and
         // outtake
         setMode(Modes.IDLING);
@@ -276,6 +279,8 @@ public class IntakeSubsystem extends SubsystemBase {
     upperIntakeMotor.set(TalonFXControlMode.PercentOutput, IntakeRollers.INTAKE);
   }
 
+  // periodic section
+
   private void offModePeriodic() {
     stopEjectRollers();
     stopIntakeRollers();
@@ -291,6 +296,11 @@ public class IntakeSubsystem extends SubsystemBase {
   private void intakeModePeriodic() {
     runEjectRollersPercent(EjectRollers.IDLE);
     runIntakeRollersPercent(IntakeRollers.INTAKE);
+  }
+
+  private void intakeForcefulModePeriodic() {
+    runEjectRollersPercent(EjectRollers.IDLE);
+    runIntakeRollersPercent(IntakeRollers.INTAKE_FORCEFUL);
   }
 
   private void alignLowPeriodic() {
@@ -369,6 +379,9 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case INTAKE:
         intakeModePeriodic();
+        break;
+      case INTAKE_FORCEFUL:
+        intakeForcefulModePeriodic();
         break;
       case ALIGN_LOW:
         alignLowPeriodic();
