@@ -244,9 +244,9 @@ public class RobotContainer {
         .whenHeld(new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE));
     // score into low from fender
     jasonLayer
-        .off(jason::getYButton)
-        .whenPressed(
-            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.ALIGN_LOW));
+        .off(jason::getXButton)
+        .whenHeld(
+            new ForceIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE_FORCEFUL));
     // score into high from fender
     jasonLayer
         .off(jason::getLeftBumper)

@@ -169,8 +169,9 @@ public final class Constants {
 
     /** time in seconds to wait between certain modes */
     public static final class ModeWaits {
+      /** the high goal shot, over the elevator */
       public static final class High {
-        public static final double ALIGN_TO_LEFT = .08;
+        public static final double ALIGN_TO_LEFT = .2;
         public static final double LEFT_TO_ALL = .7;
         public static final double ALL_TO_OFF = 4;
       }
@@ -182,7 +183,7 @@ public final class Constants {
         public static final double ALL_TO_OFF = 2;
       }
 
-      // nasty name because we cannot nest
+      /** time between states for intake sequence */
       public static final class IntakeWaits {
         public static final double IDLE_TO_OFF = 1;
       }
@@ -196,29 +197,31 @@ public final class Constants {
       public static final double EJECT = -1;
 
       /** the percent to run for high shot */
-      public static final double FEED_HIGH = .05;
+      public static final double FEED_HIGH = .1;
 
       /** the percent to run for the low shot */
       public static final double FEED_LOW = .7;
 
-      public static final double ALIGN_INTERNAL = -0.1;
+      public static final double ALIGN_INTERNAL = -0.5;
     }
 
     /** percent to run motors at for given states */
     public static final class IntakeRollers {
       /** the percent to run the intake motors during the intake state */
-      public static final double INTAKE = -.385;
-      /** the velocity to run the upper outtake during the outtake state */
+      public static final double INTAKE = -.2;
+      /** speed to run intake motors for unsticking balls */
+      public static final double INTAKE_FORCEFUL = -1;
+      /** LOW SHOT; the velocity to run the upper outtake during the outtake state */
       public static final double OUTTAKE_UPPER_LOW = 8000;
-      /** the velocity to run the lower outtake during the outtake state */
+      /** LOW SHOT; the velocity to run the lower outtake during the outtake state */
       public static final double OUTTAKE_LOWER_LOW = 8000;
       /** percent */
       public static final double ALIGN_INTERNAL = -0.1103 * .5;
 
       // velocity speeds for the high shoot
-      /** velocity */
+      /** HIGH SHOT; velocity */
       public static final double OUTTAKE_UPPER_HIGH = 12_000;
-      /** velocity */
+      /** HIGH SHOT; velocity */
       public static final double OUTTAKE_LOWER_HIGH = 10_000;
     }
 
