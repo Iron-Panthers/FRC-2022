@@ -167,7 +167,8 @@ public class RobotContainer {
                 () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 will::getRightY,
-                will::getRightX));
+                will::getRightX,
+                will::getRightBumper));
 
     // Elevator preset position buttons
     jasonLayer

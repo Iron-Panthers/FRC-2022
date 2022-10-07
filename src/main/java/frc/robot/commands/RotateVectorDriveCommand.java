@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Drive;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.util.Util;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -24,8 +25,10 @@ public class RotateVectorDriveCommand extends CommandBase {
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationXSupplier;
   private final DoubleSupplier rotationYSupplier;
+  private final BooleanSupplier isRobotRelativeSupplier;
 
   private double angle = 0;
+
   private static final double[] angles = {0, 45, 90, 135, 180, 225, 270, 315};
 
   /** Creates a new DefaultDriveCommand. */
@@ -34,13 +37,15 @@ public class RotateVectorDriveCommand extends CommandBase {
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationXSupplier,
-      DoubleSupplier rotationYSupplier) {
+      DoubleSupplier rotationYSupplier,
+      BooleanSupplier isRobotRelativeSupplier) {
 
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
     this.rotationXSupplier = rotationXSupplier;
     this.rotationYSupplier = rotationYSupplier;
+    this.isRobotRelativeSupplier = isRobotRelativeSupplier;
 
     addRequirements(drivebaseSubsystem);
   }
@@ -57,18 +62,20 @@ public class RotateVectorDriveCommand extends CommandBase {
     double y = translationYSupplier.getAsDouble();
     double rotX = rotationXSupplier.getAsDouble();
     double rotY = rotationYSupplier.getAsDouble();
+    boolean isRobotRelative = isRobotRelativeSupplier.getAsBoolean();
 
     // if stick magnitude is greater then rotate angle mag
     if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE) {
       angle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles);
     }
 
-    drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle);
+    drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle, isRobotRelative);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+
     drivebaseSubsystem.drive(new ChassisSpeeds());
   }
 
