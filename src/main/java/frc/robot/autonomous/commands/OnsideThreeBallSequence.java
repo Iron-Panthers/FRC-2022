@@ -31,6 +31,12 @@ public class OnsideThreeBallSequence extends SequentialCommandGroup {
             maxAccelerationMetersPerSecondSq,
             maxAccelerationMetersPerSecondSq);
 
+    PathPlannerTrajectory threeBallOnsideShoot =
+        PathPlanner.loadPath(
+            "3ball onside shoot",
+            maxAccelerationMetersPerSecondSq,
+            maxAccelerationMetersPerSecondSq);
+
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
@@ -40,6 +46,9 @@ public class OnsideThreeBallSequence extends SequentialCommandGroup {
             new FollowTrajectoryCommand(threeBallOnsidePickup, true, drivebaseSubsystem),
             new ForceIntakeModeCommand(intakeSubsystem, Modes.INTAKE),
             armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION)),
-        new FollowTrajectoryCommand(threeBallOnsidePickup, true, drivebaseSubsystem));
+        parallel(
+            new FollowTrajectoryCommand(threeBallOnsideShoot, drivebaseSubsystem),
+            armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION)),
+        new SetIntakeModeCommand(intakeSubsystem, Modes.ALIGN_HIGH, Modes.OFF));
   }
 }
