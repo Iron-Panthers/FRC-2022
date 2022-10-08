@@ -208,7 +208,7 @@ public final class Constants {
     /** percent to run motors at for given states */
     public static final class IntakeRollers {
       /** the percent to run the intake motors during the intake state */
-      public static final double INTAKE = -.2;
+      public static final double INTAKE = -.35;
       /** speed to run intake motors for unsticking balls */
       public static final double INTAKE_FORCEFUL = -1;
       /** LOW SHOT; the velocity to run the upper outtake during the outtake state */
