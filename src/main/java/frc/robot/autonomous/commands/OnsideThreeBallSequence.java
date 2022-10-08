@@ -4,8 +4,8 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Arm;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
@@ -42,13 +42,12 @@ public class OnsideThreeBallSequence extends SequentialCommandGroup {
 
     addCommands(
         new SetIntakeModeCommand(intakeSubsystem, Modes.ALIGN_HIGH, Modes.OFF),
-        new ParallelCommandGroup(
+        parallel(
             new FollowTrajectoryCommand(threeBallOnsidePickup, true, drivebaseSubsystem),
             new ForceIntakeModeCommand(intakeSubsystem, Modes.INTAKE),
-            armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION)),
-        parallel(
-            new FollowTrajectoryCommand(threeBallOnsideShoot, drivebaseSubsystem),
-            armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION)),
+            armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION)),
+        new SequentialCommandGroup(
+            armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION), new WaitCommand(.2)),
         new SetIntakeModeCommand(intakeSubsystem, Modes.ALIGN_HIGH, Modes.OFF));
   }
 }
