@@ -277,6 +277,8 @@ public class RobotContainer {
    * Adds all autonomous routines to the autoSelector, and places the autoSelector on Shuffleboard.
    */
   private void setupAutonomousCommands() {
+    Shuffleboard.getTab("DriverView")
+        .addString("NOTES", () -> "Onside is right side. We got this Danny!");
     autoSelector.setDefaultOption(
         "OffsideAuto2",
         new OffsideTwoCargoAutoSequence(
