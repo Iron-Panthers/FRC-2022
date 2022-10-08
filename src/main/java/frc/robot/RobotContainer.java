@@ -27,6 +27,7 @@ import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.autonomous.commands.OnsideOneBallSteal;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
+import frc.robot.autonomous.commands.TaxiAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorPositionCommand;
@@ -320,6 +321,16 @@ public class RobotContainer {
         "AutoTest",
         new AutoTestSequence(
             2, // m/s
+            1, // m/s2
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
+        "Taxi and Disrupt",
+        new TaxiAutoSequence(
+            4, // m/s
             1, // m/s2
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
