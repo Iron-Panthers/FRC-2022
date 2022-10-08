@@ -48,6 +48,7 @@ public class OnsideThreeBallSequence extends SequentialCommandGroup {
             armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION)),
         new SequentialCommandGroup(
             armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION), new WaitCommand(.2)),
+        new FollowTrajectoryCommand(threeBallOnsideShoot, drivebaseSubsystem),
         new SetIntakeModeCommand(intakeSubsystem, Modes.ALIGN_HIGH, Modes.OFF));
   }
 }
