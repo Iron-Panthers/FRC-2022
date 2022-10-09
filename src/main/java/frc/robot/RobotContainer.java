@@ -354,8 +354,8 @@ public class RobotContainer {
     autoSelector.addOption(
         "[NEW] OnsideThreeBallSequence",
         new OnsideThreeBallSequence(
-            6.5, // m/s
-            3.5, // m/s2
+            3, // m/s
+            1, // m/s2
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,
