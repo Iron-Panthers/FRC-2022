@@ -58,7 +58,9 @@ public class OnsideOneBallSteal extends SequentialCommandGroup {
     addCommands(
         // Score preload
         new SetIntakeModeCommand(
-            intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF),
+            intakeSubsystem,
+            IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH,
+            IntakeSubsystem.Modes.OFF),
         // Follow trajectory and intake when we are near our target cargo
         parallel(
             sequence(

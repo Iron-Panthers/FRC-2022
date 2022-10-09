@@ -253,7 +253,8 @@ public class RobotContainer {
     jasonLayer
         .off(jason::getLeftBumper)
         .whenPressed(
-            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH));
+            new InstantSetIntakeModeCommand(
+                intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH));
 
     // stop everything
     jasonLayer
