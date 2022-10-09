@@ -171,6 +171,7 @@ public final class Constants {
     public static final class ModeWaits {
       /** the high goal shot, over the elevator */
       public static final class High {
+        public static final double CENTER_NORMALIZE_TO_ALIGN = 0.1;
         public static final double ALIGN_TO_LEFT = .2;
         public static final double LEFT_TO_ALL = .7;
         public static final double ALL_TO_OFF = 4;
