@@ -47,7 +47,8 @@ public class UtilTests {
         Arguments.of(1, 0, 1),
         Arguments.of(359, 0, -1),
         Arguments.of(1, 30, -29),
-        Arguments.of(359, 30, -31));
+        Arguments.of(359, 30, -31),
+        Arguments.of(1, 690, 31));
   }
 
   // parameterized test
