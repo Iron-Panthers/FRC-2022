@@ -25,9 +25,7 @@ public class Util {
    * @return normalized degrees
    */
   public static double normalizeDegrees(double degrees) {
-    degrees %= 360;
-    degrees += 360;
-    return degrees % 360;
+    return (degrees % 360 + 360) % 360;
   }
 
   /**
