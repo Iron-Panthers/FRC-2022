@@ -263,16 +263,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
   }
 
   public void driveAngle(Pair<Double, Double> xyInput, double targetAngle) {
-    driveAngle(xyInput, targetAngle, false);
-  }
-
-  public void driveAngle(
-      Pair<Double, Double> xyInput, double targetAngle, boolean isRobotRelative) {
     this.xyInput = xyInput;
-    this.targetAngle =
-        isRobotRelative
-            ? Util.normalizeDegrees(targetAngle + getGyroscopeRotation().getDegrees())
-            : targetAngle;
+    this.targetAngle = targetAngle;
     if (mode != Modes.DRIVE_ANGLE) rotController.reset();
     mode = Modes.DRIVE_ANGLE;
   }

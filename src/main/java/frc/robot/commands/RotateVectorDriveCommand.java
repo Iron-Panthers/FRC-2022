@@ -27,6 +27,8 @@ public class RotateVectorDriveCommand extends CommandBase {
   private final DoubleSupplier rotationYSupplier;
   private final BooleanSupplier isRobotRelativeSupplier;
 
+  private double initialAngle;
+
   private double angle = 0;
 
   private static final double[] angles = {0, 45, 90, 135, 180, 225, 270, 315};
@@ -53,6 +55,7 @@ public class RotateVectorDriveCommand extends CommandBase {
   @Override
   public void initialize() {
     angle = drivebaseSubsystem.getGyroscopeRotation().getDegrees();
+    initialAngle = angle;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -65,11 +68,17 @@ public class RotateVectorDriveCommand extends CommandBase {
     boolean isRobotRelative = isRobotRelativeSupplier.getAsBoolean();
 
     // if stick magnitude is greater then rotate angle mag
-    if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE) {
-      angle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles);
+
+    double targetAngle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles);
+
+    if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE && !isRobotRelative) {
+      angle = targetAngle;
+    } else if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE
+        && isRobotRelative) {
+      angle = Util.normalizeDegrees(targetAngle + initialAngle);
     }
 
-    drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle, isRobotRelative);
+    drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle);
   }
 
   // Called once the command ends or is interrupted.
