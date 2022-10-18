@@ -4,43 +4,39 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.commands.ElevatorPositionCommand;
+import frc.robot.Constants.Elevator;
 
-public class ElevatorAutomatedCommand extends CommandBase {
+public class ElevatorAutomatedCommand extends SequentialCommandGroup {
   private final ElevatorSubsystem elevatorSubsystem;
 
   /** Creates a new ElevatorCommand. */
-  public ElevatorAutomatedCommand(ElevatorSubsystem subsystem) {
+  public ElevatorAutomatedCommand(ElevatorSubsystem subsystem, double targetHeight) {
     this.elevatorSubsystem = subsystem;
     addRequirements(elevatorSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
-  }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    // get current height
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+    addCommands(
+      new SequentialCommandGroup(
+        // mid rung
+        new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT);
+        new WaitCommand(0.2);
+        new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT);
+        new WaitCommand(0.7);
+        // high rung
+        new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT);
+        new WaitCommand(0.2);
+        new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT);
+        new WaitCommand(0.7);
+        // traversal rung
+        new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT);
+        new WaitCommand(0.2);
+        new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT);
+        new WaitCommand(0.7);
+      )
+    );
   }
 }
-
-// 12.75 full motor rotations = 1.5pi inches of height
-
-// 12.75:1 gear ratio
-// talonfx to the entire thing
-// Big gear is 2.6 inches
-// 1.5 sprocket diameter

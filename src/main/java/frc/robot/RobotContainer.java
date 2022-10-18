@@ -172,12 +172,12 @@ public class RobotContainer {
         .on(jason::getBButton)
         .whenPressed(
             new ElevatorPositionCommand(
-                elevatorSubsystem, Constants.Elevator.maxHeight)); // Elevator goes to top
+                elevatorSubsystem, Constants.Elevator.MAX_HEIGHT)); // Elevator goes to top
     jasonLayer
         .on(jason::getXButton)
         .whenPressed(
             new ElevatorPositionCommand(
-                elevatorSubsystem, Constants.Elevator.minHeight)); // Elevator goes to bottom
+                elevatorSubsystem, Constants.Elevator.MIN_HEIGHT)); // Elevator goes to bottom
 
     // Elevator Manual controls
     // jasonLayer

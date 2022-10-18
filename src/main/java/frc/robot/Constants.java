@@ -77,7 +77,7 @@ public final class Constants {
         public static final int STEER_MOTOR = 12;
         public static final int STEER_ENCODER = 26;
 
-        public static final double STEER_OFFSET =
+        public final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(7.734) // comp bot offset
                 : -Math.toRadians(358.937); // practice bot offset
@@ -135,10 +135,10 @@ public final class Constants {
 
     // Heights
     /** Max height is 21.75 inches (adjusted for overshoot) */
-    public static final double maxHeight = 20;
+    public static final double MAX_HEIGHT = 20;
 
     /** Minimum height is 0 inches */
-    public static final double minHeight = 0;
+    public static final double MIN_HEIGHT = 0;
 
     /** the minimum height the arm will stay out of the way for, inches */
     public static final double ENGAGED_HEIGHT = 1.2;

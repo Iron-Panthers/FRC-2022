@@ -153,9 +153,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     return targetHeight;
   }
 
+  public double getPidOutput() {
+    return heightController.calculate(currentHeight, targetHeight);
+  }
+
   @Override
   public void periodic() {
-
+    currentHeight = getHeight();
     // currentHeight = getHeight();
     // double motorPower = heightController.calculate(getHeight(), targetHeight);
     // right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
@@ -172,6 +176,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Top Limit Switch Pressed", topLimitSwitchPressed());
     // SmartDashboard.putNumber("Bottom Limit Switch Pressed", bottomLimitSwitchPressed());
     // This method will be called once per scheduler run
+
   }
 }
 

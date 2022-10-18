@@ -10,12 +10,14 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem elevatorSubsystem;
   private final Double targetHeight;
+  private double pidOutput;
 
   /** Creates a new ElevatorCommand. */
   public ElevatorPositionCommand(ElevatorSubsystem subsystem, Double targetHeight) {
     this.elevatorSubsystem = subsystem;
     addRequirements(elevatorSubsystem);
     this.targetHeight = targetHeight;
+    this.pidOutput = 0.0;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -28,7 +30,8 @@ public class ElevatorPositionCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // get current height
+    pidOutput = elevatorSubsystem.getPidOutput();
+    elevatorSubsystem.setPercent(pidOutput);
   }
 
   // Called once the command ends or is interrupted.
