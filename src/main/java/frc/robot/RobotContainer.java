@@ -29,6 +29,7 @@ import frc.robot.autonomous.commands.OnsideOneBallSteal;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.ElevatorAutomatedCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
@@ -178,6 +179,10 @@ public class RobotContainer {
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MIN_HEIGHT)); // Elevator goes to bottom
+    jasonLayer
+        .on(jason::getAButton)
+        .whenPressed(
+            new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
 
     // Elevator Manual controls
     // jasonLayer
@@ -191,6 +196,7 @@ public class RobotContainer {
     //         new ElevatorManualCommand(
     //             elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
 
+    /*
     jasonLayer
         .on(() -> Math.abs(jason.getLeftY()) >= .4)
         .whenHeld(
@@ -204,6 +210,7 @@ public class RobotContainer {
                 },
                 () -> false,
                 elevatorSubsystem));
+    */
 
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);

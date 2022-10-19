@@ -14,7 +14,7 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
   private final ElevatorSubsystem elevatorSubsystem;
 
   /** Creates a new ElevatorCommand. */
-  public ElevatorAutomatedCommand(ElevatorSubsystem subsystem, double targetHeight) {
+  public ElevatorAutomatedCommand(ElevatorSubsystem subsystem) {
     this.elevatorSubsystem = subsystem;
     addRequirements(elevatorSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
