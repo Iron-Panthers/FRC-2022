@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import java.util.function.BooleanSupplier;
@@ -38,8 +37,10 @@ public class RotateVelocityDriveCommand extends CommandBase {
     this.rotationSupplier = rotationSupplier;
     this.isRobotRelativeSupplier = isRobotRelativeSupplier;
 
+    /*
     Shuffleboard.getTab("Drivebase")
         .addBoolean("Is robot relative drive?", isRobotRelativeSupplier);
+    */
     addRequirements(drivebaseSubsystem);
   }
 

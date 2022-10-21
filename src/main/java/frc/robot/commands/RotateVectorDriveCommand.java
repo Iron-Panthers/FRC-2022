@@ -27,6 +27,10 @@ public class RotateVectorDriveCommand extends CommandBase {
   private final DoubleSupplier rotationYSupplier;
   private final BooleanSupplier isRobotRelativeSupplier;
 
+  /**
+   * The initial angle of the robot at the time of command call. Target angle is added in relation
+   * to the initial angle to allow robot-relative drive
+   */
   private double initialAngle;
 
   private double angle = 0;
@@ -67,15 +71,11 @@ public class RotateVectorDriveCommand extends CommandBase {
     double rotY = rotationYSupplier.getAsDouble();
     boolean isRobotRelative = isRobotRelativeSupplier.getAsBoolean();
 
-    // if stick magnitude is greater then rotate angle mag
-
     double targetAngle = Util.angleSnap(Util.vectorToAngle(-rotX, -rotY), angles);
 
-    if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE && !isRobotRelative) {
-      angle = targetAngle;
-    } else if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE
-        && isRobotRelative) {
-      angle = Util.normalizeDegrees(targetAngle + initialAngle);
+    // if stick magnitude is greater then rotate angle mag
+    if (Util.vectorMagnitude(rotX, rotY) > Drive.ROTATE_VECTOR_MAGNITUDE) {
+      angle = isRobotRelative ? Util.normalizeDegrees(targetAngle + initialAngle) : targetAngle;
     }
 
     drivebaseSubsystem.driveAngle(new Pair<>(x, y), angle);

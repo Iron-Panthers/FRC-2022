@@ -185,6 +185,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
     // tab.addNumber(
     //     "angular difference",
     //     () -> -Util.relativeAngularDifference(targetAngle, getGyroscopeRotation().getDegrees()));
+
+    tab.add(navx);
   }
 
   /** Return the current pose estimation of the robot */
