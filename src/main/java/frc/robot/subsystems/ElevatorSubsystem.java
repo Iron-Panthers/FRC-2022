@@ -29,6 +29,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** desired height in inches */
   private double targetHeight;
 
+  private double percent;
+
+  private double pidOutput;
+
   private final PIDController heightController;
 
   // clockwise moves up
@@ -135,8 +139,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setPercent(double percent) {
-    right_motor.set(
-        TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent * Elevator.MAX_PERCENT));
+    this.percent = percent;
+  }
+
+  public void setPercentToPidOutput() {
+    this.percent = pidOutput;
   }
 
   /**
@@ -155,12 +162,18 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getPidOutput() {
-    return heightController.calculate(currentHeight, targetHeight);
+    return pidOutput;
   }
 
   @Override
   public void periodic() {
     currentHeight = getHeight();
+    targetHeight = getTargetHeight();
+
+    pidOutput = heightController.calculate(currentHeight, targetHeight);
+
+    right_motor.set(
+        TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent * Elevator.MAX_PERCENT));
     // currentHeight = getHeight();
     // double motorPower = heightController.calculate(getHeight(), targetHeight);
     // right_motor.set(TalonFXControlMode.PercentOutput, motorPower);

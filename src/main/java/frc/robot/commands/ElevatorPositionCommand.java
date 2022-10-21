@@ -5,34 +5,30 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem elevatorSubsystem;
   private final Double targetHeight;
-  private double pidOutput;
 
   /** Creates a new ElevatorCommand. */
   public ElevatorPositionCommand(ElevatorSubsystem subsystem, Double targetHeight) {
     this.elevatorSubsystem = subsystem;
     addRequirements(elevatorSubsystem);
     this.targetHeight = targetHeight;
-    this.pidOutput = 0.0;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // elevatorSubsystem.setTargetHeight(targetHeight);
+    elevatorSubsystem.setTargetHeight(targetHeight);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // this.pidOutput = elevatorSubsystem.getPidOutput();
-    this.elevatorSubsystem.setPercent(Elevator.MAX_PERCENT);
+    this.elevatorSubsystem.setPercentToPidOutput();
   }
 
   // Called once the command ends or is interrupted.
