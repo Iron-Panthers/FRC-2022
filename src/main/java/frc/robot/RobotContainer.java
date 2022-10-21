@@ -171,18 +171,17 @@ public class RobotContainer {
     // Elevator preset position buttons
     jasonLayer
         .on(jason::getBButton)
-        .whenPressed(
+        .whenHeld(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MAX_HEIGHT)); // Elevator goes to top
     jasonLayer
         .on(jason::getXButton)
-        .whenPressed(
+        .whenHeld(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MIN_HEIGHT)); // Elevator goes to bottom
     jasonLayer
         .on(jason::getAButton)
-        .whenPressed(
-            new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
+        .whenHeld(new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
 
     // Elevator Manual controls
     // jasonLayer
@@ -196,7 +195,6 @@ public class RobotContainer {
     //         new ElevatorManualCommand(
     //             elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
 
-    /*
     jasonLayer
         .on(() -> Math.abs(jason.getLeftY()) >= .4)
         .whenHeld(
@@ -210,7 +208,6 @@ public class RobotContainer {
                 },
                 () -> false,
                 elevatorSubsystem));
-    */
 
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);

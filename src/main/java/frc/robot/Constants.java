@@ -77,7 +77,7 @@ public final class Constants {
         public static final int STEER_MOTOR = 12;
         public static final int STEER_ENCODER = 26;
 
-        public final double STEER_OFFSET =
+        public static final double STEER_OFFSET =
             IS_COMP_BOT
                 ? -Math.toRadians(7.734) // comp bot offset
                 : -Math.toRadians(358.937); // practice bot offset

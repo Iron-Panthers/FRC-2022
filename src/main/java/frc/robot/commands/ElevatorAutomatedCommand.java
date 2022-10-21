@@ -6,9 +6,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.Constants.Elevator;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorAutomatedCommand extends SequentialCommandGroup {
   private final ElevatorSubsystem elevatorSubsystem;
@@ -20,23 +19,21 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
     // Use addRequirements() here to declare subsystem dependencies.
 
     addCommands(
-      new SequentialCommandGroup(
-        // mid rung
-        new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT);
-        new WaitCommand(0.2);
-        new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT);
-        new WaitCommand(0.7);
-        // high rung
-        new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT);
-        new WaitCommand(0.2);
-        new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT);
-        new WaitCommand(0.7);
-        // traversal rung
-        new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT);
-        new WaitCommand(0.2);
-        new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT);
-        new WaitCommand(0.7);
-      )
-    );
+        new SequentialCommandGroup(
+            // mid rung
+            new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
+            new WaitCommand(0.2),
+            new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT),
+            new WaitCommand(0.7),
+            // high rung
+            new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
+            new WaitCommand(0.2),
+            new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT),
+            new WaitCommand(0.7),
+            // traversal rung
+            new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
+            new WaitCommand(0.2),
+            new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT),
+            new WaitCommand(0.7)));
   }
 }

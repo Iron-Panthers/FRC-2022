@@ -38,7 +38,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    heightController = new PIDController(0.000075, 0, 0);
+    heightController = new PIDController(0.5, 0, 0);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
     right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
@@ -55,7 +55,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     right_motor.configForwardSoftLimitThreshold(
         0, 0); // this is the bottom limit, we stop AT the bottom
     right_motor.configReverseSoftLimitThreshold(
-        -heightToTicks(24), 0); // this is the top limit, we stop at the very top
+        -heightToTicks(22), 0); // this is the top limit, we stop at the very top
 
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
@@ -74,6 +74,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
+    ElevatorTab.addNumber("pid output", this::getPidOutput);
 
     ShuffleboardLayout driverView =
         Shuffleboard.getTab("DriverView")
@@ -182,6 +183,5 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 // 12.75 full motor rotations = 1.5pi inches of height
 // 12.75:1 gear ratio
-// talonfx to the entire thing
 // Big gear is 2.6 inches
 // 1.5 sprocket diameter

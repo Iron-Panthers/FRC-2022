@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorPositionCommand extends CommandBase {
@@ -24,14 +25,14 @@ public class ElevatorPositionCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevatorSubsystem.setTargetHeight(targetHeight);
+    // elevatorSubsystem.setTargetHeight(targetHeight);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    pidOutput = elevatorSubsystem.getPidOutput();
-    elevatorSubsystem.setPercent(pidOutput);
+    // this.pidOutput = elevatorSubsystem.getPidOutput();
+    this.elevatorSubsystem.setPercent(Elevator.MAX_PERCENT);
   }
 
   // Called once the command ends or is interrupted.
@@ -48,6 +49,5 @@ public class ElevatorPositionCommand extends CommandBase {
 // 12.75 full motor rotations = 1.5pi inches of height
 
 // 12.75:1 gear ratio
-// talonfx to the entire thing
 // Big gear is 2.6 inches
 // 1.5 sprocket diameter

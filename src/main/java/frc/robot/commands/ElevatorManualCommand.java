@@ -27,7 +27,7 @@ public class ElevatorManualCommand extends CommandBase {
   @Override
   public void execute() {
     // SmartDashboard.putNumber("rate", rate);
-    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getTargetHeight() + rate);
+    elevatorSubsystem.setPercent(rate);
   }
 
   // Called once the command ends or is interrupted.
