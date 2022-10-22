@@ -14,10 +14,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Arm.Setpoints;
@@ -74,7 +71,7 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.configStatorCurrentLimit(config);
     armLeftMotor.configStatorCurrentLimit(config);
 
-    pidController = new PIDController(0.007, 0, 0.00015);
+    pidController = new PIDController(0.005, 0, 0.00017);
     pidController.setTolerance(Arm.PID.ANGULAR_TOLERANCE);
 
     Shuffleboard.getTab("arm").add(pidController);
@@ -89,11 +86,7 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configSensorDirection(true);
     armEncoder.setPositionToAbsolute(10); // ms
 
-    ShuffleboardLayout tab =
-        Shuffleboard.getTab("DriverView")
-            .getLayout("arm", BuiltInLayouts.kList)
-            .withSize(2, 2)
-            .withPosition(16, 1);
+    var tab = Shuffleboard.getTab("Arm");
     tab.addNumber("target angle", this::getTargetAngle);
     tab.addNumber("actual angle", this::getAngle);
   }
@@ -120,14 +113,15 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     final double currentAngle = getAngle();
 
+    boolean elevatorProtection = elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT;
+    // SmartDashboard.putBoolean("elevatorProtection", elevatorProtection);
+
     // make target angle safe lol
     desiredAngle =
         MathUtil.clamp(
             desiredAngle,
             Setpoints.INTAKE_POSITION,
-            elevatorSubsystem.getHeight() >= Elevator.ENGAGED_HEIGHT
-                ? Setpoints.CLIMB_POSITION
-                : Setpoints.MAX_HEIGHT);
+            elevatorProtection ? Setpoints.CLIMB_POSITION : Setpoints.MAX_HEIGHT);
 
     // SmartDashboard.putNumber("current angle", currentAngle);
     // SmartDashboard.putNumber("desired angle", desiredAngle);
@@ -152,13 +146,15 @@ public class ArmSubsystem extends SubsystemBase {
     final double gravityOffset =
         Math.cos(Math.toRadians(currentAngle)) * Arm.GRAVITY_CONTROL_PERCENT;
 
-    SmartDashboard.putNumber("gravityOffset", gravityOffset);
-    SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
+    // SmartDashboard.putNumber("gravityOffset", gravityOffset);
+    // SmartDashboard.putNumber("cos angle", Math.cos(Math.toRadians(currentAngle)));
 
-    final double motorPercent = MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5);
-
-    // SmartDashboard.putNumber("motor percent", motorPercent);
-
-    setPercentOutput(motorPercent);
+    // runs the arm at a constant percent if the arm is past the hardstop limit
+    if ((Arm.Setpoints.OUTTAKE_HIGH_POSITION - desiredAngle < Arm.Hardstop.ERROR_MARGIN)
+        && (Arm.Setpoints.OUTTAKE_HIGH_POSITION - currentAngle < Arm.Hardstop.ERROR_MARGIN)) {
+      setPercentOutput(Arm.Hardstop.HOLD_PERCENT);
+    } else {
+      setPercentOutput(MathUtil.clamp(clampedOutput + gravityOffset, -.5, .5));
+    }
   }
 }

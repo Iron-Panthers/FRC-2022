@@ -41,6 +41,7 @@
     "Deadband",
     "deadbanded",
     "drivebase",
+    "Hardstop",
     "Holonomic",
     "Mockito",
     "navx",
