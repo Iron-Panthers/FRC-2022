@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.Drive.*;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
@@ -20,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
@@ -208,9 +210,21 @@ public class DrivebaseSubsystem extends SubsystemBase {
    *
    * @param pose The pose to reset to.
    */
-  public void resetOdometryToPose(Pose2d pose) {
+  public void resetOdometryToPose(State firstState) {
+    Pose2d pose = firstState.poseMeters;
     navx.setAngleAdjustment(0);
-    swerveOdometry.resetPosition(pose, getGyroscopeRotation());
+    if (firstState instanceof PathPlannerState) {
+      Rotation2d holonomicRotation = ((PathPlannerState) firstState).holonomicRotation;
+
+      navx.setAngleAdjustment(getGyroscopeRotation().minus(holonomicRotation).getDegrees());
+      var newPose = new Pose2d(pose.getTranslation(), holonomicRotation);
+      swerveOdometry.resetPosition(newPose, getGyroscopeRotation());
+    } else {
+      // If it's not an instanceof Pathplanner State, we still need to zero to current position...
+      navx.setAngleAdjustment(getGyroscopeRotation().minus(pose.getRotation()).getDegrees());
+    }
+
+    // swerveOdometry.resetPosition(pose, getGyroscopeRotation());
   }
 
   /**
