@@ -31,6 +31,7 @@ import frc.robot.autonomous.commands.OnsideThreeSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorAutomatedCommand;
+import frc.robot.commands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
@@ -199,16 +200,19 @@ public class RobotContainer {
     jasonLayer
         .on(() -> Math.abs(jason.getLeftY()) >= .4)
         .whenHeld(
-            new FunctionalCommand(
-                () -> {},
-                () ->
-                    elevatorSubsystem.setPercent(
-                        modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))),
-                (interrupted) -> {
-                  elevatorSubsystem.setPercent(0);
-                },
-                () -> false,
-                elevatorSubsystem));
+            new ElevatorManualCommand(
+                elevatorSubsystem, modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))));
+
+    // new FunctionalCommand(
+    //     () -> {},
+    //     () ->
+    //         elevatorSubsystem.setPercent(
+    //             modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))),
+    //     (interrupted) -> {
+    //       elevatorSubsystem.setPercent(0);
+    //     },
+    //     () -> false,
+    //     elevatorSubsystem));
 
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);

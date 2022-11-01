@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Elevator.SlowZone;
-import frc.robot.subsystems.IntakeSubsystem.Modes;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** follower */
@@ -31,8 +30,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double targetHeight;
 
   private double percentControl;
-
-  private double targetHeightControl;
 
   private final PIDController heightController;
 
