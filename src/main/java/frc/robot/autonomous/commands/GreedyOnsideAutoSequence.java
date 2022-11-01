@@ -102,7 +102,8 @@ public class GreedyOnsideAutoSequence extends SequentialCommandGroup {
         //         armSubsystem)),
         // // Score the 2 cargo
         // new SetIntakeModeCommand(
-        //     intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF),
+        //     intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH,
+        // IntakeSubsystem.Modes.OFF),
         // // GOTO INNER CARGO
         // parallel(
         //     sequence(
@@ -117,7 +118,8 @@ public class GreedyOnsideAutoSequence extends SequentialCommandGroup {
         // new FollowTrajectoryCommand(innerCargoToOnside, drivebaseSubsystem),
         // // SCORE INNER CARGO
         // new SetIntakeModeCommand(
-        //     intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF),
+        //     intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH,
+        // IntakeSubsystem.Modes.OFF),
         // // GOTO TERMINAL
         // parallel(
         //     sequence(
@@ -133,7 +135,8 @@ public class GreedyOnsideAutoSequence extends SequentialCommandGroup {
         // // no way this happens in time with this revision, but...
         // // SCORE TERMINAL CARGO
         // new SetIntakeModeCommand(
-        //     intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF)
+        //     intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH,
+        // IntakeSubsystem.Modes.OFF)
         );
   }
 }

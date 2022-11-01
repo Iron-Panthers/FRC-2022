@@ -92,7 +92,9 @@ public class OnsideThreeSequence extends SequentialCommandGroup {
                 () -> armSubsystem.setAngle(Arm.Setpoints.OUTTAKE_HIGH_POSITION), armSubsystem)),
         // Score the 2 cargo
         new SetIntakeModeCommand(
-            intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF),
+            intakeSubsystem,
+            IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH,
+            IntakeSubsystem.Modes.OFF),
         // GOTO INNER CARGO
         parallel(
             sequence(
@@ -108,6 +110,8 @@ public class OnsideThreeSequence extends SequentialCommandGroup {
         new FollowTrajectoryCommand(innerCargoToOnside, drivebaseSubsystem),
         // SCORE 2 CARGO
         new SetIntakeModeCommand(
-            intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH, IntakeSubsystem.Modes.OFF));
+            intakeSubsystem,
+            IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH,
+            IntakeSubsystem.Modes.OFF));
   }
 }
