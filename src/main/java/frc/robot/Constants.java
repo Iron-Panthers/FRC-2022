@@ -57,9 +57,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-
                 ? -Math.toRadians(224.2089) // comp bot offset
-
                 : -Math.toRadians(225.0823); // practice bot offset
       }
 
@@ -70,9 +68,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-
                 ? -Math.toRadians(332.0507) // comp bot offset
-
                 : -Math.toRadians(332.0343); // practice bot offset
       }
 
@@ -83,9 +79,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-
                 ? -Math.toRadians(6.8554) // comp bot offset
-
                 : -Math.toRadians(358.937); // practice bot offset
       }
 
@@ -96,9 +90,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-
                 ? -Math.toRadians(18.0175) // comp bot offset
-
                 : -Math.toRadians(129.103); // practice bot offset
       }
     }
