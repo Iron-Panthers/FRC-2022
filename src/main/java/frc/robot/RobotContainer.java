@@ -26,7 +26,9 @@ import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.autonomous.commands.OnsideOneBallSteal;
+import frc.robot.autonomous.commands.OnsideThreeBallSequence;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
+import frc.robot.autonomous.commands.TaxiAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorPositionCommand;
@@ -254,7 +256,8 @@ public class RobotContainer {
     jasonLayer
         .off(jason::getLeftBumper)
         .whenPressed(
-            new InstantSetIntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.ALIGN_HIGH));
+            new InstantSetIntakeModeCommand(
+                intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH));
 
     // stop everything
     jasonLayer
@@ -279,8 +282,10 @@ public class RobotContainer {
    * Adds all autonomous routines to the autoSelector, and places the autoSelector on Shuffleboard.
    */
   private void setupAutonomousCommands() {
+    Shuffleboard.getTab("DriverView")
+        .addString("NOTES", () -> "Onside is right side. We got this Danny!");
     autoSelector.setDefaultOption(
-        "OffsideAuto2",
+        "[OLD] OffsideAuto2",
         new OffsideTwoCargoAutoSequence(
             3, // Optimal values per 2022-03-08 test (ih)
             1.5,
@@ -290,7 +295,7 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.setDefaultOption(
-        "OnsideOneBallSteal (choose this maddie, we got this)",
+        "[OLD] OnsideOneBallSteal (choose this maddie, we got this)",
         new OnsideOneBallSteal(
             3, // Optimal values per 2022-03-08 test (ih)
             1.5,
@@ -300,7 +305,7 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "OnsideAuto3",
+        "[OLD] OnsideAuto3",
         new OnsideThreeSequence(
             3,
             1.5,
@@ -310,7 +315,7 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "OnsideAuto4",
+        "[OLD] OnsideAuto4",
         new OnsideFourSequence(
             4, // m/s
             2.75, // m/s2
@@ -320,7 +325,7 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "AutoTest",
+        "[NEW] AutoTest",
         new AutoTestSequence(
             2, // m/s
             1, // m/s2
@@ -330,10 +335,30 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "DONOTUSE",
+        "[NEW] Taxi and Disrupt",
+        new TaxiAutoSequence(
+            4, // m/s
+            1, // m/s2
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
+        "[OLD] DONOTUSE",
         new GreedyOnsideAutoSequence(
             4, // m/s
             5, // m/s2
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
+        "[NEW] OnsideThreeBallSequence",
+        new OnsideThreeBallSequence(
+            3, // m/s
+            1, // m/s2
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,
