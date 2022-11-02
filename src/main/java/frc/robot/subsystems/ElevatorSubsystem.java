@@ -8,9 +8,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -65,9 +63,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.clearStickyFaults();
 
     right_motor.configForwardSoftLimitThreshold(
-        0, 0); // this is the bottom limit, we stop AT the bottom
+        -heightToTicks(Elevator.MIN_HEIGHT), 0); // this is the bottom limit, we stop AT the bottom
     right_motor.configReverseSoftLimitThreshold(
-        -heightToTicks(22), 0); // this is the top limit, we stop at the very top
+        -heightToTicks(Elevator.MAX_HEIGHT), 0); // this is the top limit, we stop at the very top
 
     right_motor.configForwardSoftLimitEnable(true, 0);
     right_motor.configReverseSoftLimitEnable(true, 0);
@@ -88,13 +86,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
     ElevatorTab.addString("mode", () -> this.getMode().toString());
 
-    ShuffleboardLayout driverView =
-        Shuffleboard.getTab("DriverView")
-            .getLayout("elevator", BuiltInLayouts.kList)
-            .withSize(2, 2)
-            .withPosition(16, 3);
-    driverView.addNumber("elevator % height", () -> getHeight() / -heightToTicks(24));
-    driverView.addNumber("elevator height inches", this::getHeight);
+    ElevatorTab.addNumber("elevator height ticks", right_motor::getSelectedSensorPosition);
   }
 
   public static double heightToTicks(double height) {

@@ -201,7 +201,8 @@ public class RobotContainer {
         .on(() -> Math.abs(jason.getLeftY()) >= .4)
         .whenHeld(
             new ElevatorManualCommand(
-                elevatorSubsystem, modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))));
+                elevatorSubsystem,
+                () -> modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))));
 
     // new FunctionalCommand(
     //     () -> {},

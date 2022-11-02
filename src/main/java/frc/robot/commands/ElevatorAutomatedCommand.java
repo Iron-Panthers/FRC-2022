@@ -39,7 +39,7 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
             parallel(
                 new WaitCommand(3),
                 new InstantCommand(
-                    () -> armSubsystem.setAngle(Arm.Setpoints.MAX_HEIGHT), armSubsystem)),
+                    () -> armSubsystem.setAngle(Arm.Setpoints.MAX_ANGLE), armSubsystem)),
             // traversal rung
             // extend to rung
             new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
