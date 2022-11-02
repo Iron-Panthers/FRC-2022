@@ -39,7 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final ShuffleboardTab ElevatorTab = Shuffleboard.getTab("ElevatorTab");
 
   /** The modes of the elevator subsystem */
-  public static enum Modes {
+  public enum Modes {
     PERCENT_CONTROL,
     POSITION_CONTROL,
     NEUTRAL
@@ -142,8 +142,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     right_motor.setSelectedSensorPosition(ticks);
   }
 
-  public void setMode(Modes mode) {
-    this.mode = mode;
+  public void setNeutral() {
+    this.mode = Modes.NEUTRAL;
   }
 
   public void setTargetHeight(double targetHeight) {
