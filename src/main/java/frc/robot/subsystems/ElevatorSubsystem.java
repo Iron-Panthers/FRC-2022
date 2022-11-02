@@ -39,7 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final ShuffleboardTab ElevatorTab = Shuffleboard.getTab("ElevatorTab");
 
   /** The modes of the elevator subsystem */
-  public enum Modes {
+  public static enum Modes {
     PERCENT_CONTROL,
     POSITION_CONTROL,
     NEUTRAL

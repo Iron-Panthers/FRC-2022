@@ -6,17 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.Modes;
 
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem elevatorSubsystem;
   private final Double targetHeight;
-  private final Modes NeutralMode;
 
   /** Creates a new ElevatorCommand. */
   public ElevatorPositionCommand(ElevatorSubsystem subsystem, Double targetHeight) {
     this.elevatorSubsystem = subsystem;
-    this.NeutralMode = Modes.NEUTRAL;
     addRequirements(elevatorSubsystem);
     this.targetHeight = targetHeight;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -35,7 +32,7 @@ public class ElevatorPositionCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    elevatorSubsystem.setMode(NeutralMode);
+    elevatorSubsystem.setNeutral();
   }
 
   // Returns true when the command should end.
