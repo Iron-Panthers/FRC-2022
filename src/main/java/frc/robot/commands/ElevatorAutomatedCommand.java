@@ -26,22 +26,24 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
     addCommands(
         new SequentialCommandGroup(
             // mid rung
+            // latch on
             new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT),
             new WaitCommand(3),
             // high rung
+            // extend to rung
             new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
-            new WaitCommand(1),
+            new WaitCommand(3),
+            // latch on
             new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT),
+            // moving arm to proper position during wait period
             parallel(
                 new WaitCommand(3),
                 new InstantCommand(
-                    () -> armSubsystem.setAngle(Arm.Setpoints.CLIMB_POSITION), armSubsystem)),
+                    () -> armSubsystem.setAngle(Arm.Setpoints.MAX_HEIGHT), armSubsystem)),
             // traversal rung
+            // extend to rung
             new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
             new WaitCommand(3),
-            parallel(
-                deadline(
-                    new WaitCommand(5),
-                    new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT)))));
+            new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT)));
   }
 }

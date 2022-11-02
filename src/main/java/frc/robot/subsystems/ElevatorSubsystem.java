@@ -41,7 +41,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** The modes of the elevator subsystem */
   public enum Modes {
     PERCENT_CONTROL,
-    POSITION_CONTROL
+    POSITION_CONTROL,
+    NEUTRAL
   }
 
   // the current mode
@@ -139,6 +140,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   private void setSensorHeight(double ticks) {
     left_motor.setSelectedSensorPosition(ticks);
     right_motor.setSelectedSensorPosition(ticks);
+  }
+
+  public void setMode(Modes mode) {
+    this.mode = mode;
   }
 
   public void setTargetHeight(double targetHeight) {
