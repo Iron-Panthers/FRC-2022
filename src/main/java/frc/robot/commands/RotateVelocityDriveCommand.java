@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -20,18 +21,26 @@ public class RotateVelocityDriveCommand extends CommandBase {
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
 
+  private final BooleanSupplier isRobotRelativeSupplier;
+
   /** Creates a new RotateVelocityDriveCommand. */
   public RotateVelocityDriveCommand(
       DrivebaseSubsystem drivebaseSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
-      DoubleSupplier rotationSupplier) {
+      DoubleSupplier rotationSupplier,
+      BooleanSupplier isRobotRelativeSupplier) {
 
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
     this.rotationSupplier = rotationSupplier;
+    this.isRobotRelativeSupplier = isRobotRelativeSupplier;
 
+    /*
+    Shuffleboard.getTab("Drivebase")
+        .addBoolean("Is robot relative drive?", isRobotRelativeSupplier);
+    */
     addRequirements(drivebaseSubsystem);
   }
 
@@ -47,9 +56,12 @@ public class RotateVelocityDriveCommand extends CommandBase {
 
     // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented
     // movement
+
     drivebaseSubsystem.drive(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            x, y, rot, drivebaseSubsystem.getGyroscopeRotation()));
+        isRobotRelativeSupplier.getAsBoolean()
+            ? new ChassisSpeeds(x, y, rot)
+            : ChassisSpeeds.fromFieldRelativeSpeeds(
+                x, y, rot, drivebaseSubsystem.getGyroscopeRotation()));
   }
 
   // Called once the command ends or is interrupted.
