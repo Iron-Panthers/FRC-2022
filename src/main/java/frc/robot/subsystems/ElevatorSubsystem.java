@@ -141,11 +141,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setNeutral() {
     this.mode = Modes.NEUTRAL;
     right_motor.setNeutralMode(NeutralMode.Brake);
+    left_motor.setNeutralMode(NeutralMode.Brake);
   }
 
   public void setCoast() {
     this.mode = Modes.COAST;
     right_motor.setNeutralMode(NeutralMode.Coast);
+    left_motor.setNeutralMode(NeutralMode.Coast);
   }
 
   public void setTargetHeight(double targetHeight) {

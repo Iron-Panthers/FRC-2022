@@ -135,7 +135,7 @@ public final class Constants {
 
     // Heights
     /** Max height is 21.75 inches (adjusted for overshoot) */
-    public static final double MAX_HEIGHT = 25;
+    public static final double MAX_HEIGHT = 24.5;
 
     /** Minimum height is 0 inches */
     public static final double MIN_HEIGHT = 0;

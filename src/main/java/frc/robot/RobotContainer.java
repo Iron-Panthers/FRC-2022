@@ -185,7 +185,8 @@ public class RobotContainer {
                 elevatorSubsystem, Constants.Elevator.MIN_HEIGHT)); // Elevator goes to bottom
     jasonLayer
         .on(jason::getAButton)
-        .whenHeld(new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
+        .whenPressed(
+            new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
 
     // Elevator manual command
     jasonLayer
