@@ -44,6 +44,7 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
             // extend to rung
             new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
             new WaitCommand(3),
+            // latch on
             new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT)));
   }
 }

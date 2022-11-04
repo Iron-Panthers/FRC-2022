@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -29,6 +30,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double percentControl;
 
+  private double percentOutput;
+
   private final PIDController heightController;
 
   // clockwise moves up
@@ -40,7 +43,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   public enum Modes {
     PERCENT_CONTROL,
     POSITION_CONTROL,
-    NEUTRAL
+    NEUTRAL,
+    COAST
   }
 
   // the current mode
@@ -48,7 +52,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    heightController = new PIDController(0.5, 0, 0);
+    heightController = new PIDController(1.5, 0.5, 0);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
     right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
@@ -77,7 +81,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // make sure we hold our height when we get disabled
     right_motor.setNeutralMode(NeutralMode.Brake);
     left_motor.setNeutralMode(NeutralMode.Brake);
-
     left_motor.follow(right_motor);
 
     ElevatorTab.add(heightController);
@@ -85,7 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
     ElevatorTab.addString("mode", () -> this.getMode().toString());
-
+    ElevatorTab.addNumber("percent output", this::getPercentOutput);
     ElevatorTab.addNumber("elevator height ticks", right_motor::getSelectedSensorPosition);
   }
 
@@ -107,21 +110,22 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   private double applySlowZoneToPercent(double percent) {
     final double height = getHeight();
+    double clampPercent = MathUtil.clamp(percent, -1, 1) * Elevator.MAX_PERCENT;
     if (
     // going down block
-    (percent >= 0 /* going down */
+    (clampPercent >= 0 /* going down */
             && height <= SlowZone.LOWER_THRESHHOLD /* inside the lower slow zone */)
         ||
         // going up block
-        (percent <= 0 /* going up */
+        (clampPercent <= 0 /* going up */
             && height >= SlowZone.UPPER_THRESHHOLD /* inside the upper slow zone */)) {
 
       // modify the output by the slowzone modifier
 
-      return percent * SlowZone.SLOWZONE_MODIFIER;
+      return clampPercent * SlowZone.SLOWZONE_MODIFIER;
     }
     // not in slow zone conditions, proceed as normal
-    return percent;
+    return clampPercent;
   }
 
   /**
@@ -136,6 +140,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void setNeutral() {
     this.mode = Modes.NEUTRAL;
+    right_motor.setNeutralMode(NeutralMode.Brake);
+  }
+
+  public void setCoast() {
+    this.mode = Modes.COAST;
+    right_motor.setNeutralMode(NeutralMode.Coast);
   }
 
   public void setTargetHeight(double targetHeight) {
@@ -167,6 +177,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     return mode;
   }
 
+  public double getPercentOutput() {
+    return percentOutput;
+  }
+
   /**
    * based on the current mode, returns the correct percent value. Default returns 0
    *
@@ -178,9 +192,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetHeight = getTargetHeight();
     switch (currentMode) {
       case PERCENT_CONTROL:
+        percentOutput = percentControl;
         return percentControl;
       case POSITION_CONTROL:
-        return heightController.calculate(currentHeight, targetHeight);
+        percentOutput = -heightController.calculate(currentHeight, targetHeight);
+        return -heightController.calculate(currentHeight, targetHeight);
       default:
         return 0;
     }
@@ -192,9 +208,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // based on mode
     // set percent to member or pid output
 
-    right_motor.set(
-        TalonFXControlMode.PercentOutput,
-        applySlowZoneToPercent(getPercentControl() * Elevator.MAX_PERCENT));
+    right_motor.set(TalonFXControlMode.PercentOutput, applySlowZoneToPercent(getPercentControl()));
   }
 }
 
