@@ -31,6 +31,7 @@ import frc.robot.autonomous.commands.OnsideThreeSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorAutomatedCommand;
+import frc.robot.commands.ElevatorCoastCommand;
 import frc.robot.commands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
@@ -192,6 +193,9 @@ public class RobotContainer {
             new ElevatorManualCommand(
                 elevatorSubsystem,
                 () -> modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))));
+
+    // Elevator goes into coast mode
+    jasonLayer.on(jason::getYButton).whenHeld(new ElevatorCoastCommand(elevatorSubsystem));
 
     // new FunctionalCommand(
     //     () -> {},
