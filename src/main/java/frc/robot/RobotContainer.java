@@ -26,8 +26,9 @@ import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.autonomous.commands.OnsideOneBallSteal;
+import frc.robot.autonomous.commands.OnsideThreeBallSequence;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
-// import frc.robot.autonomous.commands.TaxiAutoSequence;
+import frc.robot.autonomous.commands.TaxiAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorAutomatedCommand;
@@ -255,7 +256,7 @@ public class RobotContainer {
         .off(jason::getLeftBumper)
         .whenPressed(
             new InstantSetIntakeModeCommand(
-                intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE_HIGH_ALL));
+                intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH));
 
     // stop everything
     jasonLayer
@@ -344,6 +345,16 @@ public class RobotContainer {
     */
 
     autoSelector.addOption(
+        "[NEW] Taxi and Disrupt",
+        new TaxiAutoSequence(
+            4, // m/s
+            1, // m/s2
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
         "[OLD] DONOTUSE",
         new GreedyOnsideAutoSequence(
             4, // m/s
@@ -355,7 +366,7 @@ public class RobotContainer {
 
     autoSelector.addOption(
         "[NEW] OnsideThreeBallSequence",
-        new OnsideThreeSequence(
+        new OnsideThreeBallSequence(
             3, // m/s
             1, // m/s2
             drivebaseSubsystem.getKinematics(),

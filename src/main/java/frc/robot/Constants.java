@@ -168,9 +168,10 @@ public final class Constants {
     public static final class ModeWaits {
       /** the high goal shot, over the elevator */
       public static final class High {
+        public static final double CENTER_NORMALIZE_TO_ALIGN = 0.1;
         public static final double ALIGN_TO_LEFT = .2;
         public static final double LEFT_TO_ALL = .7;
-        public static final double ALL_TO_OFF = 4;
+        public static final double ALL_TO_OFF = 1.5;
       }
 
       /** this is out taking backwards, ie over the elevator (LOW SHOT) */
@@ -205,7 +206,7 @@ public final class Constants {
     /** percent to run motors at for given states */
     public static final class IntakeRollers {
       /** the percent to run the intake motors during the intake state */
-      public static final double INTAKE = -.2;
+      public static final double INTAKE = -.35;
       /** speed to run intake motors for unsticking balls */
       public static final double INTAKE_FORCEFUL = -1;
       /** LOW SHOT; the velocity to run the upper outtake during the outtake state */
