@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Elevator.SlowZone;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** follower */
@@ -29,9 +30,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** desired height in inches */
   private double targetHeight;
 
-  private double percent;
+  private double percentControl;
 
-  private double pidOutput;
+  private double targetHeightControl;
 
   private final PIDController heightController;
 
@@ -39,6 +40,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   // counterclockwise moves down
 
   private final ShuffleboardTab ElevatorTab = Shuffleboard.getTab("ElevatorTab");
+
+  /** The modes of the elevator subsystem */
+  public enum Modes {
+    PERCENT_CONTROL,
+    POSITION_CONTROL
+  }
+
+  // the current mode
+  private Modes mode = Modes.PERCENT_CONTROL;
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
@@ -78,7 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
-    ElevatorTab.addNumber("pid output", this::getPidOutput);
+    ElevatorTab.addString("mode", () -> this.getMode().toString());
 
     ShuffleboardLayout driverView =
         Shuffleboard.getTab("DriverView")
@@ -129,21 +139,19 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @param targetHeight Uses Inches
    */
-  public void setTargetHeight(double targetHeight) {
-    this.targetHeight = targetHeight;
-  }
-
   private void setSensorHeight(double ticks) {
     left_motor.setSelectedSensorPosition(ticks);
     right_motor.setSelectedSensorPosition(ticks);
   }
 
-  public void setPercent(double percent) {
-    this.percent = percent;
+  public void setTargetHeight(double targetHeight) {
+    this.mode = Modes.POSITION_CONTROL;
+    this.targetHeight = targetHeight;
   }
 
-  public void setPercentToPidOutput() {
-    this.percent = pidOutput;
+  public void setPercent(double percent) {
+    this.mode = Modes.PERCENT_CONTROL;
+    this.percentControl = percent;
   }
 
   /**
@@ -161,36 +169,38 @@ public class ElevatorSubsystem extends SubsystemBase {
     return targetHeight;
   }
 
-  public double getPidOutput() {
-    return pidOutput;
+  public Modes getMode() {
+    return mode;
+  }
+
+  /**
+   * based on the current mode, returns the correct percent value. Default returns 0
+   *
+   * @return the percent to set the motors to without adjusting for max speed or safety clamping
+   */
+  private double getPercentControl() {
+    Modes currentMode = getMode();
+    currentHeight = getHeight();
+    targetHeight = getTargetHeight();
+    switch (currentMode) {
+      case PERCENT_CONTROL:
+        return percentControl;
+      case POSITION_CONTROL:
+        return heightController.calculate(currentHeight, targetHeight);
+      default:
+        return 0;
+    }
   }
 
   @Override
   public void periodic() {
-    currentHeight = getHeight();
-    targetHeight = getTargetHeight();
 
-    pidOutput = heightController.calculate(currentHeight, targetHeight);
+    // based on mode
+    // set percent to member or pid output
 
     right_motor.set(
-        TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percent * Elevator.MAX_PERCENT));
-    // currentHeight = getHeight();
-    // double motorPower = heightController.calculate(getHeight(), targetHeight);
-    // right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
-
-    // // if (topLimitSwitchPressed() || bottomLimitSwitchPressed()) {
-    // //   lock();
-    // // } // FIXME (Isaac, we don't know if it'll be stuck at the limit switch)
-
-    // // // shuffleboard?
-    // SmartDashboard.putNumber("Height", currentHeight);
-    // SmartDashboard.putNumber("Target Height", targetHeight);
-
-    // SmartDashboard.putNumber("Motor Power", motorPower);
-    // SmartDashboard.putNumber("Top Limit Switch Pressed", topLimitSwitchPressed());
-    // SmartDashboard.putNumber("Bottom Limit Switch Pressed", bottomLimitSwitchPressed());
-    // This method will be called once per scheduler run
-
+        TalonFXControlMode.PercentOutput,
+        applySlowZoneToPercent(getPercentControl() * Elevator.MAX_PERCENT));
   }
 }
 
