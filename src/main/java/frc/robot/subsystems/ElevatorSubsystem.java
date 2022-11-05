@@ -183,6 +183,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     return percentOutput;
   }
 
+  public boolean atTarget() {
+    if (heightController.getPositionError() < 0.5) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * based on the current mode, returns the correct percent value. Default returns 0
    *
