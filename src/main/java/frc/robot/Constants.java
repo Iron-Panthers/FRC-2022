@@ -117,12 +117,12 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double MAX_HEIGHT = 145.811;
+      public static final double MAX_ANGLE = 145.811;
 
-      public static final double OUTTAKE_HIGH_POSITION = MAX_HEIGHT;
-      public static final double INTAKE_POSITION = MAX_HEIGHT - 155.3;
-      public static final double INTAKE_HIGHER_POSITION = MAX_HEIGHT - 93.3;
-      public static final double CLIMB_POSITION = MAX_HEIGHT - 37.2;
+      public static final double OUTTAKE_HIGH_POSITION = MAX_ANGLE;
+      public static final double INTAKE_POSITION = MAX_ANGLE - 155.3;
+      public static final double INTAKE_HIGHER_POSITION = MAX_ANGLE - 93.3;
+      public static final double CLIMB_POSITION = MAX_ANGLE - 37.2;
     }
   }
 
@@ -135,7 +135,7 @@ public final class Constants {
 
     // Heights
     /** Max height is 21.75 inches (adjusted for overshoot) */
-    public static final double MAX_HEIGHT = 20;
+    public static final double MAX_HEIGHT = 24.5;
 
     /** Minimum height is 0 inches */
     public static final double MIN_HEIGHT = 0;
@@ -149,9 +149,6 @@ public final class Constants {
       public static final double UPPER_THRESHHOLD = 16;
       public static final double LOWER_THRESHHOLD = 7.5;
     }
-
-    public static final double TOP_LIMIT_SWITCH_TRIGGER_HEIGHT = -19.5;
-    public static final double BOTTOM_LIMIT_SWITCH_TRIGGER_HEIGHT = -.5;
 
     public static final int TICKS = 2048;
     public static final double GEAR_RATIO = 12.75;
@@ -171,9 +168,10 @@ public final class Constants {
     public static final class ModeWaits {
       /** the high goal shot, over the elevator */
       public static final class High {
+        public static final double CENTER_NORMALIZE_TO_ALIGN = 0.1;
         public static final double ALIGN_TO_LEFT = .2;
         public static final double LEFT_TO_ALL = .7;
-        public static final double ALL_TO_OFF = 4;
+        public static final double ALL_TO_OFF = 1.5;
       }
 
       /** this is out taking backwards, ie over the elevator (LOW SHOT) */
@@ -208,7 +206,7 @@ public final class Constants {
     /** percent to run motors at for given states */
     public static final class IntakeRollers {
       /** the percent to run the intake motors during the intake state */
-      public static final double INTAKE = -.2;
+      public static final double INTAKE = -.35;
       /** speed to run intake motors for unsticking balls */
       public static final double INTAKE_FORCEFUL = -1;
       /** LOW SHOT; the velocity to run the upper outtake during the outtake state */

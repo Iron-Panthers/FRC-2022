@@ -26,11 +26,14 @@ import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.autonomous.commands.OnsideOneBallSteal;
+import frc.robot.autonomous.commands.OnsideThreeBallSequence;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
-// import frc.robot.autonomous.commands.TaxiAutoSequence;
+import frc.robot.autonomous.commands.TaxiAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorAutomatedCommand;
+import frc.robot.commands.ElevatorCoastCommand;
+import frc.robot.commands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
@@ -172,43 +175,40 @@ public class RobotContainer {
     // Elevator preset position buttons
     jasonLayer
         .on(jason::getBButton)
-        .whenHeld(
+        .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MAX_HEIGHT)); // Elevator goes to top
     jasonLayer
         .on(jason::getXButton)
-        .whenHeld(
+        .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MIN_HEIGHT)); // Elevator goes to bottom
     jasonLayer
         .on(jason::getAButton)
-        .whenHeld(new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
+        .whenPressed(
+            new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
 
-    // Elevator Manual controls
-    // jasonLayer
-    //     .on(jason::getYButton)
-    //     .whenHeld(
-    //         new ElevatorManualCommand(
-    //             elevatorSubsystem, Constants.Elevator.RATE)); // Makes elevator go up manually
-    // jasonLayer
-    //     .on(jason::getAButton)
-    //     .whenHeld(
-    //         new ElevatorManualCommand(
-    //             elevatorSubsystem, -Constants.Elevator.RATE)); // Makes elevator go down manually
-
+    // Elevator manual command
     jasonLayer
         .on(() -> Math.abs(jason.getLeftY()) >= .4)
         .whenHeld(
-            new FunctionalCommand(
-                () -> {},
-                () ->
-                    elevatorSubsystem.setPercent(
-                        modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))),
-                (interrupted) -> {
-                  elevatorSubsystem.setPercent(0);
-                },
-                () -> false,
-                elevatorSubsystem));
+            new ElevatorManualCommand(
+                elevatorSubsystem,
+                () -> modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))));
+
+    // Elevator goes into coast mode
+    jasonLayer.on(jason::getYButton).whenHeld(new ElevatorCoastCommand(elevatorSubsystem));
+
+    // new FunctionalCommand(
+    //     () -> {},
+    //     () ->
+    //         elevatorSubsystem.setPercent(
+    //             modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))),
+    //     (interrupted) -> {
+    //       elevatorSubsystem.setPercent(0);
+    //     },
+    //     () -> false,
+    //     elevatorSubsystem));
 
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
@@ -257,7 +257,7 @@ public class RobotContainer {
         .off(jason::getLeftBumper)
         .whenPressed(
             new InstantSetIntakeModeCommand(
-                intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE_HIGH_ALL));
+                intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH));
 
     // stop everything
     jasonLayer
@@ -346,6 +346,16 @@ public class RobotContainer {
     */
 
     autoSelector.addOption(
+        "[NEW] Taxi and Disrupt",
+        new TaxiAutoSequence(
+            4, // m/s
+            1, // m/s2
+            drivebaseSubsystem.getKinematics(),
+            armSubsystem,
+            drivebaseSubsystem,
+            intakeSubsystem));
+
+    autoSelector.addOption(
         "[OLD] DONOTUSE",
         new GreedyOnsideAutoSequence(
             4, // m/s
@@ -357,7 +367,7 @@ public class RobotContainer {
 
     autoSelector.addOption(
         "[NEW] OnsideThreeBallSequence",
-        new OnsideThreeSequence(
+        new OnsideThreeBallSequence(
             3, // m/s
             1, // m/s2
             drivebaseSubsystem.getKinematics(),

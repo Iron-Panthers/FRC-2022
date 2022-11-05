@@ -47,7 +47,8 @@ public class UtilTests {
         Arguments.of(1, 0, 1),
         Arguments.of(359, 0, -1),
         Arguments.of(1, 30, -29),
-        Arguments.of(359, 30, -31));
+        Arguments.of(359, 30, -31),
+        Arguments.of(1, 690, 31));
   }
 
   // parameterized test
@@ -101,5 +102,35 @@ public class UtilTests {
         Util.vectorMagnitude(x, y),
         1e-9,
         String.format("||<%s, %s>|| == %s", x, y, magnitude));
+  }
+
+  public static Stream<Arguments> normalizeDegreeProvider() {
+    return Stream.of(
+        Arguments.of(0, 0),
+        Arguments.of(360, 0),
+        Arguments.of(720, 0),
+        Arguments.of(90, 90),
+        Arguments.of(450, 90),
+        Arguments.of(270, 270),
+        Arguments.of(-90, 270),
+        Arguments.of(-270, 90),
+        Arguments.of(-360, 0),
+        Arguments.of(-720, 0),
+        // tests for non 90 degree angles
+        Arguments.of(45, 45),
+        Arguments.of(135, 135),
+        Arguments.of(225, 225),
+        Arguments.of(796, 76),
+        Arguments.of(-43, 317));
+  }
+
+  @UtilParamTest
+  @MethodSource("normalizeDegreeProvider")
+  public void normalizeDegreeCorrect(double degrees, double normalized) {
+    assertEquals(
+        normalized,
+        Util.normalizeDegrees(degrees),
+        1e-9,
+        String.format("%s normalized to %s", degrees, normalized));
   }
 }

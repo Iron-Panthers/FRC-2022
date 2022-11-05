@@ -121,7 +121,7 @@ public class ArmSubsystem extends SubsystemBase {
         MathUtil.clamp(
             desiredAngle,
             Setpoints.INTAKE_POSITION,
-            elevatorProtection ? Setpoints.CLIMB_POSITION : Setpoints.MAX_HEIGHT);
+            elevatorProtection ? Setpoints.CLIMB_POSITION : Setpoints.MAX_ANGLE);
 
     // SmartDashboard.putNumber("current angle", currentAngle);
     // SmartDashboard.putNumber("desired angle", desiredAngle);

@@ -6,13 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
+import java.util.function.DoubleSupplier;
 
 public class ElevatorManualCommand extends CommandBase {
   private ElevatorSubsystem elevatorSubsystem;
-  private final Double rate;
+  private final DoubleSupplier rateSupplier;
   /** Creates a new ElevatorCommand. */
-  public ElevatorManualCommand(ElevatorSubsystem subsystem, Double rate) {
-    this.rate = rate;
+  public ElevatorManualCommand(ElevatorSubsystem subsystem, DoubleSupplier rateSupplier) {
+    this.rateSupplier = rateSupplier;
     this.elevatorSubsystem = subsystem;
     addRequirements(elevatorSubsystem);
 
@@ -27,12 +28,14 @@ public class ElevatorManualCommand extends CommandBase {
   @Override
   public void execute() {
     // SmartDashboard.putNumber("rate", rate);
-    elevatorSubsystem.setPercent(rate);
+    elevatorSubsystem.setPercent(rateSupplier.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    elevatorSubsystem.setNeutral();
+  }
 
   // Returns true when the command should end.
   @Override
