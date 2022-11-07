@@ -223,9 +223,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
     } else {
       // If it's not an instanceof Pathplanner State, we still need to zero to current position...
       navx.setAngleAdjustment(getGyroscopeRotation().minus(pose.getRotation()).getDegrees());
+      swerveOdometry.resetPosition(pose, getGyroscopeRotation());
     }
 
-    // swerveOdometry.resetPosition(pose, getGyroscopeRotation());
+    
   }
 
   /**
