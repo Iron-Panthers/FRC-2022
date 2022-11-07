@@ -79,6 +79,7 @@ public class IntakeSubsystem extends SubsystemBase {
     ALIGN_LOW,
     OUTTAKE_LOW_LEFT,
     OUTTAKE_LOW_ALL,
+    CENTER_NORMALIZE_HIGH,
     ALIGN_HIGH,
     OUTTAKE_HIGH_LEFT,
     OUTTAKE_HIGH_ALL,
@@ -119,6 +120,12 @@ public class IntakeSubsystem extends SubsystemBase {
     return Timer.getFPGATimestamp() - timeOfModeTransition;
   }
 
+  public void setModeIfTimeSinceTransitionGreaterThan(double duration, Modes mode) {
+    if (timeSinceModeTransition() >= duration) {
+      setMode(mode);
+    }
+  }
+
   /**
    * This function is called in periodic to increment the state machine
    *
@@ -136,21 +143,20 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
 
         // high shot block
+      case CENTER_NORMALIZE_HIGH:
+        setModeIfTimeSinceTransitionGreaterThan(
+            ModeWaits.High.CENTER_NORMALIZE_TO_ALIGN, Modes.ALIGN_HIGH);
+        break;
       case ALIGN_HIGH:
         // when our time is up, we transition to high left, otherwise we wait at this mode
-        if (timeSinceModeTransition() >= ModeWaits.High.ALIGN_TO_LEFT) {
-          setMode(Modes.OUTTAKE_HIGH_LEFT);
-        }
+        setModeIfTimeSinceTransitionGreaterThan(
+            ModeWaits.High.ALIGN_TO_LEFT, Modes.OUTTAKE_HIGH_LEFT);
         break;
       case OUTTAKE_HIGH_LEFT:
-        if (timeSinceModeTransition() >= ModeWaits.High.LEFT_TO_ALL) {
-          setMode(Modes.OUTTAKE_HIGH_ALL);
-        }
+        setModeIfTimeSinceTransitionGreaterThan(ModeWaits.High.LEFT_TO_ALL, Modes.OUTTAKE_HIGH_ALL);
         break;
       case OUTTAKE_HIGH_ALL:
-        if (timeSinceModeTransition() >= ModeWaits.High.ALL_TO_OFF) {
-          setMode(Modes.OFF);
-        }
+        setModeIfTimeSinceTransitionGreaterThan(ModeWaits.High.ALL_TO_OFF, Modes.OFF);
         break;
         // end high shot block
 
@@ -163,28 +169,22 @@ public class IntakeSubsystem extends SubsystemBase {
         setMode(Modes.IDLING);
         break;
       case IDLING:
-        if (timeSinceModeTransition() >= ModeWaits.IntakeWaits.IDLE_TO_OFF) {
-          setMode(Modes.OFF);
-        }
+        setModeIfTimeSinceTransitionGreaterThan(ModeWaits.IntakeWaits.IDLE_TO_OFF, Modes.OFF);
         break;
 
         // end intake block
 
         // outtake block
       case ALIGN_LOW:
-        if (timeSinceModeTransition() >= ModeWaits.Outtake.ALIGN_TO_LEFT) {
-          setMode(Modes.OUTTAKE_LOW_LEFT);
-        }
+        setModeIfTimeSinceTransitionGreaterThan(
+            ModeWaits.Outtake.ALIGN_TO_LEFT, Modes.OUTTAKE_LOW_LEFT);
         break;
       case OUTTAKE_LOW_LEFT:
-        if (timeSinceModeTransition() >= ModeWaits.Outtake.LEFT_TO_ALL) {
-          setMode(Modes.OUTTAKE_LOW_ALL);
-        }
+        setModeIfTimeSinceTransitionGreaterThan(
+            ModeWaits.Outtake.LEFT_TO_ALL, Modes.OUTTAKE_LOW_ALL);
         break;
       case OUTTAKE_LOW_ALL:
-        if (timeSinceModeTransition() >= ModeWaits.Outtake.ALL_TO_OFF) {
-          setMode(Modes.OFF);
-        }
+        setModeIfTimeSinceTransitionGreaterThan(ModeWaits.Outtake.ALL_TO_OFF, Modes.OFF);
         break;
         // end outtake block
 
@@ -324,6 +324,11 @@ public class IntakeSubsystem extends SubsystemBase {
     upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_LOW);
   }
 
+  private void centerNormalizeHighPeriodic() {
+    // this is the same as forceful intake
+    intakeForcefulModePeriodic();
+  }
+
   private void alignHighPeriodic() {
     runEjectRollersPercent(EjectRollers.ALIGN_INTERNAL);
     stopMotor(lowerIntakeMotor);
@@ -391,6 +396,9 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case OUTTAKE_LOW_ALL:
         outtakeLowAllModePeriodic();
+        break;
+      case CENTER_NORMALIZE_HIGH:
+        centerNormalizeHighPeriodic();
         break;
       case ALIGN_HIGH:
         alignHighPeriodic();

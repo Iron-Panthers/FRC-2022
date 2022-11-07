@@ -25,28 +25,22 @@ public class Util {
    * @return normalized degrees
    */
   public static double normalizeDegrees(double degrees) {
-    degrees %= 360;
-    degrees += 360;
-    return degrees % 360;
+    return (degrees % 360 + 360) % 360;
   }
 
   /**
-   * This function finds the degree difference between angles, the shortest path. useful for pid
-   * control of drivebase rotation
+   * This function finds the degree difference between angles, the shortest path. Useful for pid
+   * control of drivebase rotation. Returns a value between -180 and 180 on a 360 reference field.
+   * Values greater than 180 won't exist, because the other direction is shorter.
    *
    * @param currentAngle Current Angle Degrees
    * @param newAngle Target Angle Degrees
    * @return Shortest angular difference in degrees
    */
   public static double relativeAngularDifference(double currentAngle, double newAngle) {
-    double normCurrentAngle = normalizeDegrees(currentAngle);
-    double normNewAngle = normalizeDegrees(newAngle);
-    double difference1 = Math.abs(normCurrentAngle - normNewAngle);
-    double difference2 = Math.abs(360 - difference1);
-    double difference = difference1 < difference2 ? difference1 : difference2;
-
-    if ((normCurrentAngle + difference) % 360 == normNewAngle) return difference * -1;
-    return difference;
+    double a = normalizeDegrees(currentAngle - newAngle);
+    double b = normalizeDegrees(newAngle - currentAngle);
+    return a < b ? a : -b;
   }
 
   public static double relativeAngularDifference(Rotation2d currentAngle, double newAngle) {

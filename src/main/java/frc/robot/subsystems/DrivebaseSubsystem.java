@@ -98,6 +98,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   private final PIDController rotController;
 
   private double targetAngle = 0; // default target angle to zero
+
   private Pair<Double, Double> xyInput = new Pair<>(0d, 0d); // the x and y for using target angles
   /**
    * The Shuffleboard tab which all things related to the drivebase can be put for easy access and
@@ -328,6 +329,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   // called in drive to angle mode
   private void driveAnglePeriodic() {
     double angularDifference = -Util.relativeAngularDifference(getGyroscopeRotation(), targetAngle);
+
     double rotationValue = rotController.calculate(angularDifference);
 
     // we are treating this like a joystick, so -1 and 1 are its lower and upper bound
