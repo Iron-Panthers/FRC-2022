@@ -74,6 +74,9 @@ dependencies {
 
     testImplementation "org.mockito:mockito-core:3.+"
     testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
+
+    // lets us read system uptime data
+    implementation 'com.github.oshi:oshi-core-java11:6.3.1'
 }
 
 // Simulation configuration (e.g. environment variables).
