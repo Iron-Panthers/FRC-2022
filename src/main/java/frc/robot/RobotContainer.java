@@ -185,7 +185,8 @@ public class RobotContainer {
     jasonLayer
         .on(jason::getBButton)
         .whenPressed(
-            new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
+            new ElevatorAutomatedCommand(
+                elevatorSubsystem, armSubsystem)); // Elevator does auto sequence
 
     // Elevator manual command
     jasonLayer
