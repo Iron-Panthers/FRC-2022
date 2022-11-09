@@ -90,7 +90,8 @@ public class RobotContainer {
         new DefaultDriveCommand(
             drivebaseSubsystem,
             () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND)));
+            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+            will::getRightBumper));
 
     // armSubsystem.setDefaultCommand(
     //     new FunctionalCommand(
@@ -158,7 +159,8 @@ public class RobotContainer {
                 /* drive joystick "y" is passed to x because controller is inverted */
                 () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-                rotationVelocity));
+                rotationVelocity,
+                will::getRightBumper));
 
     new Button(
             () ->
@@ -170,7 +172,8 @@ public class RobotContainer {
                 () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 will::getRightY,
-                will::getRightX));
+                will::getRightX,
+                will::getRightBumper));
 
     // Elevator preset position buttons
     jasonLayer
