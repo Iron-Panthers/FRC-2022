@@ -53,7 +53,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
     heightController = new PIDController(1.5, 0.5, 0);
-    heightController.setTolerance(5, 10);
+    heightController.setTolerance(5);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
     right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
@@ -203,7 +203,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return percentControl;
       case POSITION_CONTROL:
         percentOutput = -heightController.calculate(currentHeight, targetHeight);
-        return -heightController.calculate(currentHeight, targetHeight);
+        return percentOutput;
       default:
         return 0;
     }
