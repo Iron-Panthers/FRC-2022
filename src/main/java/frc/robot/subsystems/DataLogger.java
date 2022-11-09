@@ -11,8 +11,8 @@ import oshi.software.os.OperatingSystem;
 
 public class DataLogger extends SubsystemBase {
 
-  /** interval in ms between logging */
-  public static final double LOG_INTERVAL = 1000;
+  /** interval in seconds between logging */
+  public static final double LOG_INTERVAL = 1;
 
   private static final SystemInfo systemInfo = new SystemInfo();
   private static final OperatingSystem operatingSystem = systemInfo.getOperatingSystem();
@@ -26,14 +26,15 @@ public class DataLogger extends SubsystemBase {
   @Override
   public void periodic() {
     double currentTime = Timer.getFPGATimestamp();
-    if (currentTime - lastLogTime > LOG_INTERVAL) {
-      lastLogTime = System.currentTimeMillis();
+    double difference = currentTime - lastLogTime;
+    if (difference > LOG_INTERVAL) {
+      lastLogTime = Timer.getFPGATimestamp();
       createLog();
     }
   }
 
   private void log(String message) {
-    System.out.println("[DataLogger]" + message);
+    System.out.println("[DataLogger] " + message);
   }
 
   private void log(String key, Object value) {
