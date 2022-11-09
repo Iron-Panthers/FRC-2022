@@ -173,17 +173,17 @@ public class RobotContainer {
 
     // Elevator preset position buttons
     jasonLayer
-        .on(jason::getBButton)
+        .on(jason::getYButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MAX_HEIGHT)); // Elevator goes to top
     jasonLayer
-        .on(jason::getXButton)
+        .on(jason::getAButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MIN_HEIGHT)); // Elevator goes to bottom
     jasonLayer
-        .on(jason::getAButton)
+        .on(jason::getBButton)
         .whenPressed(
             new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
 
@@ -196,7 +196,7 @@ public class RobotContainer {
                 () -> modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))));
 
     // Elevator goes into coast mode
-    jasonLayer.on(jason::getYButton).whenHeld(new ElevatorCoastCommand(elevatorSubsystem));
+    jasonLayer.on(jason::getXButton).whenHeld(new ElevatorCoastCommand(elevatorSubsystem));
 
     // new FunctionalCommand(
     //     () -> {},
