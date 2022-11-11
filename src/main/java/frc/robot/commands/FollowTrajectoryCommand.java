@@ -5,11 +5,8 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-<<<<<<< HEAD
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-=======
->>>>>>> dev
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -64,7 +61,6 @@ public class FollowTrajectoryCommand extends CommandBase {
     if (localizeToStartPose) {
       // sample the trajectory at 0 seconds (its beginning)
       State firstState = trajectory.sample(0);
-<<<<<<< HEAD
       Pose2d pose = firstState.poseMeters;
       if (firstState instanceof PathPlannerState) {
         Rotation2d holonomicRotation = ((PathPlannerState) firstState).holonomicRotation;
@@ -72,14 +68,6 @@ public class FollowTrajectoryCommand extends CommandBase {
       }
       // If it's not an instanceof Pathplanner State, we still need to zero to current position...
       drivebaseSubsystem.resetOdometryToPose(pose);
-=======
-      if (firstState instanceof PathPlannerState) {
-        drivebaseSubsystem.resetOdometryToPose(
-            firstState.poseMeters, ((PathPlannerState) firstState).holonomicRotation);
-      } else {
-        drivebaseSubsystem.resetOdometryToPose(firstState.poseMeters);
-      }
->>>>>>> dev
     }
   }
 
