@@ -225,8 +225,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
       navx.setAngleAdjustment(getGyroscopeRotation().minus(pose.getRotation()).getDegrees());
       swerveOdometry.resetPosition(pose, getGyroscopeRotation());
     }
-
-    
   }
 
   /**
