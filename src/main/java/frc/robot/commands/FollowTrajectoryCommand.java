@@ -62,7 +62,6 @@ public class FollowTrajectoryCommand extends CommandBase {
       // sample the trajectory at 0 seconds (its beginning)
       State firstState = trajectory.sample(0);
       Pose2d pose = firstState.poseMeters;
-      drivebaseSubsystem.resetOdometryToPose(pose);
       if (firstState instanceof PathPlannerState) {
         Rotation2d holonomicRotation = ((PathPlannerState) firstState).holonomicRotation;
         pose = new Pose2d(pose.getTranslation(), holonomicRotation);
