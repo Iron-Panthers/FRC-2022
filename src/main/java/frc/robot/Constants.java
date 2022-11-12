@@ -229,7 +229,7 @@ public final class Constants {
       /** HIGH SHOT FAR; velocity */
       public static final double OUTTAKE_UPPER_HIGH_FAR = 14_500;
       /** HIGH SHOT FAR; velocity */
-      public static final double OUTTAKE_LOWER_HIGH_FAR = 12_500;
+      public static final double OUTTAKE_LOWER_HIGH_FAR = 10_500;
     }
 
     public static final class Ports {
