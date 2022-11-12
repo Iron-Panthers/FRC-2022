@@ -456,10 +456,10 @@ public class IntakeSubsystem extends SubsystemBase {
         alignHighPeriodic();
         break;
       case OUTTAKE_HIGH_FAR_LEFT:
-        outtakeHighLeftModePeriodic();
+        outtakeHighFarLeftModePeriodic();
         break;
       case OUTTAKE_HIGH_FAR_ALL:
-        outtakeHighAllModePeriodic();
+        outtakeHighFarAllModePeriodic();
         break;
         // end high far shot
       case EJECT_LEFT:
