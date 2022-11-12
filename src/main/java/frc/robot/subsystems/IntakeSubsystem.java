@@ -32,7 +32,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private void configStatusFramePeriodsAndBatteryComp(TalonFX talon) {
     talon.setStatusFramePeriod(1, 100);
     talon.setStatusFramePeriod(2, 20);
-    talon.configVoltageCompSaturation(11);
+    talon.configVoltageCompSaturation(11.5);
     talon.enableVoltageCompensation(true);
     talon.setNeutralMode(NeutralMode.Coast);
   }
@@ -63,6 +63,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     tab.addNumber("RIGHT roller", rightEjectMotor::getSelectedSensorVelocity);
     tab.addNumber("left roller", leftEjectMotor::getSelectedSensorVelocity);
+
+    tab.addNumber("!!! upper roller", upperIntakeMotor::getSelectedSensorVelocity);
+    tab.addNumber("!!! lower roller", lowerIntakeMotor::getSelectedSensorVelocity);
 
     configStatusFramePeriodsAndBatteryComp(lowerIntakeMotor);
     configStatusFramePeriodsAndBatteryComp(upperIntakeMotor);
