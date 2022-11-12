@@ -360,7 +360,7 @@ public class RobotContainer {
         "[NEW] OnsideThreeBallSequence",
         new OnsideThreeBallSequence(
             3, // m/s
-            1, // m/s2
+            1.5, // m/s2
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,
