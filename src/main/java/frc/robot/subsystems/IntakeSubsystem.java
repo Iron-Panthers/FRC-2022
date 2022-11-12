@@ -83,6 +83,10 @@ public class IntakeSubsystem extends SubsystemBase {
     ALIGN_HIGH,
     OUTTAKE_HIGH_LEFT,
     OUTTAKE_HIGH_ALL,
+    CENTER_NORMALIZE_HIGH_FAR,
+    ALIGN_HIGH_FAR,
+    OUTTAKE_HIGH_FAR_LEFT,
+    OUTTAKE_HIGH_FAR_ALL,
     EJECT_LEFT,
     EJECT_RIGHT,
     EJECT_ALL,
@@ -159,6 +163,24 @@ public class IntakeSubsystem extends SubsystemBase {
         setModeIfTimeSinceTransitionGreaterThan(ModeWaits.High.ALL_TO_OFF, Modes.OFF);
         break;
         // end high shot block
+
+        // high far shot block
+      case CENTER_NORMALIZE_HIGH_FAR:
+        setModeIfTimeSinceTransitionGreaterThan(
+            ModeWaits.High.CENTER_NORMALIZE_TO_ALIGN, Modes.ALIGN_HIGH_FAR);
+        break;
+      case ALIGN_HIGH_FAR:
+        setModeIfTimeSinceTransitionGreaterThan(
+            ModeWaits.High.ALIGN_TO_LEFT, Modes.OUTTAKE_HIGH_FAR_LEFT);
+        break;
+      case OUTTAKE_HIGH_FAR_LEFT:
+        setModeIfTimeSinceTransitionGreaterThan(
+            ModeWaits.High.LEFT_TO_ALL, Modes.OUTTAKE_HIGH_FAR_ALL);
+        break;
+      case OUTTAKE_HIGH_FAR_ALL:
+        setModeIfTimeSinceTransitionGreaterThan(ModeWaits.High.ALL_TO_OFF, Modes.OFF);
+        break;
+        // end high far shot block
 
         // intake block
       case INTAKE:
@@ -350,6 +372,21 @@ public class IntakeSubsystem extends SubsystemBase {
     upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_HIGH);
   }
 
+  private void outtakeHighFarLeftModePeriodic() {
+    runLeftEjectRollerPercent(EjectRollers.FEED_HIGH);
+    stopMotor(rightEjectMotor);
+
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_HIGH_FAR);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_HIGH_FAR);
+  }
+
+  private void outtakeHighFarAllModePeriodic() {
+    runEjectRollersPercent(EjectRollers.FEED_HIGH);
+
+    lowerIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_LOWER_HIGH_FAR);
+    upperIntakeMotor.set(TalonFXControlMode.Velocity, IntakeRollers.OUTTAKE_UPPER_HIGH_FAR);
+  }
+
   private void ejectLeftModePeriodic() {
     runLeftEjectRollerPercent(EjectRollers.EJECT);
     runRightEjectRollerPercent(EjectRollers.IDLE);
@@ -397,6 +434,7 @@ public class IntakeSubsystem extends SubsystemBase {
       case OUTTAKE_LOW_ALL:
         outtakeLowAllModePeriodic();
         break;
+        // high shot
       case CENTER_NORMALIZE_HIGH:
         centerNormalizeHighPeriodic();
         break;
@@ -409,6 +447,21 @@ public class IntakeSubsystem extends SubsystemBase {
       case OUTTAKE_HIGH_ALL:
         outtakeHighAllModePeriodic();
         break;
+        // end high shot
+        // high far shot
+      case CENTER_NORMALIZE_HIGH_FAR:
+        centerNormalizeHighPeriodic();
+        break;
+      case ALIGN_HIGH_FAR:
+        alignHighPeriodic();
+        break;
+      case OUTTAKE_HIGH_FAR_LEFT:
+        outtakeHighLeftModePeriodic();
+        break;
+      case OUTTAKE_HIGH_FAR_ALL:
+        outtakeHighAllModePeriodic();
+        break;
+        // end high far shot
       case EJECT_LEFT:
         ejectLeftModePeriodic();
         break;

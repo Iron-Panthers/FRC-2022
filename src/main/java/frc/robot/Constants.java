@@ -224,6 +224,12 @@ public final class Constants {
       public static final double OUTTAKE_UPPER_HIGH = 12_500;
       /** HIGH SHOT; velocity */
       public static final double OUTTAKE_LOWER_HIGH = 10_500;
+
+      // velocity speeds for the high far shoot
+      /** HIGH SHOT FAR; velocity */
+      public static final double OUTTAKE_UPPER_HIGH_FAR = 12_500;
+      /** HIGH SHOT FAR; velocity */
+      public static final double OUTTAKE_LOWER_HIGH_FAR = 10_500;
     }
 
     public static final class Ports {
