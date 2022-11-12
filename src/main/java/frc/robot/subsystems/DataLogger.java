@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import oshi.SystemInfo;
+import oshi.hardware.NetworkIF;
 import oshi.software.os.OperatingSystem;
 
 public class DataLogger extends SubsystemBase {
@@ -45,7 +46,16 @@ public class DataLogger extends SubsystemBase {
     log(key, String.format("%d", value));
   }
 
+  private void logNetworkIF(NetworkIF networkIF) {
+    String name = networkIF.getName() + "\t";
+    log(name + "inDrops", networkIF.getInDrops());
+    log(name + "IfOperationStatus", networkIF.getIfOperStatus());
+    log(name + "outErrors", networkIF.getOutErrors());
+  }
+
   public void createLog() {
+    var networkIFs = systemInfo.getHardware().getNetworkIFs();
+    networkIFs.forEach(this::logNetworkIF);
     log("SystemUptime", operatingSystem.getSystemUptime());
   }
 }
