@@ -42,6 +42,7 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.ControllerUtil;
+import frc.util.HotChange;
 import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
@@ -106,6 +107,17 @@ public class RobotContainer {
 
     // Create and put autonomous selector to dashboard
     setupAutonomousCommands();
+
+    initHotChanges();
+  }
+
+  public void initHotChanges() {
+    HotChange.constant(
+        "Outtake.ALIGN_TO_LEFT",
+        () -> Constants.Intake.ModeWaits.Outtake.ALIGN_TO_LEFT,
+        (v) -> {
+          Constants.Intake.ModeWaits.Outtake.ALIGN_TO_LEFT = v;
+        });
   }
 
   public void containerTeleopInit() {
