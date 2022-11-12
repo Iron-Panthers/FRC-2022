@@ -32,7 +32,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private void configStatusFramePeriodsAndBatteryComp(TalonFX talon) {
     talon.setStatusFramePeriod(1, 100);
     talon.setStatusFramePeriod(2, 20);
-    talon.configVoltageCompSaturation(11);
+    talon.configVoltageCompSaturation(11.5);
     talon.enableVoltageCompensation(true);
     talon.setNeutralMode(NeutralMode.Coast);
   }
