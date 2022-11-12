@@ -254,6 +254,12 @@ public class RobotContainer {
         .whenPressed(
             new InstantSetIntakeModeCommand(
                 intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH));
+    // score into high when robot width away
+    jasonLayer
+        .off(jason::getYButton)
+        .whenPressed(
+            new InstantSetIntakeModeCommand(
+                intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH_FAR));
 
     // stop everything
     jasonLayer
