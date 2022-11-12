@@ -79,6 +79,7 @@ public class IntakeSubsystem extends SubsystemBase {
     IDLING,
     INTAKE,
     INTAKE_FORCEFUL,
+    CENTER_NORMALIZE_LOW,
     ALIGN_LOW,
     OUTTAKE_LOW_LEFT,
     OUTTAKE_LOW_ALL,
@@ -200,6 +201,10 @@ public class IntakeSubsystem extends SubsystemBase {
         // end intake block
 
         // outtake block
+        case CENTER_NORMALIZE_LOW:
+        setModeIfTimeSinceTransitionGreaterThan(
+            ModeWaits.Outtake.CENTER_NORMALIZE_TO_ALIGN, Modes.ALIGN_LOW);
+        break;
       case ALIGN_LOW:
         setModeIfTimeSinceTransitionGreaterThan(
             ModeWaits.Outtake.ALIGN_TO_LEFT, Modes.OUTTAKE_LOW_LEFT);
@@ -427,6 +432,9 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case INTAKE_FORCEFUL:
         intakeForcefulModePeriodic();
+        break;
+      case CENTER_NORMALIZE_LOW:
+        centerNormalizeHighPeriodic();
         break;
       case ALIGN_LOW:
         alignLowPeriodic();

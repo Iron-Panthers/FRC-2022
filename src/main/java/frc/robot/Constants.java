@@ -179,9 +179,10 @@ public final class Constants {
 
       /** this is out taking backwards, ie over the elevator (LOW SHOT) */
       public static final class Outtake {
-        public static final double ALIGN_TO_LEFT = .24 * 2;
-        public static final double LEFT_TO_ALL = .55 * 3;
-        public static final double ALL_TO_OFF = 2;
+        public static final double CENTER_NORMALIZE_TO_ALIGN = 0.1;
+        public static final double ALIGN_TO_LEFT = .24;
+        public static final double LEFT_TO_ALL = .7;
+        public static final double ALL_TO_OFF = 1.5;
       }
 
       /** time between states for intake sequence */
@@ -213,9 +214,9 @@ public final class Constants {
       /** speed to run intake motors for unsticking balls */
       public static final double INTAKE_FORCEFUL = -1;
       /** LOW SHOT; the velocity to run the upper outtake during the outtake state */
-      public static final double OUTTAKE_UPPER_LOW = 8000;
+      public static final double OUTTAKE_UPPER_LOW = 4000;
       /** LOW SHOT; the velocity to run the lower outtake during the outtake state */
-      public static final double OUTTAKE_LOWER_LOW = 8000;
+      public static final double OUTTAKE_LOWER_LOW = 4000;
       /** percent */
       public static final double ALIGN_INTERNAL = -0.1103 * .5;
 

@@ -259,7 +259,7 @@ public class RobotContainer {
         .off(jason::getYButton)
         .whenPressed(
             new InstantSetIntakeModeCommand(
-                intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH_FAR));
+                intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_LOW));
 
     // stop everything
     jasonLayer
