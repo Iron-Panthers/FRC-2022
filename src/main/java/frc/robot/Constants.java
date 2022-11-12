@@ -179,7 +179,7 @@ public final class Constants {
 
       /** this is out taking backwards, ie over the elevator (LOW SHOT) */
       public static final class Outtake {
-        public static final double ALIGN_TO_LEFT = .24 * 2;
+        public static double ALIGN_TO_LEFT = .24 * 2;
         public static final double LEFT_TO_ALL = .55 * 3;
         public static final double ALL_TO_OFF = 2;
       }
