@@ -221,9 +221,9 @@ public final class Constants {
 
       // velocity speeds for the high shoot
       /** HIGH SHOT; velocity */
-      public static final double OUTTAKE_UPPER_HIGH = 14_500;
+      public static final double OUTTAKE_UPPER_HIGH = 7_000;
       /** HIGH SHOT; velocity */
-      public static final double OUTTAKE_LOWER_HIGH = 8_500;
+      public static final double OUTTAKE_LOWER_HIGH = 18_000;
 
       // velocity speeds for the high far shoot
       /** HIGH SHOT FAR; velocity */
