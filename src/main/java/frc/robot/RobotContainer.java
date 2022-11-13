@@ -141,10 +141,8 @@ public class RobotContainer {
         () ->
             ControllerUtil.deadband((will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1);
     DoubleSupplier rotationVelocity =
-        () ->
-            rotation.getAsDouble()
-                * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-                * .5 /* half speed trigger rotation per will */;
+        exponential(
+            () -> rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND, 2);
 
     new Button(() -> Math.abs(rotation.getAsDouble()) > 0)
         .whenHeld(
@@ -399,5 +397,12 @@ public class RobotContainer {
     value = Math.copySign(value * value, value);
 
     return value;
+  }
+
+  private static DoubleSupplier exponential(DoubleSupplier supplier, double exponential) {
+    return () -> {
+      double val = supplier.getAsDouble();
+      return Math.copySign(Math.pow(val, exponential), val);
+    };
   }
 }
