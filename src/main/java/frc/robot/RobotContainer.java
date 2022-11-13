@@ -25,6 +25,7 @@ import frc.robot.autonomous.commands.OffsideTaxiShot;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.autonomous.commands.OnsideOneBallSteal;
+import frc.robot.autonomous.commands.OnsideTaxiStealShot;
 import frc.robot.autonomous.commands.OnsideThreeBallSequence;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
 import frc.robot.autonomous.commands.TaxiAutoSequence;
@@ -370,6 +371,10 @@ public class RobotContainer {
         "[NEW] Offside Shoot and Taxi",
         new OffsideTaxiShot(
             1.5, 1.5, drivebaseSubsystem.getKinematics(), drivebaseSubsystem, intakeSubsystem));
+
+    autoSelector.addOption(
+        "[NEW] Onside Shoot and Steal Taxi",
+        new OnsideTaxiStealShot(3, 2, armSubsystem, drivebaseSubsystem, intakeSubsystem));
 
     Shuffleboard.getTab("DriverView")
         .add("auto selector", autoSelector)
