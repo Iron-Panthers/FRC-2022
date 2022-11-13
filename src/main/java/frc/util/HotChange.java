@@ -25,6 +25,7 @@ public class HotChange {
 
     @Override
     public void initSendable(SendableBuilder builder) {
+      builder.setSmartDashboardType("kTextView");
       builder.addDoubleProperty(name, constGetter, constSetter);
     }
   }
