@@ -337,7 +337,7 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "[NEW] Taxi and Disrupt",
+        "[NEW] Middle Taxi and Disrupt",
         new TaxiAutoSequence(
             4, // m/s
             1, // m/s2
