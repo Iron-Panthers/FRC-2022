@@ -113,11 +113,13 @@ public class RobotContainer {
 
   public void initHotChanges() {
     HotChange.constant(
-        "Outtake.ALIGN_TO_LEFT",
-        () -> Constants.Intake.ModeWaits.Outtake.ALIGN_TO_LEFT,
-        (v) -> {
-          Constants.Intake.ModeWaits.Outtake.ALIGN_TO_LEFT = v;
-        });
+        "OUTTAKE_UPPER_HIGH ",
+        () -> Constants.Intake.IntakeRollers.OUTTAKE_UPPER_HIGH,
+        n -> Constants.Intake.IntakeRollers.OUTTAKE_UPPER_HIGH = n);
+    HotChange.constant(
+        "OUTTAKE_LOWER_HIGH ",
+        () -> Constants.Intake.IntakeRollers.OUTTAKE_LOWER_HIGH,
+        n -> Constants.Intake.IntakeRollers.OUTTAKE_LOWER_HIGH = n);
   }
 
   public void containerTeleopInit() {
