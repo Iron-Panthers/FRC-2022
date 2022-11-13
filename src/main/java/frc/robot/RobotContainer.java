@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.AutoTestSequence;
@@ -378,7 +379,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelector.getSelected();
+    return new WaitCommand(
+            /** auto start delay */
+            7)
+        .andThen(autoSelector.getSelected());
   }
 
   /**
