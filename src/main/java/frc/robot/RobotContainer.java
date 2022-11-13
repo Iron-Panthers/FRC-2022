@@ -28,6 +28,7 @@ import frc.robot.autonomous.commands.OnsideOneBallSteal;
 import frc.robot.autonomous.commands.OnsideTaxiStealShot;
 import frc.robot.autonomous.commands.OnsideThreeBallSequence;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
+import frc.robot.autonomous.commands.ShootNoTaxi;
 import frc.robot.autonomous.commands.TaxiAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -375,6 +376,10 @@ public class RobotContainer {
     autoSelector.addOption(
         "[NEW] Onside Shoot and Steal Taxi",
         new OnsideTaxiStealShot(3, 2, armSubsystem, drivebaseSubsystem, intakeSubsystem));
+
+    autoSelector.addOption(
+        "[NEW] Shoot (from anywhere) No Taxi (sit still like we died, manual calibration in teleop)",
+        new ShootNoTaxi(intakeSubsystem));
 
     Shuffleboard.getTab("DriverView")
         .add("auto selector", autoSelector)
