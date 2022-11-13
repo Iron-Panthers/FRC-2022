@@ -41,17 +41,15 @@ public class OnsideThreeBallSequence extends SequentialCommandGroup {
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
     addCommands(
-        race(
+        new SetIntakeModeCommand(intakeSubsystem, Modes.CENTER_NORMALIZE_HIGH, Modes.OFF),
+        parallel(
+            race(
                 new ForceIntakeModeCommand(intakeSubsystem, Modes.INTAKE),
-                sequence(
-                    new SetIntakeModeCommand(intakeSubsystem, Modes.CENTER_NORMALIZE_HIGH, Modes.OFF),
-        new FollowTrajectoryCommand(threeBallOnsidePickup, true, drivebaseSubsystem),
-            armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION),
+                new FollowTrajectoryCommand(threeBallOnsidePickup, true, drivebaseSubsystem)),
+            armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION)),
         new SequentialCommandGroup(
             armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION), new WaitCommand(.2)),
-        new FollowTrajectoryCommand(threeBallOnsideShoot, drivebaseSubsystem)
-                )),
-        
+        new FollowTrajectoryCommand(threeBallOnsideShoot, drivebaseSubsystem),
         new SetIntakeModeCommand(intakeSubsystem, Modes.CENTER_NORMALIZE_HIGH, Modes.OFF));
   }
 }
