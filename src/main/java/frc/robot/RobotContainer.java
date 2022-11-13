@@ -369,7 +369,7 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "[NEW] Offside Shoot and Taxi",
+        "[NEW] Offside Shoot and Taxi Disrupt",
         new OffsideTaxiShot(
             1.5, 1.5, drivebaseSubsystem.getKinematics(), drivebaseSubsystem, intakeSubsystem));
 
