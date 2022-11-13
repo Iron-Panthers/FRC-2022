@@ -140,11 +140,18 @@ public class RobotContainer {
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
 
     DoubleSupplier rotation =
-        () ->
-            ControllerUtil.deadband((will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1);
-    DoubleSupplier rotationVelocity =
         exponential(
-            () -> rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND, 2);
+            () ->
+                ControllerUtil.deadband(
+                    (will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1),
+            2);
+    DoubleSupplier rotationVelocity =
+        () ->
+            rotation.getAsDouble()
+                * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+                *
+                /** percent of fraction power */
+                (will.getAButton() ? .3 : .8);
 
     new Button(() -> Math.abs(rotation.getAsDouble()) > 0)
         .whenHeld(
