@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.AutoTestSequence;
 import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
+import frc.robot.autonomous.commands.OffsideTaxiShot;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.autonomous.commands.OnsideOneBallSteal;
@@ -364,6 +365,11 @@ public class RobotContainer {
             armSubsystem,
             drivebaseSubsystem,
             intakeSubsystem));
+
+    autoSelector.addOption(
+        "[NEW] Offside Shoot and Taxi",
+        new OffsideTaxiShot(
+            1.5, 1.5, drivebaseSubsystem.getKinematics(), drivebaseSubsystem, intakeSubsystem));
 
     Shuffleboard.getTab("DriverView")
         .add("auto selector", autoSelector)
