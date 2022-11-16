@@ -52,7 +52,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    heightController = new PIDController(1.5, 0.5, 0);
+    heightController = new PIDController(0.5, 0, 0);
     heightController.setTolerance(5);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
@@ -143,10 +143,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
       // modify the output by the slowzone modifier
 
-      return MathUtil.clamp(clampPercent, -0.3, 0.3);
+      return MathUtil.clamp(clampPercent, -SlowZone.SLOWZONE_MODIFIER, SlowZone.SLOWZONE_MODIFIER);
 
-    }
-    else {
+    } else {
       return clampPercent;
     }
   }
@@ -223,7 +222,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         percentOutput = applySlowZoneToPercent(percentControl);
         return percentOutput;
       case POSITION_CONTROL:
-        percentOutput = applySlowZoneToPID(-heightController.calculate(currentHeight, targetHeight));
+        percentOutput =
+            applySlowZoneToPID(-heightController.calculate(currentHeight, targetHeight));
         return percentOutput;
       default:
         return 0;
