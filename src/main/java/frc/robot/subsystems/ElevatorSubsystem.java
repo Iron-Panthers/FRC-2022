@@ -53,6 +53,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
     heightController = new PIDController(1.5, 0.5, 0);
+    heightController.setTolerance(5);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
     right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
@@ -128,6 +129,27 @@ public class ElevatorSubsystem extends SubsystemBase {
     return clampPercent;
   }
 
+  private double applySlowZoneToPID(double percent) {
+    final double height = getHeight();
+    double clampPercent = MathUtil.clamp(percent, -1, 1);
+    if (
+    // going down block
+    (percent >= 0 /* going down */
+            && height <= SlowZone.LOWER_THRESHHOLD /* inside the lower slow zone */)
+        ||
+        // going up block
+        (percent <= 0 /* going up */
+            && height >= SlowZone.UPPER_THRESHHOLD /* inside the upper slow zone */)) {
+
+      // modify the output by the slowzone modifier
+
+      return MathUtil.clamp(clampPercent, -0.3, 0.3);
+
+    }
+    else {
+      return clampPercent;
+    }
+  }
   /**
    * Stores the target height for the elevator, to be reached with motor adjustment
    *
@@ -184,11 +206,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atTarget() {
-    if (heightController.getPositionError() < 0.5) {
-      return true;
-    } else {
-      return false;
-    }
+    return heightController.atSetpoint();
   }
 
   /**
@@ -202,11 +220,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetHeight = getTargetHeight();
     switch (currentMode) {
       case PERCENT_CONTROL:
-        percentOutput = percentControl;
-        return percentControl;
+        percentOutput = applySlowZoneToPercent(percentControl);
+        return percentOutput;
       case POSITION_CONTROL:
-        percentOutput = -heightController.calculate(currentHeight, targetHeight);
-        return -heightController.calculate(currentHeight, targetHeight);
+        percentOutput = applySlowZoneToPID(-heightController.calculate(currentHeight, targetHeight));
+        return percentOutput;
       default:
         return 0;
     }
@@ -218,7 +236,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // based on mode
     // set percent to member or pid output
 
-    right_motor.set(TalonFXControlMode.PercentOutput, applySlowZoneToPercent(getPercentControl()));
+    right_motor.set(TalonFXControlMode.PercentOutput, getPercentControl());
   }
 }
 

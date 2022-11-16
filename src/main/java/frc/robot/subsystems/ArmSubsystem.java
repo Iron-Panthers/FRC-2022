@@ -86,9 +86,9 @@ public class ArmSubsystem extends SubsystemBase {
     armEncoder.configSensorDirection(true);
     armEncoder.setPositionToAbsolute(10); // ms
 
-    // var tab = Shuffleboard.getTab("Arm");
-    // tab.addNumber("target angle", this::getTargetAngle);
-    // tab.addNumber("actual angle", this::getAngle);
+    var tab = Shuffleboard.getTab("Arm");
+    tab.addNumber("target angle!", this::getTargetAngle);
+    tab.addNumber("actual angle!", this::getAngle);
   }
 
   public double getAngle() {

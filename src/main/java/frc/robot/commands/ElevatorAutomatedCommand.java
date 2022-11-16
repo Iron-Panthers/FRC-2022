@@ -17,24 +17,24 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
   private final ArmSubsystem armSubsystem;
 
   /** Creates a new ElevatorCommand. */
-  public ElevatorAutomatedCommand(ElevatorSubsystem subsystem) {
-    this.elevatorSubsystem = subsystem;
-    armSubsystem = new ArmSubsystem(subsystem);
-    addRequirements(elevatorSubsystem);
+  public ElevatorAutomatedCommand(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem) {
+    this.elevatorSubsystem = elevatorSubsystem;
+    this.armSubsystem = armSubsystem;
+    addRequirements(elevatorSubsystem, armSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
 
     addCommands(
         new SequentialCommandGroup(
             // mid rung
             // latch on
-            new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT),
+            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
             new WaitCommand(3),
             // high rung
             // extend to rung
-            new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
+            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MAX_HEIGHT),
             new WaitCommand(3),
             // latch on
-            new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT),
+            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
             // moving arm to proper position during wait period
             parallel(
                 new WaitCommand(3),
@@ -42,9 +42,9 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
                     () -> armSubsystem.setAngle(Arm.Setpoints.MAX_ANGLE), armSubsystem)),
             // traversal rung
             // extend to rung
-            new ElevatorPositionCommand(subsystem, Elevator.MAX_HEIGHT),
+            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MAX_HEIGHT),
             new WaitCommand(3),
             // latch on
-            new ElevatorPositionCommand(subsystem, Elevator.MIN_HEIGHT)));
+            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT)));
   }
 }

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -21,15 +22,19 @@ public class DefaultDriveCommand extends CommandBase {
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
 
+  private final BooleanSupplier isRobotRelativeSupplier;
+
   /** Creates a new DefaultDriveCommand. */
   public DefaultDriveCommand(
       DrivebaseSubsystem drivebaseSubsystem,
       DoubleSupplier translationXSupplier,
-      DoubleSupplier translationYSupplier) {
+      DoubleSupplier translationYSupplier,
+      BooleanSupplier isRobotRelativeRelativeSupplier) {
 
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
+    this.isRobotRelativeSupplier = isRobotRelativeRelativeSupplier;
 
     addRequirements(drivebaseSubsystem);
   }
@@ -40,8 +45,13 @@ public class DefaultDriveCommand extends CommandBase {
     double x = translationXSupplier.getAsDouble();
     double y = translationYSupplier.getAsDouble();
 
+    boolean isRobotRelative = isRobotRelativeSupplier.getAsBoolean();
+
     drivebaseSubsystem.drive(
-        ChassisSpeeds.fromFieldRelativeSpeeds(x, y, 0, drivebaseSubsystem.getGyroscopeRotation()));
+        isRobotRelative
+            ? new ChassisSpeeds(x, y, 0)
+            : ChassisSpeeds.fromFieldRelativeSpeeds(
+                x, y, 0, drivebaseSubsystem.getGyroscopeRotation()));
   }
 
   // Called once the command ends or is interrupted.

@@ -6,9 +6,6 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -43,6 +40,7 @@ import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.VibrateControllerCommand;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.DataLogger;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -50,7 +48,6 @@ import frc.util.ControllerUtil;
 import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
-import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
@@ -68,6 +65,8 @@ public class RobotContainer {
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem(elevatorSubsystem);
+
+  private final DataLogger dataLogger = new DataLogger();
 
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
@@ -90,7 +89,8 @@ public class RobotContainer {
         new DefaultDriveCommand(
             drivebaseSubsystem,
             () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND)));
+            () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
+            will::getRightBumper));
 
     // armSubsystem.setDefaultCommand(
     //     new FunctionalCommand(
@@ -109,9 +109,6 @@ public class RobotContainer {
 
     // Create and put autonomous selector to dashboard
     setupAutonomousCommands();
-
-    // start the camera server and configure the cameras
-    setupCameras();
   }
 
   public void containerTeleopInit() {
@@ -158,7 +155,8 @@ public class RobotContainer {
                 /* drive joystick "y" is passed to x because controller is inverted */
                 () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
-                rotationVelocity));
+                rotationVelocity,
+                will::getRightBumper));
 
     new Button(
             () ->
@@ -170,23 +168,25 @@ public class RobotContainer {
                 () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND),
                 will::getRightY,
-                will::getRightX));
+                will::getRightX,
+                will::getRightBumper));
 
     // Elevator preset position buttons
     jasonLayer
-        .on(jason::getBButton)
+        .on(jason::getYButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MAX_HEIGHT)); // Elevator goes to top
     jasonLayer
-        .on(jason::getXButton)
+        .on(jason::getAButton)
         .whenPressed(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.MIN_HEIGHT)); // Elevator goes to bottom
     jasonLayer
-        .on(jason::getAButton)
+        .on(jason::getBButton)
         .whenPressed(
-            new ElevatorAutomatedCommand(elevatorSubsystem)); // Elevator does auto sequence
+            new ElevatorAutomatedCommand(
+                elevatorSubsystem, armSubsystem)); // Elevator does auto sequence
 
     // Elevator manual command
     jasonLayer
@@ -197,7 +197,7 @@ public class RobotContainer {
                 () -> modifyAxis(ControllerUtil.deadband(jason.getLeftY(), .4))));
 
     // Elevator goes into coast mode
-    jasonLayer.on(jason::getYButton).whenHeld(new ElevatorCoastCommand(elevatorSubsystem));
+    jasonLayer.on(jason::getXButton).whenHeld(new ElevatorCoastCommand(elevatorSubsystem));
 
     // new FunctionalCommand(
     //     () -> {},
@@ -379,24 +379,6 @@ public class RobotContainer {
         .add("auto selector", autoSelector)
         .withSize(4, 1)
         .withPosition(6, 0);
-  }
-
-  private void setupCameras() {
-    UsbCamera intakeCamera = CameraServer.startAutomaticCapture("intake camera", 0);
-    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 15);
-    Shuffleboard.getTab("DriverView")
-        .add(intakeCamera)
-        .withSize(6, 6)
-        .withPosition(0, 0)
-        .withProperties(Map.of("show controls", false));
-
-    // UsbCamera fieldCamera = CameraServer.startAutomaticCapture("field camera", 1);
-    // fieldCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 7);
-    // Shuffleboard.getTab("DriverView")
-    //     .add(fieldCamera)
-    //     .withSize(6, 6)
-    //     .withPosition(6, 0)
-    //     .withProperties(Map.of("show controls", false));
   }
 
   /**
