@@ -6,6 +6,8 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -28,6 +30,7 @@ import frc.robot.autonomous.commands.OnsideThreeSequence;
 import frc.robot.autonomous.commands.TaxiAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.DriveLimelightCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
@@ -75,6 +78,9 @@ public class RobotContainer {
   /** the sendable chooser to select which auto to run. */
   private final SendableChooser<Command> autoSelector = new SendableChooser<>();
 
+  //network table for limelight
+  private NetworkTable table;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Set up the default command for the drivetrain.
@@ -99,6 +105,8 @@ public class RobotContainer {
     //         () -> false,
     //         armSubsystem));
 
+    table = NetworkTableInstance.getDefault().getTable("limelight-rightUp");
+    
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
     // Configure the button bindings
@@ -135,6 +143,8 @@ public class RobotContainer {
 
     new Button(will::getLeftStickButton)
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
+    new Button(will::getYButton).whenHeld(new DriveLimelightCommand(drivebaseSubsystem, table));
 
     DoubleSupplier rotation =
         () ->
