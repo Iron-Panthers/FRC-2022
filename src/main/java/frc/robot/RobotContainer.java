@@ -105,7 +105,7 @@ public class RobotContainer {
     //         () -> false,
     //         armSubsystem));
 
-    table = NetworkTableInstance.getDefault().getTable("limelight-rightUp");
+    table = NetworkTableInstance.getDefault().getTable("limelight-rightup");
     
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 

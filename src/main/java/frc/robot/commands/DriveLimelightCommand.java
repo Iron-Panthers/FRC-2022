@@ -8,6 +8,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.trajectory.*;
 import edu.wpi.first.math.util.Units;
@@ -34,9 +36,12 @@ public class DriveLimelightCommand extends CommandBase {
   private NetworkTableEntry ta;
   private NetworkTableEntry ty; 
 
+  private double ldifferenceX;
+  private double ldifferenceY;
 
-  private PIDController xController;
-  private PIDController yController;
+
+  private ProfiledPIDController xController;
+  private ProfiledPIDController yController;
 
   private ShuffleboardTab shuffleboard;
   /**
@@ -56,17 +61,26 @@ public class DriveLimelightCommand extends CommandBase {
 
     shuffleboard = Shuffleboard.getTab("limelight-rightup");
     
-    xController = new PIDController(0.1, 0, 0);
-    yController = new PIDController(0.1, 0, 0);
-   // yController.setSetpoint(0);
+
+    xController = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(5, 10));
+    
+    yController = new ProfiledPIDController(0.8, 0, 0, new TrapezoidProfile.Constraints(5, 10));
 
     tx = table.getEntry("tx");
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
 
+    ldifferenceX = 0;
+    ldifferenceY = 0;
+
     shuffleboard.addNumber("X", () -> tx.getDouble(0.0));
     shuffleboard.addNumber("Y", () -> ty.getDouble(0.0));
     shuffleboard.addNumber("A", () -> ta.getDouble(0.0));
+    shuffleboard.add("XController", xController);
+    shuffleboard.add("YController", yController);
+    
+    shuffleboard.addNumber("differenceX", () -> ldifferenceX);
+    shuffleboard.addNumber("differenceY", () -> ldifferenceY);
   }
 
   @Override
@@ -80,12 +94,13 @@ public class DriveLimelightCommand extends CommandBase {
 
 
     double ldifferenceX = -xController.calculate(tx.getDouble(0.0));
-    ldifferenceX = MathUtil.clamp(ldifferenceX, -1, 1);
+    this.ldifferenceX = MathUtil.clamp(ldifferenceX, -1, 1);
 
     double ldifferenceY = -yController.calculate(ta.getDouble(0.0));
-    ldifferenceY = MathUtil.clamp(ldifferenceY, -1, 1);
+    this.ldifferenceY = MathUtil.clamp(ldifferenceY, -1, 1);
 
     drivebaseSubsystem.drive(new ChassisSpeeds(ldifferenceY, 0, ldifferenceX));
+    
   }
 
 
