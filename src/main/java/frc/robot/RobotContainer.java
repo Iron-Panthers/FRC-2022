@@ -78,7 +78,7 @@ public class RobotContainer {
   /** the sendable chooser to select which auto to run. */
   private final SendableChooser<Command> autoSelector = new SendableChooser<>();
 
-  //network table for limelight
+  // network table for limelight
   private NetworkTable table;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -106,7 +106,7 @@ public class RobotContainer {
     //         armSubsystem));
 
     table = NetworkTableInstance.getDefault().getTable("limelight-rightup");
-    
+
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
 
     // Configure the button bindings
