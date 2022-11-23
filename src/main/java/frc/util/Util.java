@@ -21,7 +21,8 @@ public class Util {
    * Modulo on a negative number returns a negative number. This function always returns positive
    * numbers, even for negative angles, without rotation.
    *
-   * @param degrees
+   * @param degrees the angle in degrees to normalize. Doubles close to Double.MAX_VALUE are not
+   *     supported.
    * @return normalized degrees
    */
   public static double normalizeDegrees(double degrees) {

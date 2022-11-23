@@ -37,7 +37,7 @@ public class Layer {
   /**
    * gets the button that controls the layering
    *
-   * @return
+   * @return the button tht controls the layering
    */
   public Trigger getLayerSwitch() {
     return layerSwitch;
@@ -70,8 +70,8 @@ public class Layer {
    * Combines a {@link BooleanSupplier} with the layer root provided that the layer switch is
    * activated.
    *
-   * @param button the {@link BooleanSupplier} that is used in tandem with the layer for the virtual
-   *     button
+   * @param boolSupplier the {@link BooleanSupplier} that is used in tandem with the layer for the
+   *     virtual button
    * @return virtual {@link Button} that is pressed when the layer switch and the provided button is
    *     pressed
    */
@@ -94,8 +94,8 @@ public class Layer {
    * Combines a {@link BooleanSupplier} with the layer root provided that the layer switch is not
    * activated.
    *
-   * @param button the {@link BooleanSupplier} that is used in tandem with the layer for the virtual
-   *     button
+   * @param boolSupplier the {@link BooleanSupplier} that is used in tandem with the layer for the
+   *     virtual button
    * @return virtual {@link Button} that is pressed when the layer switch is not pressed, but the
    *     provided button is pressed
    */

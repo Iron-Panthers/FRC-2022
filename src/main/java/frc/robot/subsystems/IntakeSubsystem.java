@@ -256,23 +256,23 @@ public class IntakeSubsystem extends SubsystemBase {
     lowerIntakeMotor.set(TalonFXControlMode.PercentOutput, percent);
   }
 
-  private void runEjectRollersVelocity(double velocity) {
-    runLeftEjectRollerVelocity(velocity);
-    runRightEjectRollerVelocity(velocity);
-  }
+  // private void runEjectRollersVelocity(double velocity) {
+  //   runLeftEjectRollerVelocity(velocity);
+  //   runRightEjectRollerVelocity(velocity);
+  // }
 
-  private void runLeftEjectRollerVelocity(double velocity) {
-    leftEjectMotor.set(TalonFXControlMode.Velocity, velocity);
-  }
+  // private void runLeftEjectRollerVelocity(double velocity) {
+  //   leftEjectMotor.set(TalonFXControlMode.Velocity, velocity);
+  // }
 
-  private void runRightEjectRollerVelocity(double velocity) {
-    rightEjectMotor.set(TalonFXControlMode.Velocity, velocity);
-  }
+  // private void runRightEjectRollerVelocity(double velocity) {
+  //   rightEjectMotor.set(TalonFXControlMode.Velocity, velocity);
+  // }
 
-  private void runIntakeRollersVelocity(double velocity) {
-    upperIntakeMotor.set(TalonFXControlMode.Velocity, velocity);
-    lowerIntakeMotor.set(TalonFXControlMode.Velocity, velocity);
-  }
+  // private void runIntakeRollersVelocity(double velocity) {
+  //   upperIntakeMotor.set(TalonFXControlMode.Velocity, velocity);
+  //   lowerIntakeMotor.set(TalonFXControlMode.Velocity, velocity);
+  // }
 
   private void feedBallsViaIntakeForEject() {
     stopMotor(lowerIntakeMotor);

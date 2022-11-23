@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.AutoTestSequence;
-import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.autonomous.commands.OnsideOneBallSteal;
@@ -63,7 +62,9 @@ public class RobotContainer {
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem(elevatorSubsystem);
 
-  private final DataLogger dataLogger = new DataLogger();
+  // naming this unused prevents compilation error
+  // we instantiate the datalogger so its periodic can run
+  private final DataLogger unusedDataLogger = new DataLogger();
 
   /** controller 1 */
   private final XboxController jason = new XboxController(1);
@@ -335,16 +336,6 @@ public class RobotContainer {
         new TaxiAutoSequence(
             4, // m/s
             1, // m/s2
-            drivebaseSubsystem.getKinematics(),
-            armSubsystem,
-            drivebaseSubsystem,
-            intakeSubsystem));
-
-    autoSelector.addOption(
-        "[OLD] DONOTUSE",
-        new GreedyOnsideAutoSequence(
-            4, // m/s
-            5, // m/s2
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,

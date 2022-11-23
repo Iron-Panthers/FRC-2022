@@ -47,12 +47,12 @@ public class OnsideOneBallSteal extends SequentialCommandGroup {
 
     trajectoryConfig.setReversed(true);
 
-    Trajectory centerCargoToOffsideStart =
-        TrajectoryGenerator.generateTrajectory(
-            OffsideStartToCenterCargo.LAST,
-            List.of(),
-            OffsideStartToCenterCargo.FIRST,
-            trajectoryConfig);
+    // Trajectory centerCargoToOffsideStart =
+    //     TrajectoryGenerator.generateTrajectory(
+    //         OffsideStartToCenterCargo.LAST,
+    //         List.of(),
+    //         OffsideStartToCenterCargo.FIRST,
+    //         trajectoryConfig);
 
     // Sequence is explained by comments
     addCommands(

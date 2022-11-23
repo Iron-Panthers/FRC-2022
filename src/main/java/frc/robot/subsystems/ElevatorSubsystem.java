@@ -85,7 +85,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public static double heightToTicks(double height) {
-    return height * ((Elevator.GEAR_RATIO * Elevator.TICKS) / (Elevator.GEAR_CIRCUMFERENCE));
+    return height * ((Elevator.GEAR_RATIO * Elevator.TICKS) / Elevator.GEAR_CIRCUMFERENCE);
   }
 
   public static double ticksToHeight(double ticks) {

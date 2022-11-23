@@ -107,7 +107,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /**
    * Initialize a falcon with a shuffleboard tab, and mk4 default gear ratio
    *
-   * @param tab the shuffleboard tab to use
    * @param title the shuffleboard title
    * @param pos the shuffleboard x position, which is <b>multiplied by 2</b>
    * @param drive the drive motor port const
