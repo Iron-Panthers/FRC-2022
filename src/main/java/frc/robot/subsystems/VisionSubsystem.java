@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.Optional;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem extends SubsystemBase {
 
@@ -60,7 +61,8 @@ public class VisionSubsystem extends SubsystemBase {
     var result = frontCamera.getLatestResult();
     var bestTarget = result.getBestTarget();
 
-    bestCameraToTarget = Optional.ofNullable(bestTarget.getBestCameraToTarget());
+    bestCameraToTarget =
+        Optional.ofNullable(bestTarget).map(PhotonTrackedTarget::getBestCameraToTarget);
   }
 
   public Optional<Transform3d> getBestCameraToTarget() {
