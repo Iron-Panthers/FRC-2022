@@ -4,6 +4,7 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2022.4.1"
     id "com.diffplug.spotless" version "6.2.0"
+    id("net.ltgt.errorprone") version "3.0.1"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -50,6 +51,7 @@ def includeDesktopSupport = false
 
 repositories {
     maven { url 'https://jitpack.io' }
+    mavenCentral()
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
@@ -83,6 +85,8 @@ dependencies {
 
     testImplementation "org.mockito:mockito-core:3.+"
     testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
+
+    errorprone("com.google.errorprone:error_prone_core:2.16")
 }
 
 // Simulation configuration (e.g. environment variables).
