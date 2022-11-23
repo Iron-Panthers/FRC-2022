@@ -112,7 +112,13 @@ public class RobotContainer {
           var result = frontCamera.getLatestResult();
           StringBuilder data = new StringBuilder();
 
-          data.append("has targets: " + result.hasTargets());
+          var bestTarget = result.getBestTarget();
+
+          var transform = bestTarget.getBestCameraToTarget();
+
+          data.append("X: " + transform.getX() + "\t");
+          data.append("Y: " + transform.getY() + "\t");
+          data.append("Z: " + transform.getZ() + "\t");
 
           return data.toString();
         });
