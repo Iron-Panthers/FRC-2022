@@ -48,6 +48,10 @@ wpi.java.debugJni = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = false
 
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
@@ -56,6 +60,8 @@ dependencies {
 
     // lets us read system uptime data
     implementation group: 'com.github.oshi', name: 'oshi-core', version: '6.3.1'
+
+    implementation "com.github.Oblarg:Oblog:4.0.9"
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
@@ -108,6 +114,14 @@ test {
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
+
+// configure warnigns as errors
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile){
+        options.compilerArgs << "-Xlint:all" << "-Werror"
+    }
+}
+
 
 spotless {
     java {
