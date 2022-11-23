@@ -22,7 +22,7 @@ public class LayerTests {
   private Button buttonALayerOff = layer.off(buttonA);
   private Button buttonALayerOn = layer.on(buttonA);
 
-  private Button buttonBLayerOff = layer.off(buttonB);
+  // private Button buttonBLayerOff = layer.off(buttonB);
   private Button buttonBLayerOn = layer.on(buttonB);
 
   @BeforeEach

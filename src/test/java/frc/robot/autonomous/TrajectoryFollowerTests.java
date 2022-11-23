@@ -17,7 +17,7 @@ public class TrajectoryFollowerTests {
   // Basic concrete implementation of TrajectoryFollower to allow for testing of the concrete
   // methods
   // NOTE: this is probably better implemented via Mockito.
-  private class ConcreteImpl extends TrajectoryFollower<Integer> {
+  private static class ConcreteImpl extends TrajectoryFollower<Integer> {
     /** @return -1 */
     @Override
     protected Integer calculateDriveSignal(

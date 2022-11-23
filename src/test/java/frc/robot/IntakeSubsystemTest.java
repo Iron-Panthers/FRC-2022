@@ -1,71 +1,63 @@
 package frc.robot;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import frc.robot.subsystems.IntakeSubsystem;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class IntakeSubsystemTest {
 
-  private AutoCloseable closeable;
+  // private AutoCloseable closeable;
 
-  @InjectMocks private IntakeSubsystem intakeSubsystem;
+  // @InjectMocks private IntakeSubsystem intakeSubsystem;
 
-  @Mock private TalonFX lowerIntakeMotor;
-  @Mock private TalonFX upperIntakeMotor;
-  @Mock private TalonFX rightEjectMotor;
-  @Mock private TalonFX leftEjectMotor;
+  // @Mock private TalonFX lowerIntakeMotor;
+  // @Mock private TalonFX upperIntakeMotor;
+  // @Mock private TalonFX rightEjectMotor;
+  // @Mock private TalonFX leftEjectMotor;
 
-  private static String[] motorNames = {
-    "lowerIntakeMotor", "upperIntakeMotor", "rightEjectMotor", "leftEjectMotor"
-  };
-  /** [lowerIntakeMotor, upperIntakeMotor, rightEjectMotor, leftEjectMotor] */
-  private TalonFX[] motorArray;
+  // private static String[] motorNames = {
+  //   "lowerIntakeMotor", "upperIntakeMotor", "rightEjectMotor", "leftEjectMotor"
+  // };
+  // /** [lowerIntakeMotor, upperIntakeMotor, rightEjectMotor, leftEjectMotor] */
+  // private TalonFX[] motorArray;
 
-  @BeforeEach
-  public void setup() {
-    closeable = MockitoAnnotations.openMocks(intakeSubsystem);
-    motorArray =
-        new TalonFX[] {lowerIntakeMotor, upperIntakeMotor, rightEjectMotor, leftEjectMotor};
-  }
+  // @BeforeEach
+  // public void setup() {
+  //   closeable = MockitoAnnotations.openMocks(intakeSubsystem);
+  //   motorArray =
+  //       new TalonFX[] {lowerIntakeMotor, upperIntakeMotor, rightEjectMotor, leftEjectMotor};
+  // }
 
-  /**
-   * call the periodic methods
-   *
-   * <p>we call tick to let the intake react to our input - periodic ticks need to occur for our
-   * mocked motors to have updates
-   */
-  private void tick() {
-    intakeSubsystem.periodic();
-  }
+  // /**
+  //  * call the periodic methods
+  //  *
+  //  * <p>we call tick to let the intake react to our input - periodic ticks need to occur for our
+  //  * mocked motors to have updates
+  //  */
+  // private void tick() {
+  //   intakeSubsystem.periodic();
+  // }
 
-  /**
-   * call the periodic methods repeatedly
-   *
-   * <p>we call tick to let the intake react to our input - periodic ticks need to occur for our
-   * mocked motors to have updates. The updates will happen for each tick, so using multiple ticks
-   * can ensure behavior is consistent
-   */
-  private void tick(int amount) {
-    for (int i = 0; i < amount; i++) intakeSubsystem.periodic();
-  }
+  // /**
+  //  * call the periodic methods repeatedly
+  //  *
+  //  * <p>we call tick to let the intake react to our input - periodic ticks need to occur for our
+  //  * mocked motors to have updates. The updates will happen for each tick, so using multiple
+  // ticks
+  //  * can ensure behavior is consistent
+  //  */
+  // private void tick(int amount) {
+  //   for (int i = 0; i < amount; i++) intakeSubsystem.periodic();
+  // }
 
-  @AfterEach
-  public void shutdown() {
-    try {
-      closeable.close();
-    } catch (Exception e) {
-      fail(e);
-    }
-  }
+  // @AfterEach
+  // public void shutdown() {
+  //   try {
+  //     closeable.close();
+  //   } catch (Exception e) {
+  //     fail(e);
+  //   }
+  // }
 
   // @RobotTest
   // public void intakeDefaultsToOff() {
