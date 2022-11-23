@@ -16,7 +16,12 @@ public class MacUtil {
 
   static {
     String macAddress = macToString(getMacAddress());
-    SmartDashboard.putString("MAC address", macAddress);
+    // using smart dashboard occasionally throws, so we need to wrap this
+    try {
+      SmartDashboard.putString("MAC address", macAddress);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
     IS_COMP_BOT =
         !(macAddress.equals(
                 // this value is the mac address of the practice bot
