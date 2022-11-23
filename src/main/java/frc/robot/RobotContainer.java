@@ -41,6 +41,7 @@ import frc.robot.subsystems.DataLogger;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.util.ControllerUtil;
 import frc.util.Layer;
 import frc.util.MacUtil;
@@ -48,7 +49,6 @@ import frc.util.Util;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
-import org.photonvision.PhotonCamera;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -64,7 +64,7 @@ public class RobotContainer {
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem(elevatorSubsystem);
 
-  private final PhotonCamera frontCamera = new PhotonCamera("front camera");
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
   private final DataLogger dataLogger = new DataLogger();
 
@@ -103,25 +103,6 @@ public class RobotContainer {
     //         armSubsystem));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
-
-    var apriltab = Shuffleboard.getTab("apriltags");
-
-    apriltab.addString(
-        "detection",
-        () -> {
-          var result = frontCamera.getLatestResult();
-          StringBuilder data = new StringBuilder();
-
-          var bestTarget = result.getBestTarget();
-
-          var transform = bestTarget.getBestCameraToTarget();
-
-          data.append("X: " + transform.getX() + "\t");
-          data.append("Y: " + transform.getY() + "\t");
-          data.append("Z: " + transform.getZ() + "\t");
-
-          return data.toString();
-        });
 
     // Configure the button bindings
     configureButtonBindings();
