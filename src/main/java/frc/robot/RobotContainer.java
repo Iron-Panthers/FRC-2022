@@ -48,6 +48,7 @@ import frc.util.Util;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
+import org.photonvision.PhotonCamera;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -62,6 +63,8 @@ public class RobotContainer {
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem(elevatorSubsystem);
+
+  private final PhotonCamera frontCamera = new PhotonCamera("front camera");
 
   private final DataLogger dataLogger = new DataLogger();
 
@@ -100,6 +103,19 @@ public class RobotContainer {
     //         armSubsystem));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
+
+    var apriltab = Shuffleboard.getTab("apriltags");
+
+    apriltab.addString(
+        "detection",
+        () -> {
+          var result = frontCamera.getLatestResult();
+          StringBuilder data = new StringBuilder();
+
+          data.append("has targets: " + result.hasTargets());
+
+          return data.toString();
+        });
 
     // Configure the button bindings
     configureButtonBindings();
