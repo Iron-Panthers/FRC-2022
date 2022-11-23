@@ -4,36 +4,55 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.Optional;
 import org.photonvision.PhotonCamera;
 
 public class VisionSubsystem extends SubsystemBase {
 
   private PhotonCamera frontCamera;
 
-  private ShuffleboardTab visionSubsystem;
+  private ShuffleboardTab visionSubsystemTab;
 
-  private Transform3d bestCameraToTarget;
+  private Optional<Transform3d> bestCameraToTarget;
 
   /** Creates a new VisonSubsystem. */
   public VisionSubsystem() {
     frontCamera = new PhotonCamera("front camera");
 
-    visionSubsystem = Shuffleboard.getTab("VisionSubsystem");
+    visionSubsystemTab = Shuffleboard.getTab("VisionSubsystem");
 
-    // create a group for the x, y, and z translation using bestCameraToTarget
-
-    var listGroup =
-        visionSubsystem.getLayout("bestCameraToTarget", BuiltInLayouts.kList).withSize(2, 4);
-
-    listGroup.addNumber("x", () -> bestCameraToTarget.getTranslation().getX());
-    listGroup.addNumber("y", () -> bestCameraToTarget.getTranslation().getY());
-    listGroup.addNumber("z", () -> bestCameraToTarget.getTranslation().getZ());
-    listGroup.addNumber("angle", () -> bestCameraToTarget.getRotation().getAngle());
+    visionSubsystemTab.addNumber(
+        "x",
+        () ->
+            bestCameraToTarget
+                .map(Transform3d::getTranslation)
+                .map(Translation3d::getX)
+                .orElse(0d));
+    visionSubsystemTab.addNumber(
+        "y",
+        () ->
+            bestCameraToTarget
+                .map(Transform3d::getTranslation)
+                .map(Translation3d::getY)
+                .orElse(0d));
+    visionSubsystemTab.addNumber(
+        "z",
+        () ->
+            bestCameraToTarget
+                .map(Transform3d::getTranslation)
+                .map(Translation3d::getZ)
+                .orElse(0d));
+    visionSubsystemTab.addNumber(
+        "angle",
+        () ->
+            bestCameraToTarget.map(Transform3d::getRotation).map(Rotation3d::getAngle).orElse(0d));
+    visionSubsystemTab.addBoolean("has target", () -> bestCameraToTarget.isPresent());
   }
 
   @Override
@@ -41,10 +60,10 @@ public class VisionSubsystem extends SubsystemBase {
     var result = frontCamera.getLatestResult();
     var bestTarget = result.getBestTarget();
 
-    bestCameraToTarget = bestTarget.getBestCameraToTarget();
+    bestCameraToTarget = Optional.ofNullable(bestTarget.getBestCameraToTarget());
   }
 
-  public Transform3d getBestCameraToTarget() {
+  public Optional<Transform3d> getBestCameraToTarget() {
     return bestCameraToTarget;
   }
 }
