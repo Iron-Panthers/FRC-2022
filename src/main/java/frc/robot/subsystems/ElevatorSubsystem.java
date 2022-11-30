@@ -55,7 +55,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorSubsystem() {
     heightController =
         new ProfiledPIDController(
-            0.1, 0, 0, new TrapezoidProfile.Constraints(8, 2)); // idk abt constraint values
+            0.1, 0, 0, new TrapezoidProfile.Constraints(8, 3)); // idk abt constraint values
     heightController.setTolerance(.5);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
@@ -227,7 +227,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return percentOutput;
       case POSITION_CONTROL:
         percentOutput =
-            applySlowZoneToPID(-heightController.calculate(currentHeight, targetHeight));
+            applySlowZoneToPID(-heightController.calculate(currentHeight, targetHeight) * 2);
         return percentOutput;
       default:
         return 0;
