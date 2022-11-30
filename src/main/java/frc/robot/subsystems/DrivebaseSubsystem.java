@@ -288,18 +288,24 @@ public class DrivebaseSubsystem extends SubsystemBase {
   }
 
   private void drivePeriodic() {
-    SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+    SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(chassisSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
 
     // sets swerve module speeds and angles, for each swerve module, using kinematics
     for (int i = 0; i < swerveModules.length; i++) {
       swerveModules[i].set(
-          states[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-          states[i].angle.getRadians());
+          desiredStates[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+          desiredStates[i].angle.getRadians());
+    }
+
+    SwerveModuleState[] trueStates = new SwerveModuleState[swerveModules.length];
+
+    for (int i = 0; i < trueStates.length; i++) {
+      trueStates[i] = swerveModules[i].getState();
     }
 
     // Update odometry
-    odometryPeriodic(states);
+    odometryPeriodic(trueStates);
   }
 
   // called in drive to angle mode
