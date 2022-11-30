@@ -50,10 +50,10 @@ public class ArmSubsystem extends SubsystemBase {
     armRightMotor.setNeutralMode(NeutralMode.Brake);
     armLeftMotor.setNeutralMode(NeutralMode.Brake);
 
-    armLeftMotor.follow(armRightMotor);
-    armLeftMotor.setInverted(InvertType.OpposeMaster);
+    armRightMotor.follow(armLeftMotor);
+    armRightMotor.setInverted(InvertType.OpposeMaster);
 
-    armRightMotor.configOpenloopRamp(0.2);
+    armLeftMotor.configOpenloopRamp(0.2);
 
     armRightMotor.setStatusFramePeriod(1, 100);
     armRightMotor.setStatusFramePeriod(2, 100);
@@ -100,7 +100,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   private void setPercentOutput(double power) {
-    armRightMotor.set(TalonFXControlMode.PercentOutput, power);
+    armLeftMotor.set(TalonFXControlMode.PercentOutput, -power);
   }
 
   // Sets the goal of the pid controller
