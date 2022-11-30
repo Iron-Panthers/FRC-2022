@@ -55,7 +55,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorSubsystem() {
     heightController =
         new ProfiledPIDController(
-            0.8, 0, 0, new TrapezoidProfile.Constraints(1, 1)); // idk abt constraint values
+            0.1, 0, 0, new TrapezoidProfile.Constraints(8, 2)); // idk abt constraint values
     heightController.setTolerance(.5);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
@@ -88,7 +88,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.follow(right_motor);
 
     ElevatorTab.add("pid", heightController);
-    ElevatorTab.add("setpoint", heightController.getSetpoint());
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
