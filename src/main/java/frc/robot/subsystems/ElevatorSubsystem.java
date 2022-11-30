@@ -35,8 +35,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private final ProfiledPIDController heightController;
 
-  private final TrapezoidProfile.Constraints constraints;
-
   // clockwise moves up
   // counterclockwise moves down
 
@@ -55,8 +53,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    constraints = new TrapezoidProfile.Constraints(5, 3); // idk abt these values
-    heightController = new ProfiledPIDController(0.8, 0, 0, constraints);
+    heightController =
+        new ProfiledPIDController(
+            0.8, 0, 0, new TrapezoidProfile.Constraints(1, 1)); // idk abt constraint values
     heightController.setTolerance(.5);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
@@ -89,6 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.follow(right_motor);
 
     ElevatorTab.add("pid", heightController);
+    ElevatorTab.add("setpoint", heightController.getSetpoint());
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
@@ -178,6 +178,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setTargetHeight(double targetHeight) {
     this.mode = Modes.POSITION_CONTROL;
     this.targetHeight = targetHeight;
+    heightController.reset(getHeight());
   }
 
   public void setPercent(double percent) {
