@@ -36,9 +36,10 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.HOOK_ENGAGED_HEIGHT),
         new WaitCommand(1),
         // extend to high rung
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.SEQUENCE_EXTEND_HEIGHT),
+        // allow bumper to hit mid rung
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.BUMPER_HEIGHT),
         new WaitCommand(1.25),
-        new ElevatorPositionCommand(elevatorSubsystem, Elevator.SEQUENCE_EXTEND_HEIGHT),
         // hook on to high rung
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.HOOK_ENGAGED_HEIGHT),
@@ -46,6 +47,9 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
         // extend to traversal rung
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.SEQUENCE_EXTEND_HEIGHT),
         new WaitCommand(0.5),
+        // allow bumper to hit high rung
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.BUMPER_HEIGHT),
+        new WaitCommand(1.25),
         // hook on to traversal rung
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT)));
   }
