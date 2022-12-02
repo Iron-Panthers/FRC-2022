@@ -36,6 +36,8 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.HOOK_ENGAGED_HEIGHT),
         new WaitCommand(1),
         // extend to high rung
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.BUMPER_HEIGHT),
+        new WaitCommand(1.25),
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.SEQUENCE_EXTEND_HEIGHT),
         // hook on to high rung
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
