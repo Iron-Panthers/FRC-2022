@@ -57,7 +57,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(224.2089) // comp bot offset
+                ? -Math.toRadians(224.648) // comp bot offset
                 : -Math.toRadians(225.0823); // practice bot offset
       }
 
@@ -68,7 +68,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(332.0507) // comp bot offset
+                ? -Math.toRadians(331.43) // comp bot offset
                 : -Math.toRadians(332.0343); // practice bot offset
       }
 
@@ -79,7 +79,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(6.8554) // comp bot offset
+                ? -Math.toRadians(7.734) // comp bot offset
                 : -Math.toRadians(358.937); // practice bot offset
       }
 
@@ -90,7 +90,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(18.0175) // comp bot offset
+                ? -Math.toRadians(19.863) // comp bot offset
                 : -Math.toRadians(129.103); // practice bot offset
       }
     }
@@ -139,6 +139,10 @@ public final class Constants {
 
     /** Minimum height is 0 inches */
     public static final double MIN_HEIGHT = 0;
+
+    public static final double HOOK_ENGAGED_HEIGHT = 1.9;
+
+    public static final double SEQUENCE_EXTEND_HEIGHT = 21;
 
     /** the minimum height the arm will stay out of the way for, inches */
     public static final double ENGAGED_HEIGHT = 1.2;

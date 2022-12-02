@@ -8,7 +8,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,7 +33,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double percentOutput;
 
-  private final PIDController heightController;
+  private final ProfiledPIDController heightController;
 
   // clockwise moves up
   // counterclockwise moves down
@@ -52,8 +53,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    heightController = new PIDController(0.5, 0, 0);
-    heightController.setTolerance(5);
+    heightController =
+        new ProfiledPIDController(
+            0.3, 0, 0, new TrapezoidProfile.Constraints(8, 5)); // idk abt constraint values
+    heightController.setTolerance(.35);
 
     left_motor = new TalonFX(Constants.Elevator.Ports.LEFT_MOTOR);
     right_motor = new TalonFX(Constants.Elevator.Ports.RIGHT_MOTOR);
@@ -84,7 +87,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.setNeutralMode(NeutralMode.Brake);
     left_motor.follow(right_motor);
 
-    ElevatorTab.add(heightController);
+    ElevatorTab.add("pid", heightController);
     ElevatorTab.addNumber("height", () -> this.currentHeight);
     ElevatorTab.addNumber("target height", () -> this.targetHeight);
     ElevatorTab.addNumber("right motor sensor value", this::getHeight);
@@ -174,6 +177,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setTargetHeight(double targetHeight) {
     this.mode = Modes.POSITION_CONTROL;
     this.targetHeight = targetHeight;
+    heightController.reset(getHeight());
   }
 
   public void setPercent(double percent) {
@@ -223,7 +227,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return percentOutput;
       case POSITION_CONTROL:
         percentOutput =
-            applySlowZoneToPID(-heightController.calculate(currentHeight, targetHeight));
+            MathUtil.clamp(-heightController.calculate(currentHeight, targetHeight), -.5, .5);
         return percentOutput;
       default:
         return 0;

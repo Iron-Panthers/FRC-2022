@@ -4,12 +4,14 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem elevatorSubsystem;
   private final Double targetHeight;
+  private double startTime = 0;
 
   /** Creates a new ElevatorCommand. */
   public ElevatorPositionCommand(ElevatorSubsystem subsystem, Double targetHeight) {
@@ -23,6 +25,7 @@ public class ElevatorPositionCommand extends CommandBase {
   @Override
   public void initialize() {
     elevatorSubsystem.setTargetHeight(targetHeight);
+    startTime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,8 +41,8 @@ public class ElevatorPositionCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return elevatorSubsystem.atTarget();
-    return false;
+    if (Timer.getFPGATimestamp() < startTime + 1) return false;
+    return elevatorSubsystem.atTarget();
   }
 }
 

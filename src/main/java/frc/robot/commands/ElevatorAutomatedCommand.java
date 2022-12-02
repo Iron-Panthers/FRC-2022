@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Function;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -24,27 +26,25 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
     // Use addRequirements() here to declare subsystem dependencies.
 
     addCommands(
-        new SequentialCommandGroup(
-            // mid rung
-            // latch on
-            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
-            new WaitCommand(3),
-            // high rung
-            // extend to rung
-            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MAX_HEIGHT),
-            new WaitCommand(3),
-            // latch on
-            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
-            // moving arm to proper position during wait period
-            parallel(
-                new WaitCommand(3),
-                new InstantCommand(
-                    () -> armSubsystem.setAngle(Arm.Setpoints.MAX_ANGLE), armSubsystem)),
-            // traversal rung
-            // extend to rung
-            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MAX_HEIGHT),
-            new WaitCommand(3),
-            // latch on
-            new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT)));
+      new SequentialCommandGroup(
+        new InstantCommand(
+          () -> armSubsystem.setAngle(Arm.Setpoints.CLIMB_POSITION),
+          armSubsystem
+        ),
+        // hook on to mid rung
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.HOOK_ENGAGED_HEIGHT),
+        new WaitCommand(1),
+        // extend to high rung
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.SEQUENCE_EXTEND_HEIGHT),
+        // hook on to high rung
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.HOOK_ENGAGED_HEIGHT),
+        new WaitCommand(1),
+        // extend to traversal rung
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.SEQUENCE_EXTEND_HEIGHT),
+        new WaitCommand(0.5),
+        // hook on to traversal rung
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT)));
   }
 }
