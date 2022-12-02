@@ -6,6 +6,9 @@ package frc.robot;
 
 import static frc.robot.Constants.Drive;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -45,6 +48,7 @@ import frc.util.ControllerUtil;
 import frc.util.Layer;
 import frc.util.MacUtil;
 import frc.util.Util;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
@@ -106,6 +110,9 @@ public class RobotContainer {
 
     // Create and put autonomous selector to dashboard
     setupAutonomousCommands();
+
+    // Setup camera server
+    setupCameras();
   }
 
   public void containerTeleopInit() {
@@ -364,6 +371,24 @@ public class RobotContainer {
         .add("auto selector", autoSelector)
         .withSize(4, 1)
         .withPosition(6, 0);
+  }
+
+  private void setupCameras() {
+    UsbCamera intakeCamera = CameraServer.startAutomaticCapture("Stew Camera", 0);
+    intakeCamera.setVideoMode(PixelFormat.kMJPEG, 320, 240, 15);
+    Shuffleboard.getTab("DriverView")
+        .add(intakeCamera)
+        .withSize(6, 6)
+        .withPosition(0, 0)
+        .withProperties(Map.of("show controls", false, "rotation", "half"));
+
+    // UsbCamera fieldCamera = CameraServer.startAutomaticCapture("field camera", 1);
+    // fieldCamera.setVideoMode(PixelFormat.kMJPEG, 160, 120, 7);
+    // Shuffleboard.getTab("DriverView")
+    //     .add(fieldCamera)
+    //     .withSize(6, 6)
+    //     .withPosition(6, 0)
+    //     .withProperties(Map.of("show controls", false));
   }
 
   /**
