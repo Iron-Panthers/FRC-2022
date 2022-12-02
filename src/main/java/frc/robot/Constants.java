@@ -142,7 +142,7 @@ public final class Constants {
 
     public static final double HOOK_ENGAGED_HEIGHT = 1.9;
 
-    public static final double SEQUENCE_EXTEND_HEIGHT = 19;
+    public static final double SEQUENCE_EXTEND_HEIGHT = 21;
 
     /** the minimum height the arm will stay out of the way for, inches */
     public static final double ENGAGED_HEIGHT = 1.2;

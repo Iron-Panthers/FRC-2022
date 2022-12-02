@@ -27,13 +27,16 @@ public class ElevatorAutomatedCommand extends SequentialCommandGroup {
 
     addCommands(
       new SequentialCommandGroup(
+        new InstantCommand(
+          () -> armSubsystem.setAngle(Arm.Setpoints.CLIMB_POSITION),
+          armSubsystem
+        ),
         // hook on to mid rung
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.HOOK_ENGAGED_HEIGHT),
         new WaitCommand(1),
         // extend to high rung
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.SEQUENCE_EXTEND_HEIGHT),
-        new WaitCommand(0.5),
         // hook on to high rung
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.MIN_HEIGHT),
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.HOOK_ENGAGED_HEIGHT),
