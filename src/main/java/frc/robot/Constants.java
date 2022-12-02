@@ -142,12 +142,13 @@ public final class Constants {
 
     public static final double HOOK_ENGAGED_HEIGHT = 1.9;
 
-    public static final double SEQUENCE_EXTEND_HEIGHT = 21;
+    public static final double SEQUENCE_EXTEND_HEIGHT = 20;
+
+    public static final double BUMPER_HEIGHT = 13;
 
     /** the minimum height the arm will stay out of the way for, inches */
     public static final double ENGAGED_HEIGHT = 1.2;
 
-    public static final double BUMPER_HEIGHT = MAX_HEIGHT - 10;
 
     /** run the motors at lower power when height is higher then upper or lower then lower. */
     public static final class SlowZone {
