@@ -137,13 +137,18 @@ public class RobotContainer {
         .whenPressed(new HaltDriveCommandsCommand(drivebaseSubsystem));
 
     DoubleSupplier rotation =
-        () ->
-            ControllerUtil.deadband((will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1);
+        exponential(
+            () ->
+                ControllerUtil.deadband(
+                    (will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1),
+            2);
     DoubleSupplier rotationVelocity =
         () ->
             rotation.getAsDouble()
                 * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-                * .5 /* half speed trigger rotation per will */;
+                *
+                /** percent of fraction power */
+                (will.getAButton() ? .3 : .8);
 
     new Button(() -> Math.abs(rotation.getAsDouble()) > 0)
         .whenHeld(
@@ -372,6 +377,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    // return new WaitCommand(
+    //         /** auto start delay */
+    //         7)
+    //     .andThen(autoSelector.getSelected());
     return autoSelector.getSelected();
   }
 
@@ -389,5 +398,12 @@ public class RobotContainer {
     value = Math.copySign(value * value, value);
 
     return value;
+  }
+
+  private static DoubleSupplier exponential(DoubleSupplier supplier, double exponential) {
+    return () -> {
+      double val = supplier.getAsDouble();
+      return Math.copySign(Math.pow(val, exponential), val);
+    };
   }
 }
