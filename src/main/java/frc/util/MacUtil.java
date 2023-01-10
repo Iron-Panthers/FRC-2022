@@ -21,7 +21,7 @@ public class MacUtil {
         !(macAddress.equals(
                 // this value is the mac address of the practice bot
                 // if the read mac address is not the practice bot, we default to comp bot
-                "00:80:2F:28:AC:B0")
+                "00:80:2F:32:FD:81")
             // this is the mac address of the practice bot with cable
             || macAddress.equals("00:80:2F:28:AC:B1"));
   }
