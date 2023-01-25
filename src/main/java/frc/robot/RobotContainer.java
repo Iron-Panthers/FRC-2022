@@ -20,11 +20,14 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.Arm;
 import frc.robot.autonomous.commands.AutoTestSequence;
 import frc.robot.autonomous.commands.GreedyOnsideAutoSequence;
+import frc.robot.autonomous.commands.OffsideTaxiShot;
 import frc.robot.autonomous.commands.OffsideTwoCargoAutoSequence;
 import frc.robot.autonomous.commands.OnsideFourSequence;
 import frc.robot.autonomous.commands.OnsideOneBallSteal;
+import frc.robot.autonomous.commands.OnsideTaxiStealShot;
 import frc.robot.autonomous.commands.OnsideThreeBallSequence;
 import frc.robot.autonomous.commands.OnsideThreeSequence;
+import frc.robot.autonomous.commands.ShootNoTaxi;
 import frc.robot.autonomous.commands.TaxiAutoSequence;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -259,6 +262,12 @@ public class RobotContainer {
         .whenPressed(
             new InstantSetIntakeModeCommand(
                 intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_HIGH));
+    // score into high when robot width away
+    jasonLayer
+        .off(jason::getYButton)
+        .whenPressed(
+            new InstantSetIntakeModeCommand(
+                intakeSubsystem, IntakeSubsystem.Modes.CENTER_NORMALIZE_LOW));
 
     // stop everything
     jasonLayer
@@ -336,7 +345,7 @@ public class RobotContainer {
             intakeSubsystem));
 
     autoSelector.addOption(
-        "[NEW] Taxi and Disrupt",
+        "[NEW] Middle Taxi and Disrupt",
         new TaxiAutoSequence(
             4, // m/s
             1, // m/s2
@@ -359,11 +368,24 @@ public class RobotContainer {
         "[NEW] OnsideThreeBallSequence",
         new OnsideThreeBallSequence(
             3, // m/s
-            1, // m/s2
+            1.5, // m/s2
             drivebaseSubsystem.getKinematics(),
             armSubsystem,
             drivebaseSubsystem,
             intakeSubsystem));
+
+    autoSelector.addOption(
+        "[NEW] Offside Shoot and Taxi Disrupt",
+        new OffsideTaxiShot(
+            1.5, 1.5, drivebaseSubsystem.getKinematics(), drivebaseSubsystem, intakeSubsystem));
+
+    autoSelector.addOption(
+        "[NEW] Onside Shoot and Steal Taxi",
+        new OnsideTaxiStealShot(3, 2, armSubsystem, drivebaseSubsystem, intakeSubsystem));
+
+    autoSelector.addOption(
+        "[NEW] Shoot (from anywhere) No Taxi (sit still like we died, manual calibration in teleop)",
+        new ShootNoTaxi(intakeSubsystem));
 
     Shuffleboard.getTab("DriverView")
         .add("auto selector", autoSelector)

@@ -2,10 +2,8 @@ package frc.robot.autonomous.commands;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.Arm;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.ForceIntakeModeCommand;
@@ -16,42 +14,32 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
 import java.util.function.DoubleFunction;
 
-public class OnsideThreeBallSequence extends SequentialCommandGroup {
-  public OnsideThreeBallSequence(
+public class OnsideTaxiStealShot extends SequentialCommandGroup {
+  public OnsideTaxiStealShot(
       double maxVelocityMetersPerSecond,
       double maxAccelerationMetersPerSecondSq,
-      SwerveDriveKinematics kinematics,
       ArmSubsystem armSubsystem,
       DrivebaseSubsystem drivebaseSubsystem,
       IntakeSubsystem intakeSubsystem) {
 
-    PathPlannerTrajectory threeBallOnsidePickup =
+    PathPlannerTrajectory taxiStealPath =
         PathPlanner.loadPath(
-            "3ball onside pickup",
-            maxAccelerationMetersPerSecondSq,
-            maxAccelerationMetersPerSecondSq);
-
-    PathPlannerTrajectory threeBallOnsideShoot =
-        PathPlanner.loadPath(
-            "3ball onside shoot",
-            maxAccelerationMetersPerSecondSq,
+            "taxiOnsideStealShotPath",
+            maxVelocityMetersPerSecond,
             maxAccelerationMetersPerSecondSq);
 
     DoubleFunction<InstantCommand> armAngleCommand =
         angle -> new InstantCommand(() -> armSubsystem.setAngle(angle), armSubsystem);
 
     addCommands(
+        // take shot
         new SetIntakeModeCommand(intakeSubsystem, Modes.CENTER_NORMALIZE_HIGH, Modes.OFF),
         deadline(
-            sequence(
-                parallel(
-                    new FollowTrajectoryCommand(threeBallOnsidePickup, true, drivebaseSubsystem),
-                    armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION)),
-                sequence(
-                    armAngleCommand.apply(Arm.Setpoints.OUTTAKE_HIGH_POSITION),
-                    new WaitCommand(.2)),
-                new FollowTrajectoryCommand(threeBallOnsideShoot, drivebaseSubsystem)),
-            new ForceIntakeModeCommand(intakeSubsystem, Modes.INTAKE)),
-        new SetIntakeModeCommand(intakeSubsystem, Modes.CENTER_NORMALIZE_HIGH, Modes.OFF));
+            // drive the path while putting the arm down
+            parallel(
+                new FollowTrajectoryCommand(taxiStealPath, true, drivebaseSubsystem),
+                armAngleCommand.apply(Arm.Setpoints.INTAKE_POSITION)),
+            // run the intake until the path ends
+            new ForceIntakeModeCommand(intakeSubsystem, Modes.INTAKE)));
   }
 }
